@@ -1,0 +1,863 @@
+/* ============================================================
+   AV Ninjas — global styles. Tokens come from tokens.css (GL-003).
+   No hardcoded colors/sizes/spacing outside tokens — audit law.
+   ============================================================ */
+
+/* ---- Self-hosted fonts (GL-003 §3 v3.0). POPPINS — ONE superfamily for display
+   + body (Iris ruling 2026-06-16, sweep §D): replaces League Spartan + Glacial
+   Indifference + Jost entirely. Self-hosted woff2 from @fontsource/poppins
+   (Indian Type Foundry; SIL Open Font License 1.1), copied to /public/fonts/.
+   Ship weights 400/500/600/700/800 only (payload lean). font-display: swap.
+   Display weights (700, 800) are preloaded in BaseLayout. The size/weight
+   contrast carries the hierarchy — no second face. ---- */
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/poppins-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/poppins-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/poppins-600.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/poppins-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/poppins-800.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---- Reset / base ---- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth; /* hero "Learn More" scrolls to next section — navigation, not animation (GL-003 §7) */
+  overflow-x: clip; /* root clamp: kills page-level h-scroll (Vera v5 H-1). clip (not hidden) does NOT create a scroll container, so sticky/position contexts stay intact. The comparison table's wide content still scrolls INSIDE .cmp-wrap{overflow-x:auto} — sanctioned exception survives. */
+}
+
+body {
+  margin: 0;
+  overflow-x: clip; /* belt-and-braces with html clamp — see above (Vera v5 H-1) */
+  background: var(--color-canvas); /* light-first: dark is an accent, never the base (Ben, Apr 27) */
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-wrap: break-word;
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ============================================================
+   MEDIA CAP (GL-003 §4 v3.1 — Ben round-4 §8/§9). Every image shrinks freely
+   but NEVER renders wider than --max-media (1920px). Applied globally to every
+   real image; the full-bleed bands and both tickers reference the same ceiling.
+   This is a ceiling, not a fixed width — fluidity below 1920 is unchanged.
+   ============================================================ */
+.media-cap,
+.img-real,
+.fullbleed__img {
+  max-width: var(--max-media);
+  margin-inline: auto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  margin: 0 0 var(--space-lg);
+  text-wrap: balance;
+}
+
+/* Role→step LOCK (GL-003 §3 v2): EVERY major section head is `h2` in markup and
+   carries --text-h1 (the major-section-head role). "The Ninjas" and "The Gear"
+   are the same role → identical size/weight/case/tracking. The page's single
+   <h1> is the hero (set via .display). No section is free to pick its own size. */
+h1 { font-size: var(--text-h1); line-height: var(--leading-h1); }
+h2 { font-size: var(--text-h1); line-height: var(--leading-h1); } /* major section head role */
+h3 { font-size: var(--text-h3); line-height: var(--leading-h3); }
+h4 { font-size: var(--text-h4); line-height: var(--leading-h4); font-weight: 600; }
+/* Sub-section heads (inside a major section) opt down to the h2 role explicitly. */
+.subhead { font-size: var(--text-h2); line-height: var(--leading-h2); }
+
+p {
+  margin: 0 0 var(--space-md);
+}
+
+ul, ol {
+  margin: 0 0 var(--space-md);
+  padding-inline-start: var(--space-lg);
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration-thickness: from-font;
+  text-underline-offset: 0.15em;
+  transition: color var(--motion-micro) var(--ease-out);
+}
+
+/* Shout/display headlines: Poppins 800, uppercase, tight (GL-003 §3 v3 — one superfamily) */
+.display {
+  font-size: var(--text-display);
+  line-height: var(--leading-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* The giant "No Funny Business, Guaranteed." moment (GL-003 §3 v2 --text-mega).
+   Mimics the big-font contrast Ben called out. One per section at most. */
+.mega {
+  font-size: var(--text-mega);
+  line-height: var(--leading-mega);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.lead {
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body-lg);
+}
+
+.small {
+  font-size: var(--text-small);
+  line-height: var(--leading-small);
+}
+
+/* Muted text: --color-gray on canvas/white ONLY (GL-003 §9 — fails AA body on cream) */
+.muted { color: var(--color-gray); }
+.section--cream .muted { color: var(--color-ink); } /* hard usage rule, GL-003 §2/§9 */
+.section--dark .muted { color: var(--color-gray-bright); }
+
+/* ---- Focus (GL-003 §9: visible 2px accent ring on every interactive element) ---- */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+.section--dark :focus-visible,
+.on-dark :focus-visible {
+  outline-color: var(--color-accent-bright); /* deep teal is invisible on ink; bright voicing on dark per GL-003 §2 */
+}
+
+/* ---- Layout ---- */
+.container {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--space-lg);
+}
+@media (min-width: 768px) {
+  .container { padding-inline: var(--space-xl); }
+}
+
+.section {
+  padding-block: var(--space-3xl); /* mobile: sections drop one step (GL-003 §4) */
+}
+@media (min-width: 768px) {
+  .section { padding-block: var(--space-4xl); }
+}
+.section--roomy { padding-block: var(--space-4xl); } /* hero + dark-moment sections */
+@media (min-width: 768px) {
+  .section--roomy { padding-block: var(--space-5xl); }
+}
+
+.section--cream { background: var(--color-cream); }
+
+/* Dark sections: earned moments. JS adds .is-light below the fold, removes it
+   on scroll-into-view → light→dark fade (GL-003 §7 moment 3, sannewijbenga ref).
+   No-JS and reduced-motion: sections are simply dark (end state). */
+.section--dark {
+  background: var(--color-ink);
+  color: var(--color-canvas);
+  transition:
+    background-color var(--motion-dark-fade) var(--ease-out),
+    color var(--motion-dark-fade) var(--ease-out);
+}
+.section--dark.is-light {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+.section--dark a { color: var(--color-accent-bright); }
+.section--dark.is-light a { color: var(--color-accent); }
+
+/* ============================================================
+   v3 — ALIGNMENT SYSTEM (GL-003 §4a + sweep §A). The governing rule:
+   section headings are ALWAYS centered; content is a grid-locked SPLIT
+   (left-text/right-image sharing ONE top+bottom edge) or a centered GRID.
+   ============================================================ */
+
+/* Section announcement = the centered head + eyebrow + dek. Every major
+   section head carries .sec-head; the heading and its dek center together,
+   capped to a ≤720px measure (≤900 for shout moments via .sec-head--wide). */
+.sec-head {
+  text-align: center;
+  max-width: 720px;
+  margin-inline: auto;
+  margin-bottom: var(--space-2xl);
+}
+.sec-head--wide { max-width: 900px; }
+.sec-head > :last-child { margin-bottom: 0; }
+.sec-head .eyebrow { text-align: center; }
+
+/* SPLIT archetype — two columns on a SHARED baseline grid. Text and image
+   share identical TOP and BOTTOM edges (align-items: stretch + image cover-fit
+   to the row height). This is the "image narrower than text" fix. Pick ONE
+   ratio site-wide: 55/45. Image side alternates via .split--img-left. */
+.split {
+  display: grid;
+  gap: var(--space-2xl);
+  align-items: stretch; /* text + image share top AND bottom edge */
+}
+@media (min-width: 920px) {
+  .split {
+    grid-template-columns: 55fr 45fr; /* text 55 / image 45 — every SPLIT, same ratio */
+    gap: var(--space-3xl);
+  }
+  /* Image-left variant: image column first visually (zig-zag rhythm). */
+  .split--img-left .split__media { order: -1; }
+}
+.split__copy { align-self: center; }
+.split__media {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  min-height: 320px;
+}
+/* The image fills its column to the shared row height (cover-fit) so the two
+   columns end on the same bottom edge — no floating narrow image. */
+.split__media .img-real {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+/* ============================================================
+   SPLIT-HEADING archetype (round-4 §18 — Ben: "restore the two left-side
+   headings; I like the split page: heading left, content right"). A grid-locked
+   split where the LEFT column is the section heading and the RIGHT column is all
+   the content (copy + image). Used by The Ninjas + The Gear. The heading column
+   is sticky-ish (top-aligned); the content reads down the right.
+   ============================================================ */
+.split-head {
+  display: grid;
+  gap: var(--space-xl);
+}
+@media (min-width: 920px) {
+  .split-head {
+    grid-template-columns: 4fr 8fr; /* heading left (narrow), content right (dominant) */
+    gap: var(--space-3xl);
+    align-items: start;
+  }
+}
+.split-head__heading { align-self: start; }
+.side-head {
+  /* Same major-section-head role as every other section head (--text-h1, GL-003
+     §3 role-lock) — only the POSITION differs (left, not centered). */
+  font-size: var(--text-h1);
+  line-height: var(--leading-h1);
+  margin-bottom: 0;
+}
+@media (min-width: 920px) {
+  .side-head { position: sticky; top: var(--space-3xl); }
+}
+.split-head__content > :last-child { margin-bottom: 0; }
+.split-head__media {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-block: var(--space-lg);
+}
+.split-head__media .img-real {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+}
+
+/* ============================================================
+   v3 — FULL-BLEED IMAGE MOMENTS (GL-003 §8a — exactly 3 sanctioned).
+   The image breaks the 1200 container to 100vw; text over it stays inside
+   the 1200 measure, centered; mandatory ink scrim (≥4.5:1). Static — NOT a
+   motion moment. object-position keeps faces uncropped (hero-crop fix).
+   ============================================================ */
+.fullbleed {
+  position: relative;
+  width: 100vw;
+  margin-inline: calc(50% - 50vw); /* break the container to viewport width */
+  overflow: hidden;
+  background: var(--color-ink);
+}
+/* The full-bleed image caps at --max-media (1920) and centers; on viewports
+   wider than 1920 the section tone (ink) fills the gutters (GL-003 §4 v3.1). */
+.fullbleed__img {
+  width: 100%;
+  max-width: var(--max-media);
+  height: 100%;
+  margin-inline: auto;
+  object-fit: cover;
+  object-position: center 40%; /* no face crop */
+  display: block;
+}
+/* Ink scrim so centered text over the image stays ≥4.5:1 (GL-003 §9). */
+.fullbleed__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, #111115 35%, transparent) 0%,
+    color-mix(in srgb, #111115 70%, transparent) 100%
+  );
+  pointer-events: none;
+}
+.fullbleed__inner {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: var(--space-2xl) var(--space-lg);
+}
+.fullbleed__inner .container { color: var(--color-canvas); }
+
+/* ============================================================
+   v3 — BAND GROUPING (GL-003 §8a recipe). Sibling sections within a band sit
+   tighter (--space-3xl); the band boundary gets the breathing room or a tonal
+   break. .band-tight trims a section's TOP padding so it hugs its band-mate;
+   .band-break adds the inter-band gap.
+   ============================================================ */
+.band-tight { padding-top: var(--space-3xl); }
+@media (min-width: 768px) {
+  .band-tight { padding-top: var(--space-3xl); }
+}
+.band-break-rule {
+  width: 100%;
+  height: 1px;
+  border: 0;
+  margin: 0;
+  background: color-mix(in srgb, var(--color-gray) 12%, transparent);
+}
+
+/* Eyebrow labels */
+.eyebrow {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--text-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.08em; /* +0.08em tracking on eyebrow (GL-003 §3 v2) */
+  color: var(--color-accent);
+  margin-bottom: var(--space-sm);
+}
+.section--dark .eyebrow { color: var(--color-accent-bright); }
+
+/* ---- Buttons (GL-003 §8 v2) — pill, ink-filled primary; inverted on dark.
+   CTAs are BIGGER in v2 (Ben: "make the CTA buttons a little bigger"). ---- */
+.btn {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--text-body-lg);
+  line-height: 1.2;
+  padding: var(--space-lg) var(--space-2xl); /* bigger (v2) */
+  border-radius: var(--radius-pill);
+  border: var(--border-standard) solid transparent; /* secondary/outline default; gradient overrides to --border-pop */
+  text-decoration: none;
+  cursor: pointer;
+  text-align: center;
+  transition:
+    background-color var(--motion-micro) var(--ease-out),
+    color var(--motion-micro) var(--ease-out),
+    border-color var(--motion-micro) var(--ease-out);
+}
+.btn--primary {
+  background: var(--color-ink);
+  color: var(--color-canvas);
+  border-color: var(--color-ink);
+}
+.btn--primary:hover {
+  background: var(--color-accent); /* subtle fill shift */
+  border-color: var(--color-accent);
+  color: var(--color-surface);
+}
+/* PRIMARY "Let's Talk" — the gradient POP moment (GL-003 §2 use #1 / §8).
+   Default build: ink-filled pill with a --border-pop (5px, v3.1 — doubled,
+   global) --gradient-pop OUTLINE drawn via a border-box/padding-box mask so the
+   fill stays ink (white text legible) and only the rim carries the gradient. One
+   of TWO sanctioned gradient surfaces — never on secondary/repeated buttons. */
+.btn--gradient {
+  position: relative;
+  background: var(--color-ink);
+  color: var(--color-canvas);
+  border: var(--border-pop) solid transparent;
+  background-image:
+    linear-gradient(var(--color-ink), var(--color-ink)),
+    var(--gradient-pop);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  /* B16 (round-5): subtle, in-place gradient DRIFT so the rim reads like moving
+     video-with-a-mask. Oversize the gradient layer (the 2nd bg) and slowly pan its
+     position; the ink fill (1st layer) is a flat 100% and stays put. CSS only, no
+     video asset. Paused under prefers-reduced-motion (block at file end). */
+  background-size: 100% 100%, 320% 320%;
+  background-position: 0 0, 0% 50%;
+  animation: grad-drift 2.3s ease-in-out infinite alternate;
+}
+/* Drift only the gradient (2nd) layer's position; keep the ink fill (1st) fixed.
+   B16 (v04): faster + wider travel (oversized 320% layer panned the full 0→100%
+   range) so the rim motion is clearly perceptible, not near-static.
+   v05 (Ben): 3.5s → 2.3s so the drift clearly reads faster. */
+@keyframes grad-drift {
+  from { background-position: 0 0, 0% 50%; }
+  to   { background-position: 0 0, 100% 50%; }
+}
+.btn--gradient:hover {
+  /* subtle: deepen the fill toward navy, keep the gradient rim */
+  background-image:
+    linear-gradient(var(--color-accent-deep), var(--color-accent-deep)),
+    var(--gradient-pop);
+  color: var(--color-canvas);
+}
+/* On dark sections the ink fill would vanish into the ground → use a faint tint
+   so the gradient rim and white text still read as a raised pill. */
+.section--dark:not(.is-light) .btn--gradient,
+.on-dark .btn--gradient {
+  background-image:
+    linear-gradient(#1a1a20, #1a1a20),
+    var(--gradient-pop);
+  color: var(--color-canvas);
+}
+
+.btn--secondary {
+  background: transparent;
+  color: var(--color-ink);
+  border-color: var(--color-ink);
+}
+.btn--secondary:hover {
+  background: var(--color-ink);
+  color: var(--color-canvas);
+}
+/* Inversion on dark sections */
+.section--dark:not(.is-light) .btn--primary {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  border-color: var(--color-canvas);
+}
+.section--dark:not(.is-light) .btn--primary:hover {
+  background: var(--color-accent-bright);
+  border-color: var(--color-accent-bright);
+  color: var(--color-ink);
+}
+.section--dark:not(.is-light) .btn--secondary {
+  color: var(--color-canvas);
+  border-color: var(--color-canvas);
+}
+.section--dark:not(.is-light) .btn--secondary:hover {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+/* ---- Highlight Law v2 (GL-003 §6) — lime marker, EXACTLY TWO elements site-wide.
+   #1 hero audience phrase: animated left→right draw, ONE CONTINUOUS sweep across
+   two segments (B2 round-5: line 1 flows INTO line 2, not parallel), SLOWED, and
+   gated to scroll-into-view (B17 — all animations trigger on scroll-into-view).
+   #2 No-Funny-Business trigger line: THREE separate per-phrase sweeps on
+   scroll-into-view (B7 round-5), dividers never highlighted.
+   The marker is NOT the accent (accent is blue). ---- */
+
+/* B2: hero continuous sweep. The wrapper holds two segments; each segment is a
+   lime marker that draws left→right. We SEQUENCE them with a transition-delay so
+   segment 2 only begins after segment 1 finishes → one continuous draw down the
+   two lines. Fired by JS adding .is-drawn (B17, scroll-into-view), reduced-motion
+   / no-JS pre-draw the end state (see the noscript rule + reduced-motion block).
+   --motion-hero-seg is the per-segment draw time (slowed vs the old 700ms;
+   v05: 900ms → 1200ms per Ben "a little bit slower"). Segment 2 ("Planners")
+   is delayed by one --motion-hero-seg so line 1 fully completes first. */
+.highlight-sweep { --motion-hero-seg: 1200ms; }
+.highlight-seg {
+  background-image: linear-gradient(var(--color-highlight), var(--color-highlight));
+  background-repeat: no-repeat;
+  background-size: 0% 88%;
+  background-position: 0 60%;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  color: var(--color-ink); /* ink over highlight ≈16.8:1 */
+  /* LINEAR (not ease-out): constant sweep speed so the line-1 → line-2 hand-off
+     reads as one continuous motion. ease-out decelerated at the end of line 1 and
+     ease-in'd into "Planners", which read as a pause at the wrap (Ben). */
+  transition: background-size var(--motion-hero-seg) linear;
+}
+/* Sequence: segment 1 draws first; segment 2 waits one segment-duration so the
+   sweep reads as a single continuous line-1 → line-2 motion. Segment 2 ("Planners")
+   is much shorter than line 1, so it gets a proportionally shorter duration —
+   same per-character speed = the sweep never appears to slow down or stop. */
+.highlight-seg--1 { transition-delay: 0ms; }
+.highlight-seg--2 {
+  transition-delay: var(--motion-hero-seg);
+  transition-duration: 360ms;
+}
+.highlight-sweep.is-drawn .highlight-seg { background-size: 100% 88%; }
+/* #2 — No-Funny-Business trigger line: SWEEPS/draws across on scroll-into-view
+   (round-4 §16 — Ben). Same draw MECHANISM as the hero highlight (left→right
+   background-size grow), but fired by an IntersectionObserver-added .is-drawn
+   class instead of on load, so it animates as the section scrolls into view.
+   Reduced-motion / no-JS: pre-drawn end state (handled below). */
+.highlight-static {
+  background-image: linear-gradient(var(--color-highlight), var(--color-highlight));
+  background-repeat: no-repeat;
+  background-size: 0% 88%;
+  background-position: 0 60%;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  color: var(--color-ink);
+  padding-inline: 0.08em;
+  transition: background-size var(--motion-highlight-draw) var(--ease-out);
+}
+.highlight-static.is-drawn { background-size: 100% 88%; }
+
+/* B7: No-Funny-Business — THREE separate per-phrase sweeps, dividers un-highlighted.
+   Each phrase segment is its own lime marker; the " | " dividers are plain text
+   (.nfb-divider, no marker). The segments are sequenced with a ½s gap so they draw
+   one after another (phrase 1 → ½s → phrase 2 → ½s → phrase 3) on scroll-into-view.
+   --motion-nfb-seg = per-phrase draw time; --motion-nfb-gap = the pause between.
+   v05: per-phrase draw 600ms → 850ms per Ben "a little bit more" (slower). The
+   gap is unchanged so the 3 sweeps stay distinctly sequenced. */
+.nfb-sweep { --motion-nfb-seg: 850ms; --motion-nfb-gap: 500ms; }
+.nfb-seg {
+  background-image: linear-gradient(var(--color-highlight), var(--color-highlight));
+  background-repeat: no-repeat;
+  background-size: 0% 88%;
+  background-position: 0 60%;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  color: var(--color-ink);
+  padding-inline: 0.08em;
+  transition: background-size var(--motion-nfb-seg) var(--ease-out);
+}
+/* Stagger: seg1 at 0, seg2 after (seg+gap), seg3 after 2*(seg+gap). */
+.nfb-seg--1 { transition-delay: 0ms; }
+.nfb-seg--2 { transition-delay: calc(var(--motion-nfb-seg) + var(--motion-nfb-gap)); }
+.nfb-seg--3 { transition-delay: calc(2 * (var(--motion-nfb-seg) + var(--motion-nfb-gap))); }
+.nfb-sweep.is-drawn .nfb-seg { background-size: 100% 88%; }
+/* Dividers are NEVER highlighted — plain text, inherit the section color. */
+.nfb-divider { background: none; }
+
+/* ---- Pillar rows: wireframe "A · B · C" separator lines, rendered VERBATIM
+   (middots are canonical text, kept for copy fidelity) ---- */
+.pillars {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--text-h4);
+  line-height: 1.5;
+}
+/* B8 (round-5): The Ninjas — three points, each on its OWN line with a bullet.
+   A real bulleted list (was a middot-separated run). Bullet uses the accent on
+   dark grounds; sits comfortably indented. */
+ul.pillars-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+ul.pillars-list li {
+  position: relative;
+  padding-left: calc(1em + var(--space-sm));
+}
+ul.pillars-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--color-accent-bright); /* The Ninjas is a DARK section — bright voice (7.0:1) */
+  font-weight: 700;
+}
+
+/* v05 (Ben): The Ninjas three points — CENTERED beneath the picture, each fading
+   in individually (staggered) on scroll-into-view. The <ul> is centered as a block
+   under the image; each <li> is left-aligned inside a shrink-to-fit column so the
+   bullets read as a tidy centered list (not three center-justified ragged lines).
+   The "The Ninjas" side heading and the picture are untouched. */
+.ninjas-points {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  margin-top: var(--space-xl);
+  text-align: left;
+}
+/* Staggered fade-in: each item starts faded + slightly down; .is-revealed (added
+   by the IntersectionObserver) lets them rise, each with its own delay so they
+   appear one after another. */
+.ninjas-points li {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 500ms var(--ease-out),
+    transform 500ms var(--ease-out);
+}
+.ninjas-points.is-revealed li { opacity: 1; transform: none; }
+.ninjas-points.is-revealed li:nth-child(1) { transition-delay: 0ms; }
+.ninjas-points.is-revealed li:nth-child(2) { transition-delay: 180ms; }
+.ninjas-points.is-revealed li:nth-child(3) { transition-delay: 360ms; }
+
+/* ---- Marquee (GL-003 §7/§8: ambient texture, ≥40s linear loop, pause on hover,
+   static list under reduced-motion).
+   SEAMLESS-LOOP FIX (round-4 §12): the track holds TWO identical lists. Each list
+   carries its OWN trailing gap (padding-inline-end), and the track gap is 0, so
+   the two lists tile edge-to-edge with NO seam. Translating the track by exactly
+   -50% (the width of one list) lands the duplicate precisely where the original
+   started → continuous loop with no gap when the list "runs out".
+   1920 CAP (round-4 §11b / GL-003 §4 v3.1): the moving track is capped + centered
+   via .ticker-track on the band; the marquee animation runs INSIDE the capped box. ---- */
+.ticker-track {
+  max-width: var(--max-media);
+  margin-inline: auto;
+  overflow: hidden;
+}
+.marquee {
+  overflow: hidden;
+  border-block: 1px solid var(--color-gray-bright);
+  padding-block: var(--space-md);
+}
+.marquee__track {
+  display: flex;
+  gap: 0; /* lists tile edge-to-edge — each carries its own trailing gap */
+  width: max-content;
+  animation: marquee-scroll 48s linear infinite;
+  will-change: transform;
+  /* Chrome under-rasterizes the off-screen second list (it only paints the
+     viewport "interest rect"), so the duplicate row blanks out until a repaint
+     (hover/scroll) forces it in. backface-visibility + a 3D-transform keyframe
+     keep it a stable, fully-painted composited layer. */
+  backface-visibility: hidden;
+}
+.marquee:hover .marquee__track { animation-play-state: paused; }
+.marquee__list {
+  display: flex;
+  gap: var(--space-2xl);
+  padding-inline-end: var(--space-2xl); /* trailing gap === inter-item gap → seamless tiling */
+  list-style: none;
+  margin: 0;
+  padding-block: 0;
+  padding-inline-start: 0;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-gray-bright); /* gray-bright on dark (GL-003 §8) */
+  white-space: nowrap;
+}
+@keyframes marquee-scroll {
+  /* -33.333% === exactly one list-width (THREE identical lists incl. trailing
+     gap), so the loop point is invisible AND there are always ≥2 lists of content
+     ahead of the viewport — no blank after the last item at the loop extreme even
+     when one list is narrower than the screen. translate3d keeps the track on a
+     3D-composited layer the whole loop. */
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-33.333%, 0, 0); }
+}
+
+/* ---- Image placeholders (Pixel's images drop in later without layout shift) ---- */
+.img-ph {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-md); /* same radius on all four corners — token law */
+  border: 1.5px dashed var(--color-gray);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent 0,
+      transparent 22px,
+      var(--color-cream) 22px,
+      var(--color-cream) 24px
+    ),
+    var(--color-surface);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.section--dark:not(.is-light) .img-ph {
+  border-color: var(--color-gray-bright);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent 0,
+      transparent 22px,
+      var(--color-gray) 22px,
+      var(--color-gray) 24px
+    ),
+    var(--color-ink);
+}
+.img-ph__label {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--text-small);
+  color: var(--color-gray);
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs) var(--space-sm);
+  z-index: 1;
+}
+.section--dark:not(.is-light) .img-ph__label {
+  color: var(--color-gray-bright);
+  background: var(--color-ink);
+}
+
+/* ---- Accordions (GL-003 §8 — chevron, ≤250ms, one open at a time, full-row target) ---- */
+.accordion {
+  border-bottom: 1px solid var(--color-gray-bright);
+}
+.accordion summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding-block: var(--space-md);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--text-h3);
+  line-height: var(--leading-h3);
+}
+.accordion summary::-webkit-details-marker { display: none; }
+.accordion summary .chev {
+  flex: none;
+  transition: transform var(--motion-accordion) var(--ease-out);
+}
+.accordion[open] summary .chev { transform: rotate(180deg); }
+.accordion__body {
+  padding-block: 0 var(--space-lg);
+}
+.accordion[open] .accordion__body {
+  animation: acc-fade var(--motion-accordion) var(--ease-out);
+}
+@keyframes acc-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ---- Forms (GL-003 §8: labels above inputs, radius-sm, 2px accent focus ring) ---- */
+.field label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+}
+.field input[type="email"],
+.field input[type="text"] {
+  width: 100%;
+  font: inherit;
+  color: var(--color-ink);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-gray);
+  border-radius: var(--radius-sm);
+  padding: var(--space-md);
+}
+.field input:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+/* Tabular figures on pricing + comparison chart (GL-003 §3) */
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* ---- Utilities ---- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space-md);
+  top: var(--space-md);
+  z-index: 100;
+  background: var(--color-ink);
+  color: var(--color-canvas);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  transform: translateY(-200%);
+}
+.skip-link:focus-visible {
+  transform: none;
+}
+
+/* ---- Reduced motion (GL-003 §7): all moments degrade to end states ---- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .highlight-seg {
+    transition: none;
+    background-size: 100% 88%; /* hero highlight pre-drawn end state (B2) */
+  }
+  .highlight-static,
+  .nfb-seg {
+    transition: none;
+    background-size: 100% 88%; /* sweeps pre-drawn (B7) */
+  }
+  /* v05: The Ninjas points show immediately, no staggered fade. */
+  .ninjas-points li {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  /* B16 (round-5): pause the living-video gradient drift; the gradient holds its
+     legible start position. */
+  .btn--gradient { animation: none; }
+  .marquee__track { animation: none; flex-wrap: wrap; width: auto; }
+  .marquee__track .marquee__list[aria-hidden="true"] { display: none; } /* static single list */
+  .marquee__list { white-space: normal; flex-wrap: wrap; row-gap: var(--space-sm); }
+  .section--dark { transition: none; }
+  .accordion[open] .accordion__body { animation: none; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

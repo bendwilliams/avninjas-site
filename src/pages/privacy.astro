@@ -1,0 +1,147 @@
+---
+/**
+ * Privacy Policy (/privacy/) — required for LinkedIn Ads / LinkedIn Company Page
+ * destinations. Standalone page with a back-to-home button; linked from the footer.
+ *
+ * NOTE FOR BEN: this is a sensible, plain-language starting policy that satisfies
+ * the "must have a published privacy policy" requirement. Before relying on it
+ * legally, confirm/replace the bracketed specifics (legal entity name, contact
+ * email, analytics/ad tools actually in use, jurisdiction) and have counsel review.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const lastUpdated = "June 18, 2026";
+const contactEmail = "hello@avninjas.co"; // [PENDING BEN: confirm the real contact email]
+---
+
+<BaseLayout
+  title="Privacy Policy — AV Ninjas"
+  description="How AV Ninjas collects, uses, and protects information from visitors to this website."
+>
+  <main class="legal">
+    <div class="legal__wrap">
+      <a href="/" class="legal__back">← Back to home</a>
+
+      <h1>Privacy Policy</h1>
+      <p class="legal__updated">Last updated: {lastUpdated}</p>
+
+      <p>
+        This Privacy Policy explains how AV Ninjas ("we," "us," or "our") collects,
+        uses, and protects information when you visit this website or get in touch
+        with us. We keep this simple and try to collect only what we need.
+      </p>
+
+      <h2>Information we collect</h2>
+      <ul>
+        <li>
+          <strong>Information you give us.</strong> If you contact us or request a
+          quote, we collect what you choose to send — typically your name, email
+          address, company, and details about your event.
+        </li>
+        <li>
+          <strong>Information collected automatically.</strong> Like most websites,
+          we collect basic technical data such as your IP address, browser type,
+          device, referring page, and how you move through the site. This is used to
+          keep the site working and to understand what's useful.
+        </li>
+        <li>
+          <strong>Cookies and similar technologies.</strong> We use cookies and
+          comparable tools for site functionality, analytics, and advertising
+          measurement — including the LinkedIn Insight Tag if you reached us from
+          LinkedIn. You can control cookies through your browser settings.
+        </li>
+      </ul>
+
+      <h2>How we use information</h2>
+      <ul>
+        <li>To respond to your inquiries and provide quotes and services.</li>
+        <li>To operate, maintain, and improve this website.</li>
+        <li>To measure the performance of our marketing, including LinkedIn ads.</li>
+        <li>To comply with legal obligations.</li>
+      </ul>
+
+      <h2>How we share information</h2>
+      <p>
+        We do not sell your personal information. We may share it with service
+        providers who help us operate the site and our marketing (for example,
+        analytics and advertising platforms such as LinkedIn), and when required by
+        law. These providers handle your information under their own privacy terms.
+      </p>
+
+      <h2>Your choices and rights</h2>
+      <p>
+        Depending on where you live, you may have the right to access, correct, or
+        delete the personal information we hold about you, and to opt out of certain
+        uses. To make a request, email us at <a href={`mailto:${contactEmail}`}
+        >{contactEmail}</a>. You can also manage cookies in your browser and adjust
+        ad preferences on LinkedIn and other platforms directly.
+      </p>
+
+      <h2>Data retention &amp; security</h2>
+      <p>
+        We keep information only as long as we need it for the purposes above, then
+        delete or anonymize it. We take reasonable measures to protect your
+        information, though no method of transmission or storage is completely secure.
+      </p>
+
+      <h2>Children's privacy</h2>
+      <p>
+        This site is intended for businesses and is not directed to children under 16.
+        We do not knowingly collect information from children.
+      </p>
+
+      <h2>Changes to this policy</h2>
+      <p>
+        We may update this policy from time to time. When we do, we'll revise the
+        "Last updated" date above.
+      </p>
+
+      <h2>Contact us</h2>
+      <p>
+        Questions about this policy? Email <a href={`mailto:${contactEmail}`}
+        >{contactEmail}</a>.
+      </p>
+
+      <a href="/" class="legal__back legal__back--bottom">← Back to home</a>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .legal {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    padding-block: var(--space-4xl);
+  }
+  .legal__wrap {
+    max-width: 720px;
+    margin-inline: auto;
+    padding-inline: var(--space-xl);
+  }
+  .legal__back {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+    margin-bottom: var(--space-2xl);
+  }
+  .legal__back:hover { text-decoration: underline; }
+  .legal__back--bottom { margin-top: var(--space-3xl); margin-bottom: 0; }
+  .legal h1 { margin-bottom: var(--space-xs); }
+  .legal__updated {
+    color: var(--color-gray);
+    font-size: var(--text-small);
+    margin-top: 0;
+    margin-bottom: var(--space-2xl);
+  }
+  .legal h2 {
+    font-size: var(--text-h4);
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-sm);
+  }
+  .legal p { margin-block: var(--space-md); line-height: var(--leading-body); }
+  .legal ul { margin-block: var(--space-md); padding-left: var(--space-xl); }
+  .legal li { padding-block: var(--space-2xs, 4px); line-height: var(--leading-body); }
+  .legal a { color: var(--color-accent); }
+</style>

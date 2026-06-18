@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.astro/
+working/
+npm-debug.log*
+.DS_Store
+
+# never publish secrets or local-only artifacts
+.env
+.env.*
+*.env
+.claude-secrets/
+.vercel/
+shots/
+
+# local version-comparison snapshot — not for the public site
+public/v4/
+
+# dev-only scripts that leak local/vault paths — keep out of the public repo
+scripts/screenshots*.mjs
+**/.tmp-*/

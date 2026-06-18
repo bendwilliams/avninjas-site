@@ -1,0 +1,157 @@
+---
+/**
+ * HVCO opt-in page (/hvco/) — STANDALONE funnel entry point.
+ * No site header/footer, no cross-links to the homepage (original scope).
+ *
+ * Copy SSOT: Deliverables/.../06-canonical-copy/hvco-copy.md — verbatim,
+ * zero fixes ("chocked full" carried as-is; doubled periods are brand voice).
+ * The corpus "Notes for Claude" section never renders here.
+ *
+ * KNOWN GAPS (hvco-copy.md Flags — Ben decisions, NOT builder inventions):
+ *   - No CTA button text            → [PENDING BEN: cta-label]
+ *   - No email-field label          → [PENDING BEN: email-field-label]
+ *   - No privacy line               → [PENDING BEN: privacy-line]
+ *   - No post-submit confirmation   → [PENDING BEN: confirmation-copy]
+ *   - No display headline exists    → page opens straight into the hook copy (by design)
+ *   - Asset title unratified (three names in circulation) — "Audio Visual
+ *     Mastery for Event Planners" rendered because it IS in the canonical copy.
+ *   - No imagery slots defined for this page anywhere in the corpus — none invented.
+ * The homepage footer's privacy line is NOT borrowed (explicitly disallowed).
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const juggling = [
+  "Securing the venue..",
+  "Selecting a caterer and menu",
+  "Invites and RSVPs",
+  "Booking the talent..",
+] as const;
+
+const offerBullets = [
+  "How to optimize for maximum connection and impact",
+  "How to get the AV piece sorted in minutes, not months",
+  "How to properly vet AV companies to lock in on the right partner",
+  "How to apply the 80/20 principle to AV budgeting",
+  "How to pull off killer production value for less than the cost of the mediocre option",
+] as const;
+---
+
+<!-- [PENDING BEN: ratify asset title for <title> + og tags] — "Free Guide" is a
+     provisional tab/SEO label only (WCAG 2.4.2 distinct-title fix, Vera MEDIUM-3);
+     no visible body copy is affected. -->
+<BaseLayout title="AV Ninjas | Free Guide">
+  <main id="main" class="hvco">
+    <!-- 1. Headline / Hook -->
+    <section class="section section--roomy" aria-label="Hook">
+      <div class="container hvco-narrow">
+        <p class="lead">Planning a meeting or event can be a bit like a juggling act:</p>
+        <ul>
+          {juggling.map((item) => <li>{item}</li>)}
+        </ul>
+        <p>The list goes on...</p>
+        <p>To succeed, it seems like you need to be part plate spinner and part cat-herder..</p>
+        <p>
+          But it can be absolute magic when all those pieces come together. There's
+          nothing quite like the chemistry that can happen at a live event. It's why we do
+          what we do. Whether a strategic summit or a conference, something happens when
+          you get people in a room together, fully engaged, fully present.
+        </p>
+        <p>
+          ..and for those of us who are drawn to this line of work, it's a point of pride
+          to orchestrate all of these pieces, all the while making it look easy.
+        </p>
+      </div>
+    </section>
+
+    <!-- 2. The Problem (Agitation) -->
+    <section class="section section--cream" aria-label="The Problem">
+      <div class="container hvco-narrow">
+        <p>
+          But there's one puzzle piece that can be a bit like Pandora's box. It looks
+          innocent enough at first, but it's chocked full of stinging things that can not
+          only mess up your day, but do lasting harm to your reputation. If you've ever
+          experienced this, you know what I'm talking about.
+        </p>
+        <p>
+          Solid Audio-Visual support can help your event go as smooth as butter, but the
+          wrong players can make your event look like hot-mess amateur-hour at best or
+          turn it into a full blown train wreck at worst.
+        </p>
+        <p>
+          ..not to mention the unplanned costs that can pile up, seemingly out of nowhere
+          - and burn well beyond your budget like a forest fire..
+        </p>
+        <p>
+          ..and the emails. So many emails. Details that never seem to get all the way
+          ironed out.. Until you wake up one day and realize that all of the
+          back-and-forth has become a second full time job.
+        </p>
+        <p>
+          Being out of sync with your AV provider is a bit like being forced to chew on
+          shards of broken glass. It can be incredibly awkward and leave you questioning
+          your own sanity. And sadly, piss-poor service and even forms of gaslighting have
+          become all too normal in certain settings.
+        </p>
+      </div>
+    </section>
+
+    <!-- 3. The Turn -->
+    <section class="section" aria-label="The Turn">
+      <div class="container hvco-narrow">
+        <p class="lead">
+          It doesn't have to be this way.. In fact, it can be an enjoyable experience.
+          Whether you're planning an event for 25 or 2500, you'll find our free resource
+          to be worth its weight in gold.
+        </p>
+      </div>
+    </section>
+
+    <!-- 4. Offer + opt-in -->
+    <section class="section section--roomy section--dark" aria-label="Offer">
+      <div class="container hvco-narrow">
+        <!-- Asset title pending Ben's ratification (three names in circulation) —
+             rendered because this string IS canonical copy. -->
+        <h1>Audio Visual Mastery for Event Planners</h1>
+        <p class="lead"><em>Everything you need to know. Nothing you don't.</em></p>
+        <ul class="hvco-offer-list">
+          {offerBullets.map((item) => <li>{item}</li>)}
+        </ul>
+
+        <!-- Opt-in mechanics: NO canonical strings exist (hvco-copy.md Flag #1).
+             Visibly-marked placeholders below; form is NOT wired (Mack's layer). -->
+        <form class="hvco-form" method="post" action="#">
+          <div class="field">
+            <label for="hvco-email">[PENDING BEN: email-field-label]</label>
+            <input type="email" id="hvco-email" name="email" autocomplete="email" required />
+          </div>
+          <button type="submit" class="btn btn--primary">[PENDING BEN: cta-label]</button>
+          <p class="small hvco-privacy">[PENDING BEN: privacy-line]</p>
+        </form>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .hvco-narrow {
+    max-width: 720px;
+  }
+  .hvco-offer-list li {
+    padding-block: var(--space-xs);
+  }
+  .hvco-form {
+    margin-top: var(--space-2xl);
+    max-width: 480px;
+  }
+  .hvco-form .field {
+    margin-bottom: var(--space-md);
+  }
+  .hvco-form :global(input) {
+    border-color: var(--color-gray-bright);
+  }
+  .hvco-privacy {
+    color: var(--color-gray-bright);
+    margin-top: var(--space-sm);
+    margin-bottom: 0;
+  }
+</style>

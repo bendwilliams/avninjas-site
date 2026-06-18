@@ -1,0 +1,39 @@
+---
+/**
+ * Marquee — ambient texture, NOT a motion moment (GL-003 §7/§8).
+ * Slow linear loop (48s), pauses on hover, renders as a static wrapped list
+ * under prefers-reduced-motion (handled in global.css).
+ *
+ * SEAMLESS LOOP (round-4 §12): the content set is TRIPLICATED (three identical
+ * lists, the two extras aria-hidden). Each list carries its own trailing gap, the
+ * track translates exactly -33.333% (one list width) → no gap when the list runs
+ * out. Three copies (not two) guarantee ≥2 lists of content ahead of the viewport
+ * at every point in the loop, so a single list narrower than a wide screen never
+ * exposes a blank after the last item at the loop extreme.
+ *
+ * 1920 CAP (round-4 §11b): wrapped in .ticker-track so the moving strip caps at
+ * --max-media (1920px) and centers; the animation runs inside the capped box.
+ */
+interface Props {
+  /** Exact-casing marquee items (canonical copy). */
+  items: readonly string[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="ticker-track">
+  <div class="marquee">
+    <div class="marquee__track">
+      <ul class="marquee__list">
+        {items.map((item) => <li>{item}</li>)}
+      </ul>
+      <ul class="marquee__list" aria-hidden="true">
+        {items.map((item) => <li>{item}</li>)}
+      </ul>
+      <ul class="marquee__list" aria-hidden="true">
+        {items.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+  </div>
+</div>

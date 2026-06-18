@@ -1,0 +1,150 @@
+---
+/**
+ * SiteHeader (v2) — real logo + scroll-reveal nav.
+ *
+ * Ben (2026-06-16):
+ *   • Real logo in the header, appropriately sized (logo height ~44px,
+ *     30–50% larger than typical per GL-003 §4 — "doesn't scale small well").
+ *   • Menu hidden while at the very top (over the hero); appears only after
+ *     the user scrolls past the hero entirely.
+ *   • Menu items: "Audience and Event Formats" (→ #audiences), "The Ninja Way"
+ *     (→ #the-ninjas), "Packages" (→ #packages). No CTA button to the right.
+ *
+ * Header obeys the same container/max-width as the rest of the site (Ben, May 27).
+ * Logo: real transparent PNG (master mark), src/assets/logo/av-ninjas-logo.png.
+ * The scroll-reveal is progressive enhancement: with no JS the header is simply
+ * visible (the safe end state).
+ */
+import { Image } from "astro:assets";
+import logo from "../assets/logo/av-ninjas-logo.png";
+
+const navItems = [
+  { label: "Audience and Event Formats", href: "#audiences" },
+  { label: "The Ninja Way", href: "#the-ninjas" },
+  { label: "Packages", href: "#packages" },
+] as const;
+---
+
+<header class="site-header" id="site-header" data-reveal="shown">
+  <div class="container site-header__inner">
+    <a href="/" class="site-header__logo" aria-label="AV Ninjas home">
+      <Image
+        src={logo}
+        alt="AV Ninjas"
+        height={44}
+        densities={[1, 2]}
+        loading="eager"
+        class="site-header__logo-img"
+      />
+    </a>
+    <nav class="site-header__nav" aria-label="Primary">
+      <ul>
+        {navItems.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--color-canvas) 92%, transparent);
+    backdrop-filter: saturate(140%) blur(8px);
+    -webkit-backdrop-filter: saturate(140%) blur(8px);
+    border-bottom: 1px solid var(--color-cream);
+    /* Scroll-reveal: slide up + fade out while over the hero; drop in once past it. */
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      transform var(--motion-dark-fade) var(--ease-out),
+      opacity var(--motion-dark-fade) var(--ease-out);
+  }
+  .site-header[data-reveal="shown"] {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    padding-block: var(--space-md);
+  }
+  .site-header__logo {
+    display: inline-flex;
+    border-radius: var(--radius-sm);
+  }
+  .site-header__logo-img {
+    height: 44px; /* logo height target 40–48px per GL-003 §4 */
+    width: auto;
+  }
+  .site-header__nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg) var(--space-xl);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: var(--text-body);
+  }
+  .site-header__nav a {
+    color: var(--color-ink);
+    text-decoration: none;
+    padding-block: var(--space-xs);
+    transition: color var(--motion-micro) var(--ease-out);
+  }
+  .site-header__nav a:hover {
+    color: var(--color-accent);
+  }
+  /* Mobile: keep the logo, let the three short links wrap under it gracefully. */
+  @media (max-width: 600px) {
+    .site-header__inner {
+      flex-wrap: wrap;
+    }
+    .site-header__nav ul {
+      gap: var(--space-md) var(--space-lg);
+      font-size: var(--text-small);
+    }
+  }
+  /* No-JS / reduced-motion safety: the header is simply present (end state). */
+  @media (prefers-reduced-motion: reduce) {
+    .site-header {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  /* Reveal the header only after the user has scrolled PAST the hero entirely
+     (Ben, 2026-06-16). Hidden at the very top; appears once #hero leaves the
+     viewport. Progressive enhancement — without JS the header stays shown. */
+  const header = document.getElementById("site-header");
+  const hero = document.getElementById("hero");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (header && hero && !reduceMotion && "IntersectionObserver" in window) {
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          // Show the header once the hero is no longer intersecting (scrolled past).
+          header.dataset.reveal = entry.isIntersecting ? "hidden" : "shown";
+        }
+      },
+      { threshold: 0 },
+    );
+    obs.observe(hero);
+  } else if (header) {
+    // No-JS path can't run this, but reduced-motion / no-IO users get it shown.
+    header.dataset.reveal = "shown";
+  }
+</script>

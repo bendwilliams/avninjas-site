@@ -1,0 +1,71 @@
+---
+/**
+ * /resources/ — CMS-shell index. Lists every entry in the `resources`
+ * content collection (src/content/resources/*.md). Empty today by design:
+ * no canonical article copy exists yet.
+ *
+ * The "Resources" H1 is a structural label (no canonical string exists for
+ * this page) — flagged for Ben alongside the intro placeholder.
+ */
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+
+const entries = (await getCollection("resources"))
+  .filter((entry) => !entry.data.draft)
+  .sort(
+    (a, b) => (b.data.pubDate?.valueOf() ?? 0) - (a.data.pubDate?.valueOf() ?? 0),
+  );
+---
+
+<BaseLayout title="Resources | AV Ninjas">
+  <a href="#main" class="skip-link">Skip to content</a>
+  <SiteHeader />
+  <main id="main">
+    <section class="section">
+      <div class="container res-narrow">
+        <h1>Resources</h1>
+        {
+          entries.length === 0 ? (
+            <p class="muted">[PENDING BEN: resources intro copy — no articles published yet]</p>
+          ) : (
+            <ul class="res-list">
+              {entries.map((entry) => (
+                <li>
+                  <a href={`/resources/${entry.id}/`}>{entry.data.title}</a>
+                  {entry.data.description && <p class="small muted">{entry.data.description}</p>}
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+    </section>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .res-narrow {
+    max-width: 720px;
+  }
+  .res-list {
+    list-style: none;
+    padding: 0;
+  }
+  .res-list li {
+    padding-block: var(--space-md);
+    border-bottom: 1px solid var(--color-cream);
+  }
+  .res-list a {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-h3);
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  .res-list a:hover {
+    color: var(--color-accent);
+  }
+</style>

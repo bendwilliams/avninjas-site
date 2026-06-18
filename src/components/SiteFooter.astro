@@ -1,0 +1,41 @@
+---
+/**
+ * SiteFooter — copyright line + a Privacy Policy link.
+ * Ben reduced this to copyright-only on 2026-06-17 (the wireframe's 6-link nav row
+ * and email-capture form were dropped). The Privacy Policy link was added back
+ * 2026-06-18 because LinkedIn Ads / a LinkedIn Company Page require a published,
+ * linked privacy policy. Centered on the dark ground.
+ */
+---
+
+<footer class="site-footer section--dark" aria-label="Footer">
+  <div class="container">
+    <nav class="site-footer__links" aria-label="Footer">
+      <a href="/privacy/">Privacy Policy</a>
+    </nav>
+    <p class="small site-footer__legal">© 2026 AV Ninjas. All rights reserved.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-ink);
+    color: var(--color-canvas);
+    padding-block: var(--space-3xl);
+    text-align: center;
+  }
+  .site-footer__links {
+    margin-bottom: var(--space-md);
+  }
+  .site-footer__links a {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--color-canvas);
+    text-decoration: none;
+  }
+  .site-footer__links a:hover { color: var(--color-accent-bright); }
+  .site-footer__legal {
+    color: var(--color-gray-bright);
+    margin: 0;
+  }
+</style>

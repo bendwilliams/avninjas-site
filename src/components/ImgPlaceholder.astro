@@ -1,0 +1,25 @@
+---
+/**
+ * ImgPlaceholder — token-styled labeled slot for a Pixel-generated image.
+ * Sized to the FINAL aspect ratio so the real image drops in with zero layout
+ * shift. The [IMG: slug] label is intentionally visible (shared ID with Pixel;
+ * never final rendered copy).
+ *
+ * Imagery itself goes through Ben's description-first process
+ * (nuance brief §4) — nothing is generated or picked here.
+ */
+interface Props {
+  /** Placeholder slug shared with Pixel, e.g. "img-hero-trio". */
+  slug: string;
+  /** CSS aspect-ratio value the final image will ship at, e.g. "3 / 2". */
+  ratio: string;
+  /** Optional extra class hook. */
+  class?: string | undefined;
+}
+
+const { slug, ratio, class: className } = Astro.props;
+---
+
+<div class:list={["img-ph", className]} style={`aspect-ratio: ${ratio};`}>
+  <span class="img-ph__label">[IMG: {slug}]</span>
+</div>

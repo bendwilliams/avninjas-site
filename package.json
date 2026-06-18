@@ -1,0 +1,21 @@
+{
+  "name": "avninjas-site",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "check:copy": "node scripts/fidelity-check.mjs"
+  },
+  "dependencies": {
+    "@fontsource/poppins": "^5.2.7",
+    "astro": "^5.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.0",
+    "playwright": "^1.61.0",
+    "typescript": "^5.5.0"
+  }
+}

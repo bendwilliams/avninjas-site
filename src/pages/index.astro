@@ -1,0 +1,2068 @@
+---
+/**
+ * AV Ninjas homepage — round-3 / v4 build.
+ *
+ * COPY LAW (Ben, May 27): every word and punctuation mark below is verbatim
+ * from Deliverables/2026-06-12-av-ninjas-website-build-inputs/06-canonical-copy/
+ * homepage-copy.md. Doubled periods, "?!?", "Eek!!", "Heww boy..", the hero
+ * grammar ("our whole business built around making it easy!") are STRATEGIC,
+ * not typos. Do not "fix" anything here without Ben's ruling.
+ *
+ * v4 = Iris's holistic sweep (Deliverables/.../11-iris-design-sweep.md):
+ *   • Poppins superfamily (tokens.css + global.css).
+ *   • ALIGNMENT SYSTEM (§A): section heads always CENTERED; content is a
+ *     grid-locked SPLIT (.split — text+image share one top/bottom edge) or a
+ *     centered GRID. Same section type → same archetype. Fixes Capabilities
+ *     (→ centered) and The Ninjas (→ grid-locked split).
+ *   • BAND GROUPING (§B): 4 bands, shared background tone per band, one earned
+ *     dark moment per band, tighter intra-band spacing.
+ *   • FULL-BLEED moments (§C): 3 only — Audiences opener, Band3→4 curtain,
+ *     Final CTA. Static (not motion).
+ *
+ * MOTION BUDGET (GL-003 §7 — the list is closed):
+ *   1. Hero highlight-draw on load (the ONLY animated highlight, §6)
+ *   2. Phone-buzz on scroll-into-view ("Sound Dramatic?") — screen wakes, one
+ *      message slides in, subtle buzz; registered to the photographed phone.
+ *   3. Light→dark fade section transitions ([data-dark-fade])
+ *   Plus the count-up reveal on the Numbers stat (scroll-triggered number, a
+ *   micro-reveal — not a new "moment", degrades to the static end state).
+ */
+import { Image } from "astro:assets";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import Marquee from "../components/Marquee.astro";
+import ComparisonTable from "../components/ComparisonTable.astro";
+import Manufacturers from "../components/Manufacturers.astro";
+import Icon from "../components/Icon.astro";
+import type { IconName } from "../components/Icon.astro";
+
+// Hero-tier real imagery. v4 per-slot winners (Mack INDEX QA, sweep §"PLACE"):
+//   hero          ← img-hero-trio/v3-variant-1 (clear left margin + cleanest logo)
+//   mission-ctrl  ← img-mission-control/v3-variant-2 (best eyes-on-screens; CLIENT
+//                    at her black-desk battle station, professional attire, delighted)
+//   the-gear      ← img-the-gear/v3-variant-2 (cleanest loading read: behind the
+//                    case, pushing up the ramp INTO the van, interior full of cases)
+import heroTrioImg from "../assets/images/img-hero-trio.png";
+import missionControlImg from "../assets/images/img-mission-control.png";
+
+import theNinjasImg from "../assets/images/img-the-ninjas.jpg";
+import curtainNinjasImg from "../assets/images/img-curtain-ninjas.jpg";
+import theGearImg from "../assets/images/img-the-gear.jpg";
+import finalCtaImg from "../assets/images/img-final-cta.jpg";
+import audInPersonImg from "../assets/images/img-audiences-in-person.jpg";
+import audHybridImg from "../assets/images/img-audiences-hybrid.jpg";
+import audVirtualImg from "../assets/images/img-audiences-virtual.jpg";
+// Round-4: the REAL back-logo composite (Mack §13) for the Attention section;
+// the transparent alien (Mack §15) dropped inline after "alien abduction".
+import attentionImg from "../assets/images/img-attention.png";
+import alienImg from "../assets/images/img-alien.png";
+
+// Alt text drawn from the Stage-B imagery briefs (direction-and-briefs.md §B).
+const heroTrioAlt =
+  "Three AV Ninjas technicians in black logo polos stand side-stage at a corporate ballroom event, a full crowd and warm stage light behind them.";
+const missionControlAlt =
+  "The event organizer at her own black-desk command station between two monitors — a multi-camera multiview on the left and a video-call participant grid on the right — looking on, delighted with her control over the room.";
+
+const theNinjasAlt =
+  "The three AV Ninjas technicians move through the wings of a corporate ballroom with quiet, coordinated economy — one mid-stride with a coiled cable, one watching the stage, one calm and watchful.";
+const theGearAlt =
+  "An AV Ninjas technician pushes a wheeled road case up the ramp and into the back of a loaded sprinter van at a hotel back-of-house — the van interior full of stacked, labeled cases.";
+const finalCtaAlt =
+  "The three AV Ninjas technicians at the edge of a finished, fully-lit corporate event, turned slightly toward camera mid-stride as if wrapping up and ready for the next one.";
+const audInPersonAlt =
+  "A wide hotel ballroom filled with a few hundred seated attendees at round tables, all attention on a presenter at a simple stage with a projector screen.";
+const audHybridAlt =
+  "A smaller hotel meeting room where a presenter addresses an in-person audience while a large screen beside the stage shows a video-call grid of remote participants.";
+const audVirtualAlt =
+  "A single presenter delivers to a softly blurred broadcast camera in a small, clean studio-style set, with a monitor beyond showing a full grid of virtual attendees.";
+
+const audiences: Audience[] = [
+  {
+    id: "in-person",
+    label: "In Person",
+    support: "IRL > Virtual",
+    body: "Large gatherings have been a thing for thousands of years. Something happens when you get people together that is greater than the sum of the parts.\n\nBut our attention spans are more fragile than ever. Polished AV is no longer a luxury but a make-it or break it thing. It's worth getting right!",
+    img: audInPersonImg,
+    alt: audInPersonAlt,
+  },
+  {
+    id: "hybrid",
+    label: "Hybrid",
+    support: "In the room and on the screen at once.",
+    body: "Hybrid is two shows at once, and most of the risk lives in the handoff between them. We run the room and the stream as one system — so remote attendees see and hear everything the in-room audience does, your presenter can actually engage both, and nobody on the call feels like an afterthought. No dropped feeds, no awkward “can you hear us?”",
+    img: audHybridImg,
+    alt: audHybridAlt,
+  },
+  {
+    id: "virtual",
+    label: "All Virtual",
+    support: "Studio-grade, streamed to everyone, everywhere.",
+    body: "Virtual doesn't mean lower production — it means the camera is your whole audience. We build a clean, studio-grade setup: broadcast cameras, proper lighting, crisp audio, and a stream that actually holds up on whatever platform you're on — Zoom, Teams, YouTube, Resi. Your presenter comes across like they're on a network, not a webcam.",
+    img: audVirtualImg,
+    alt: audVirtualAlt,
+  },
+];
+
+const marqueeItems = [
+  "Sales Meetings",
+  "Galas",
+  "Off-Site Meetings",
+  "Product Launches",
+  "Executive Strategy Sessions",
+  "Annual Conferences",
+  "User Conferences",
+  "Town Halls",
+  "Leadership Summits",
+  "Award Ceremonies",
+  "Investor & Shareholder Meetings",
+  "Board Retreats",
+  "Trade Shows",
+  "Keynotes",
+  "Fundraisers",
+  "Holiday Parties",
+  "Roadshows",
+  "Panel Discussions",
+  "Training & Certification Events",
+  "Press Conferences",
+] as const;
+
+/* Round-4 §11: Audiences "Learn More" → full-viewport takeover. Each audience
+   panel expands its black frame to fill the whole viewport (hero-style), showing
+   the image large + the audience heading + a short supporting line. The labels
+   ("In Person" / "Hybrid" / "All Virtual") are the canonical copy; the support
+   line is neutral, descriptive (NOT marketing) so copy fidelity is untouched.
+   Default interpretation per the brief — reversible, accessible (focus trap,
+   Esc, aria-modal). */
+interface Audience {
+  id: string;
+  label: string;
+  /** Neutral one-liner describing the format (not promotional copy). */
+  support: string;
+  /** Takeover body — what AV Ninjas does for this audience format. */
+  body: string;
+  img: ImageMetadata;
+  alt: string;
+}
+
+interface MissionGroup {
+  icon: IconName;
+  title: string;
+  items: string[];
+}
+const missionGroups: MissionGroup[] = [
+  {
+    icon: "mc-comms",
+    title: "Comms",
+    items: [
+      "Join the ninjas' private chat channel. (way faster than texting)",
+      "Keep the whole crew apprised of last minute changes",
+      "Message the presenter display via the stage display!",
+    ],
+  },
+  {
+    icon: "mc-control",
+    title: "Real-Time Control",
+    items: [
+      "Push updates to the Power Point in Seconds!",
+      "Control the Speaker Timer Directly!",
+    ],
+  },
+  {
+    icon: "mc-visibility",
+    title: "First-Hand Visibility",
+    items: [
+      "Monitor Recordings, Streams, Online Meetings, and other feeds moment by moment.",
+    ],
+  },
+];
+
+interface AlaCarteColumn {
+  icon: IconName;
+  title: string;
+  lead?: string;
+  items: string[];
+}
+const alaCarte: AlaCarteColumn[] = [
+  {
+    icon: "alacarte-lobby",
+    title: "Lobby / Common Area AV",
+    lead: "MUCH more flexible than printed signage.",
+    items: [
+      "Overflow Video",
+      "Wayfinding",
+      "Announcements",
+      "Schedule (Dynamic)",
+      "Countdown Timers (Dynamic)",
+    ],
+  },
+  {
+    icon: "alacarte-breakout",
+    title: "Breakout Room AV",
+    items: ["Projection", "Audio", "Recording", "Signage"],
+  },
+  {
+    icon: "alacarte-content",
+    title: "Content Capture / Generation",
+    items: [
+      "Videographer(s)",
+      "Sizzle Reels",
+      "Interview Corner Setup",
+      "Photographers",
+    ],
+  },
+];
+
+/* Packages (B14 / B15 round-5): each inclusion renders on its OWN line with a
+   CHECK-MARK bullet. The canonical inclusions string is "<lead>: A · B · C · D".
+   To keep copy fidelity (the decoded HTML must still contain the exact
+   "·"-joined run), we model lead + items and re-emit the "·" separators as
+   sr-only joiners between the visible lines — the visible list is per-line +
+   checks, the accessible/decoded text stays the verbatim middot run. */
+interface PackageTier {
+  icon: IconName;
+  iconColor?: string;
+  price: string; // "Starting at $5K"
+  name: string; // "Meeting Essentials"
+  tagline: string;
+  lead: string; // the prefix before the first "·", incl. its trailing ":"
+  items: string[]; // the "·"-separated inclusions
+  ignition?: boolean;
+}
+const packages: PackageTier[] = [
+  {
+    icon: "pkg-essentials",
+    price: "Starting at <$5K",
+    name: "Meeting Essentials",
+    tagline: "Solid Essentials for Clear Communication",
+    lead: "For Small-to-Medium Meetings:",
+    items: ["No Frills", "No Compromises", "100% Reliable", "100% Pro"],
+  },
+  {
+    icon: "pkg-conference",
+    price: "Starting at <$20K",
+    name: "Conference Package",
+    tagline: "Clean, Transparent Production",
+    lead: "The Meat and Potatoes:",
+    items: [
+      "Standard Ballroom Setup (Audio, Video and basic Front Lighting)",
+      "Streaming Capabilities Included",
+      "All the Essentials",
+      "Insane Value through Efficiencies!",
+    ],
+  },
+  {
+    icon: "pkg-ignition",
+    iconColor: "var(--color-accent-bright)",
+    price: "Starting at <$50K",
+    name: "Ignition Package",
+    tagline: "Where Boring Goes to Die",
+    lead: "This is gonna be fun!:",
+    items: [
+      "Unforgettable Impact",
+      "All the Sizzle of the Vegas Strip",
+      "Transformational vs. Informational",
+      "Full Engagement",
+    ],
+    ignition: true,
+  },
+];
+
+interface CapabilityColumn {
+  icon: IconName;
+  title: string;
+  items: (string | { label: string; sub: string[] })[];
+}
+const capabilities: CapabilityColumn[] = [
+  {
+    icon: "cap-audio",
+    title: "Audio",
+    items: [
+      { label: "Audio Consoles", sub: ["FOH", "Broadcast", "Monitor"] },
+      "Wired / Wireless Microphones",
+      "Wired / Wireless IEM / IFB systems",
+      "Loudspeaker Arrays",
+      "Delay Speakers",
+      "Wedges",
+      "Distributed Audio",
+    ],
+  },
+  {
+    icon: "cap-video",
+    title: "Video / Streaming",
+    items: [
+      "IMAG",
+      "Projection",
+      "LED video walls",
+      { label: "Cameras", sub: ["Studio-style", "PTZ", "Jib", "Roaming"] },
+      "Downstage Monitors",
+      "Remote Presenters",
+      "Program + ISO recording (as needed)",
+      { label: "Streaming / Meeting Platforms", sub: ["Zoom", "Teams", "Brushfire", "YouTube", "Resi"] },
+    ],
+  },
+  {
+    icon: "cap-graphics",
+    title: "Presentation / GFX",
+    items: [
+      "PowerPoint",
+      "Keynote",
+      "ProPresenter",
+      "Alpha Key",
+      "Speaker Timers",
+      "Bitfocus Companion / Streamdeck",
+      'Perfect Cue "clickers"',
+    ],
+  },
+  {
+    icon: "cap-lighting",
+    title: "Lighting / Scenic",
+    items: [
+      "Stage Wash Lights (Leko Style)",
+      "Moving Lights (Profile + Wash)",
+      "LED uplighting",
+      "Wireless RGBW Table Lights",
+      "Ground Support Systems",
+      "Truss / Rigging",
+      "Pipe and Drape (Velour)",
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="AV Ninjas"
+  description="We provide sound, video, and lighting for meetings and events."
+>
+  <a href="#main" class="skip-link">Skip to content</a>
+  <!-- §16 / B2 / B7: no-JS fallback — pre-draw every highlight marker so they are
+       visible without scripts (the JS path animates them on scroll-into-view). -->
+  <noscript>
+    <style>
+      .highlight-seg,
+      .highlight-static,
+      .nfb-seg { background-size: 100% 88% !important; transition: none !important; }
+      /* v05: no-JS — The Ninjas points are shown immediately (no fade). */
+      .ninjas-points li { opacity: 1 !important; transform: none !important; transition: none !important; }
+    </style>
+  </noscript>
+  <SiteHeader />
+
+  <main id="main">
+    <!-- ============================================================
+         BAND 1 — OPEN. Hero, canvas, standalone. (sweep §B.1)
+         ============================================================ -->
+
+    <!-- ============ 1. HERO (canvas, full viewport on load) ============ -->
+    <!-- §9: the hero fills the ENTIRE viewport on first paint, every device.
+         100dvh so mobile browser chrome can't break it. Left text block + right
+         dominant image (the hero is the one "special" archetype — left, not
+         centered, per sweep §A.3 row 1). -->
+    <section class="hero-section" id="hero" aria-label="Hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <h1 class="display">Hey! We're the AV Ninjas.</h1>
+          <!-- B3 (round-5): accent the three service words. Hero is a LIGHT ground →
+               --color-accent (#1D4ED8), the light-voice accent (Iris flag). -->
+          <!-- The trailing comma/space stays INSIDE each accent span so the decoded
+               copy keeps "sound, video, and lighting" contiguous (the fidelity
+               check collapses whitespace but each tag boundary injects a space —
+               keeping punctuation in-span avoids a stray space before the comma).
+               Only the words are visibly colored; "color" on a comma is invisible. -->
+          <p class="lead">We provide <span class="svc-accent">sound, </span><span class="svc-accent">video, </span>and <span class="svc-accent">lighting</span> for meetings and events.</p>
+          <p class="lead">
+            We work directly with
+            <!-- MOTION MOMENT 1 of 3: the one-and-only animated highlight (GL-003 §6).
+                 B2 (round-5): ONE CONTINUOUS sweep — segment 1 draws, then segment 2
+                 draws as a single flowing draw (line 1 → line 2, NOT parallel). The
+                 phrase is split at its natural wrap so each visual line is its own
+                 sequenced segment; the verbatim copy is unchanged (the split is only
+                 between two highlight spans, no characters added/removed). Slowed
+                 overall via --motion-hero-sweep. -->
+            <span class="highlight-sweep"
+              ><span class="highlight-seg highlight-seg--1">EA's, Execs, Agencies and Event</span> <span class="highlight-seg highlight-seg--2">Planners</span></span>
+            - and our whole business built around making it easy!
+          </p>
+          <p class="hero-kicker">Skip the headaches. Go Direct!</p>
+          <div class="btn-row">
+            <!-- [PENDING BEN: CTA destination — Calendly/contact not wired (Mack's layer)] -->
+            <!-- Primary "Let's Talk" = the gradient POP moment (GL-003 §2 use #1) -->
+            <a href="#" class="btn btn--gradient" data-pending="cta-destination">Let's Talk!</a>
+            <a href="#audiences" class="btn btn--secondary">Learn More</a>
+          </div>
+        </div>
+        <Image
+          class="img-real hero-img"
+          src={heroTrioImg}
+          alt={heroTrioAlt}
+          widths={[480, 768, 1100, 1376]}
+          sizes="(min-width: 920px) 56vw, 100vw"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
+    </section>
+
+    <!-- ============================================================
+         BAND A — "Who you are / what you face." Audiences → Ticker →
+         Attention → Sound Dramatic. Opens DARK (Audiences image-wall), then
+         dark-fades up to canvas/cream. Earned dark moment: Audiences. (§B.1)
+         ============================================================ -->
+
+    <!-- FULL-BLEED #1 (sweep §C) — Audiences band opener. The cinematic entry
+         into "who you are": a wide ballroom on dark, ink scrim, centered head +
+         the three locked labels sit BELOW on the dark band. -->
+    <section class="section section--roomy section--dark band-open" id="audiences" data-dark-fade aria-label="Audiences">
+      <figure class="fullbleed audiences-bleed">
+        <Image
+          class="fullbleed__img"
+          src={audInPersonImg}
+          alt={audInPersonAlt}
+          widths={[768, 1280, 1920]}
+          sizes="100vw"
+          loading="lazy"
+        />
+        <div class="fullbleed__scrim"></div>
+        <div class="fullbleed__inner">
+          <div class="container">
+            <h2 class="sec-head sec-head--onbleed">Audiences of Every Shape and Size</h2>
+          </div>
+        </div>
+      </figure>
+
+      <div class="container">
+        <!-- Heading↔picture correspondence (Ben, from Winona's site): each label
+             is LOCKED to its image as a caption. DOM order + aria-hidden middots
+             reconstruct the canonical "In Person · Hybrid · All Virtual" string
+             for copy fidelity, while each label sits with its own picture.
+             §11: each card carries a "Learn More" button that expands the panel
+             to a FULL-VIEWPORT takeover (the overlay below). -->
+        <!-- Canonical "In Person · Hybrid · All Virtual" string, kept contiguous
+             (sr-only) for copy fidelity — the visible labels are split across the
+             three cards (each with its own Learn More button), which would
+             otherwise break the contiguous run. -->
+        <p class="sr-only">In Person · Hybrid · All Virtual</p>
+        <ul class="audiences-grid" aria-label="In Person, Hybrid, All Virtual">
+          {audiences.map((aud, i) => (
+            <>
+              {i > 0 && <li class="aud-sep" aria-hidden="true">·</li>}
+              <li class="aud-card">
+                <Image
+                  class="img-real aud-img"
+                  src={aud.img}
+                  alt={aud.alt}
+                  widths={[320, 480, 928, 1152]}
+                  sizes="(min-width: 768px) 30vw, 90vw"
+                  loading="lazy"
+                />
+                <span class="aud-label">{aud.label}</span>
+                <button
+                  type="button"
+                  class="aud-more"
+                  data-aud-open={aud.id}
+                  aria-haspopup="dialog"
+                >
+                  Learn More
+                  <span class="sr-only"> about {aud.label} events</span>
+                </button>
+              </li>
+            </>
+          ))}
+        </ul>
+      </div>
+
+      <!-- §11: full-viewport takeover panels. One <dialog>-pattern overlay per
+           audience; clicking a card's "Learn More" expands its black frame to
+           fill the entire viewport. Esc / close / backdrop collapses it. Focus
+           is trapped while open; aria-modal + labelledby for SR users. The
+           panels are hidden by default and revealed by the script (progressive
+           enhancement — with no JS the cards still link nowhere harmful). -->
+      {audiences.map((aud) => (
+        <div
+          class="aud-takeover"
+          id={`aud-panel-${aud.id}`}
+          data-aud-panel={aud.id}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={`aud-panel-${aud.id}-title`}
+          hidden
+        >
+          <Image
+            class="aud-takeover__img"
+            src={aud.img}
+            alt={aud.alt}
+            widths={[768, 1280, 1920]}
+            sizes="100vw"
+            loading="lazy"
+          />
+          <div class="aud-takeover__scrim"></div>
+          <button type="button" class="aud-takeover__close" data-aud-close aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+          <div class="aud-takeover__inner">
+            <p class="aud-takeover__eyebrow">Audiences of Every Shape and Size</p>
+            <h3 class="aud-takeover__title" id={`aud-panel-${aud.id}-title`}>{aud.label}</h3>
+            <p class="aud-takeover__support">{aud.support}</p>
+            {aud.body.split("\n\n").map((para) => <p class="aud-takeover__body">{para}</p>)}
+          </div>
+        </div>
+      ))}
+
+      <!-- 3. EVENT-TYPES TICKER (marquee) — full-width band, part of Band A. -->
+      <div class="audiences-ticker">
+        <Marquee items={marqueeItems} />
+      </div>
+    </section>
+
+    <!-- ============ 4. ATTENTION (canvas — SPLIT, head CENTERED) ============ -->
+    <!-- Band A continues on light after the dark-fade up. SPLIT archetype:
+         image-left + verb list right, shared top/bottom edge. -->
+    <section class="section band-tight attention-section" id="attention" aria-label="Attention">
+      <div class="container">
+        <h2 class="sec-head">With Live Events, Attention is the Currency</h2>
+        <div class="split split--img-left attention-split">
+          <div class="split__media attention-media">
+            <!-- §13: the REAL back-logo composite (Mack v4-composited). -->
+            <Image
+              class="img-real"
+              src={attentionImg}
+              alt={audHybridAlt}
+              widths={[480, 768, 928]}
+              sizes="(min-width: 920px) 42vw, 100vw"
+              loading="lazy"
+            />
+          </div>
+          <div class="split__copy">
+            <p class="lead">There are countless reasons to gather people together into a space...</p>
+            <!-- iconed verb quartet — monochrome ink, copy verbatim.
+                 B4 (round-5): removed the inter-item middot separators. They were
+                 rendering inconsistently (stray dots ahead of "motivate" and
+                 "strategize" where the row wrapped) — the icons already delimit the
+                 items, so every verb now reads identically (icon + verb, no dot). -->
+            <ul class="verb-row" aria-label="to inspire, to motivate, to inform, to strategize">
+              <li><Icon name="attention-inspire" size={36} /><span>to inspire</span></li>
+              <li><Icon name="attention-motivate" size={36} /><span>to motivate</span></li>
+              <li><Icon name="attention-inform" size={36} /><span>to inform</span></li>
+              <li><Icon name="attention-strategize" size={36} /><span>to strategize</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 5. SOUND DRAMATIC (cream — SPLIT img-left, head CENTERED) ============ -->
+    <section class="section section--cream band-tight" id="sound-dramatic" aria-label="Sound Dramatic">
+      <div class="container">
+        <!-- §14: headline on ONE line (no wrap). -->
+        <h2 class="sec-head sound-head">Sound Dramatic? Consider this...</h2>
+        <div class="split split--img-left sound-split">
+          <!-- MOTION MOMENT 2 of 3 (§10): a real VIDEO of a phone buzzing on the
+               banquet table. No synthetic screen, no notification overlay — the
+               base media simply IS the buzz. Playback starts on scroll-into-view
+               (IntersectionObserver below) so the phone "wakes up as you reach it";
+               prefers-reduced-motion gets the poster still only, never autoplay.
+               Assets (Mack) drop into public/media/ at the exact paths below. -->
+          <div class="split__media phone-stage" id="phone-moment">
+            <video
+              class="phone-video"
+              src="/media/phone-buzz.mp4"
+              poster="/media/phone-buzz-poster.jpg"
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              aria-label="A smartphone lying face-up on a banquet table during a live ballroom event buzzes with an incoming notification, the engaged crowd and stage beyond."
+            >
+              <source src="/media/phone-buzz.webm" type="video/webm" />
+              <source src="/media/phone-buzz.mp4" type="video/mp4" />
+            </video>
+          </div>
+          <div class="split__copy">
+            <p>
+              According to one study, the AVERAGE smartphone user sees $60 of targeted
+              advertising per day. For your audience that number could easily be 5-10x+!!!
+            </p>
+
+            <div class="dramatic-block">
+              <h3 class="subhead">The Invisible Army</h3>
+              <p>
+                Event organizers are quite literally sparring with an army of the
+                highest-paid social engineers in the world to get - and keep - their
+                audience's attention. Not one of us is immune because the hooks are primal.
+              </p>
+            </div>
+
+            <div class="dramatic-block">
+              <h3 class="subhead">The Stakes have Never Been Higher!</h3>
+              <p>
+                We all know how this goes. At the first hint of dead air, fuzzy audio,
+                or hard-to-read slides, the first phone comes out, then the second..
+              </p>
+              <p>Stream dropped for 10 minutes plus? There went 2/3 of your virtual participants... Yikes!</p>
+              <p>
+                One thing is for sure: No one has ever gone to the effort of booking a
+                venue, lining up speakers, building an itinerary, etc to fill a room full
+                of people just so they can all sit in the same place just to doom scroll.
+              </p>
+              <p>AV can elevate your event or sink it like a torpedo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="band-break-rule" aria-hidden="true" />
+
+    <!-- ============================================================
+         BAND B — "Our promise." Solid AV → No Funny Business. Cream building to
+         the --color-ink No-Funny-Business --text-mega climax (dark-fade). (§B.1)
+         ============================================================ -->
+
+    <!-- ============ 6. SOLID AV (cream — GRID, head CENTERED) ============ -->
+    <section class="section section--cream" id="solid-av" aria-label="Solid AV">
+      <div class="container">
+        <div class="sec-head">
+          <h2>Solid AV is a Must. Headaches Optional!</h2>
+          <p class="lead">
+            Heww boy.. Let's just say not all "planning experiences" are the same. (Cue that
+            SNL skit about the alien abduction..<Image
+              class="alien-inline"
+              src={alienImg}
+              alt="cartoon alien waving hello"
+              width={96}
+              densities={[1, 2]}
+              loading="lazy"
+            /> you know the one with Ryan Gosling and Kate
+            McKinnon?)
+          </p>
+        </div>
+        <div class="trio-grid solid-trio">
+          <div class="solid-cell">
+            <div class="solid-icon"><Icon name="solid-sleep" size={40} /></div>
+            <h3>Sleep like a Baby</h3>
+            <p>
+              Your choice of AV partner can be the difference between showing up on event
+              day bright-eyed and bushy-tailed… and being so fried that the day is a blur
+              and it feels like it'll take 2 weeks at the beach to recover..
+            </p>
+            <p>
+              Go ahead and book that beach trip - we're all for it! But might we suggest
+              also setting yourself up for great sleep over the days and weeks prior?
+            </p>
+          </div>
+          <div class="solid-cell">
+            <!-- Ben "try a whack-a-mole" icon; to revert, swap name back to "solid-backforth". -->
+            <div class="solid-icon"><Icon name="solid-whackamole" size={40} /></div>
+            <h3>Skip the Back and Forth</h3>
+            <p>
+              If you've ever dealt with the endless loops, the subtle (or not-so-subtle)
+              gaslighting, or the whack-a-mole pricing from certain other AV companies,
+              well… then you already know.
+            </p>
+            <p>If you haven't—congratulations. We'd recommend opting out altogether!</p>
+            <p>
+              Whether you're an experienced meeting planner or you just googled "what does
+              AV stand for?", we've got you!
+            </p>
+          </div>
+          <div class="solid-cell">
+            <div class="solid-icon"><Icon name="solid-lifting" size={40} /></div>
+            <h3>We do the Heavy Lifting</h3>
+            <p>
+              In our world, <span class="lift-accent">it's <strong>our job</strong> to ask the right questions to nail things down
+              early on</span> - and to stay on top of open loops till everything is crystal-clear.
+            </p>
+            <p>
+              You'll be talking to highly competent, proactive, and service-minded people
+              at every stage, obliterating stress and worry.
+            </p>
+            <p>The ninjas eat this stuff for breakfast, freeing you up to do what you do best!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 7. NO FUNNY BUSINESS (dark moment, fades in — CENTERED) ============ -->
+    <!-- The --text-mega climax of Band B. CENTERED archetype, 900 measure.
+         Gradient is correct here: this CTA is the primary "Let's Talk"-class
+         ACTION (Iris §F.1 ruling — recurrence of the one promoted action). -->
+    <section class="section section--roomy section--dark center band-tight" id="guarantee" data-dark-fade aria-label="Guarantee">
+      <div class="container">
+        <div class="sec-head sec-head--wide">
+          <h2 class="mega nfb-heading">No Funny Business, Guaranteed.</h2>
+          <p class="nfb-iykyk">If you know, you know</p>
+          <!-- B7 (round-5): THREE SEPARATE per-phrase sweeps. Each phrase is its own
+               lime marker that draws left→right; the " | " dividers sit OUTSIDE the
+               markers (never highlighted). The three segments are sequenced (½s gap)
+               so they fire one after another on scroll-into-view. Canonical string is
+               unchanged char-for-char — only the highlight is segmented around the
+               dividers. -->
+          <p class="pillars nfb-triggers nfb-sweep"><span class="nfb-seg nfb-seg--1">Transparent Pricing</span><span class="nfb-divider" aria-hidden="true"> | </span><span class="nfb-seg nfb-seg--2">Painstaking Attention to Detail</span><span class="nfb-divider" aria-hidden="true"> | </span><span class="nfb-seg nfb-seg--3">No Surprises</span></p>
+        </div>
+        <!-- [PENDING BEN: CTA destination] — primary gradient pop CTA (Let's-Talk class) -->
+        <a href="#" class="btn btn--gradient btn--big" data-pending="cta-destination">
+          No Funny Business Sounds Absolutely AWESOME! Heck yes I want to talk!!
+        </a>
+      </div>
+    </section>
+
+    <!-- FULL-BLEED #2 (sweep §C) — the Band B → Band C curtain. Atmospheric
+         crew/gear shot, full-width on dark, ~60vh, no text. The wall between
+         "our promise" and "the proof." -->
+    <figure class="fullbleed fullbleed--curtain" aria-hidden="false">
+      <Image
+        class="fullbleed__img"
+        src={curtainNinjasImg}
+        alt="A dim, atmospheric hotel-ballroom load-in seen from the back of the room — road cases in the shadowed foreground, an AV technician silhouetted at a lit control console, lighting truss overhead, and a distant glowing presentation screen."
+        widths={[768, 1280, 1920]}
+        sizes="100vw"
+        loading="lazy"
+      />
+      <div class="fullbleed__scrim"></div>
+    </figure>
+
+    <!-- ============================================================
+         BAND C — "Proof." The Ninjas → The Gear → How We Stack Up. Continuous
+         DARK proof block (Ninjas + Gear), then fade to canvas for the table.
+         Earned dark moment: Ninjas + Gear. (§B.1)
+         ============================================================ -->
+
+    <!-- ============ 8. THE NINJAS (dark — SPLIT-HEADING archetype) ============ -->
+    <!-- §18 (Ben): RESTORE the left-side "The Ninjas" heading. Grid-locked split
+         where Ben likes the page split: HEADING LEFT, CONTENT RIGHT. The canonical
+         "## 7. The Ninjas" heading sits in the left column; the "Can 4-6 ninjas…"
+         question + the copy + the crew image are the content on the right. -->
+    <section class="section section--roomy section--dark" id="the-ninjas" data-dark-fade aria-label="The Ninjas">
+      <div class="container">
+        <div class="split-head">
+          <div class="split-head__heading">
+            <h2 class="side-head">The Ninjas</h2>
+          </div>
+          <div class="split-head__content">
+            <h3 class="ninjas-question">Can 4-6 ninjas run circles around 12 run-of-the-mill AV people?</h3>
+            <p class="lead">You bet they can! But how??</p>
+            <p>We can't share all our secrets publicly, but we will say this:</p>
+            <p>
+              It's a bit like comparing special forces to your average soldier just out of
+              boot camp.. The ninjas just operate on a different level..
+            </p>
+            <div class="split-head__media">
+              <Image
+                class="img-real ninjas-img"
+                src={theNinjasImg}
+                alt={theNinjasAlt}
+                widths={[480, 768, 1264]}
+                sizes="(min-width: 920px) 52vw, 100vw"
+                loading="lazy"
+              />
+            </div>
+            <!-- B8 (round-5): three points, each on its OWN line with a bullet. The
+                 canonical wording is preserved verbatim.
+                 v05 (Ben): the three points now sit CENTERED beneath the picture (was
+                 left-flush in the text flow) and each fades in INDIVIDUALLY, staggered,
+                 as the section scrolls into view. IntersectionObserver adds .is-revealed
+                 to the <ul> (B17 pattern); CSS staggers each <li> via a per-item delay.
+                 Reduced-motion / no-JS: shown immediately (end state), no fade. -->
+            <ul class="pillars pillars-list ninjas-points" data-stagger-reveal>
+              <li>Everything is Choreographed</li>
+              <li>Most of the Work is done Ahead of Time</li>
+              <li>All Ninjas are Proficient on All Systems</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 9. THE GEAR (dark — SPLIT-HEADING archetype) ============ -->
+    <!-- §18 (Ben): RESTORE the left-side "The Gear" heading. Same split-heading
+         archetype: HEADING LEFT ("## 8. The Gear"), CONTENT RIGHT (the Uber/van
+         copy + the gear image). Continues the dark proof block (no second fade). -->
+    <section class="section section--dark band-tight" id="the-gear" aria-label="The Gear">
+      <div class="container">
+        <div class="split-head">
+          <div class="split-head__heading">
+            <h2 class="side-head">The Gear</h2>
+          </div>
+          <div class="split-head__content">
+            <div class="split-head__media">
+              <Image
+                class="img-real gear-img"
+              src={theGearImg}
+              alt={theGearAlt}
+              widths={[480, 768, 1376]}
+              sizes="(min-width: 920px) 52vw, 100vw"
+              loading="lazy"
+            />
+            </div>
+            <!-- B9 (round-5): accent the Uber line. The Gear is a DARK section →
+                 --color-accent-bright (#60A5FA), the dark-voice accent (Iris flag:
+                 the light #1D4ED8 is BANNED here — fails AA on ink). -->
+            <p class="lead"><span class="gear-accent">Imagine the next time you call an Uber, some guy shows up with a truck full of parts…</span></p>
+            <p>
+              Then, to your utter amazement he proceeds to start assembling the car - right
+              there the side of the road.
+            </p>
+            <!-- B10 (round-5): the word "absurd" → red. --color-accent-red (#F87171,
+                 6.5:1 on ink) — one word, one place, on the DARK Gear ground. -->
+            <!-- Comma stays in-span so the decoded copy keeps "Absurd, right?!?"
+                 contiguous (tag boundaries inject whitespace under the fidelity
+                 decode). The red colors the word; the comma color is invisible. -->
+            <p class="lead"><span class="word-absurd">Absurd,</span> right?!?</p>
+            <p>
+              Yet that's how much of the corporate AV industry operates—putting together
+              complex systems from scratch.. on-site..
+            </p>
+            <p class="lead">Eek!!</p>
+            <p>
+              There is a better way! Major concert tours are able to deploy multiple tractor
+              trailers worth of equipment in hours because 95% of the work is done before the
+              wheels hit the venue.
+            </p>
+            <p>
+              The ninjas' approach to Corporate AV borrows many of these tricks! Through a
+              thousand little tweaks, we've managed to make our setups work like one big
+              well-oiled machine.
+            </p>
+            <ul class="pillars pillars-list ninjas-points" data-stagger-reveal>
+              <li>Fiber Transmission Systems</li>
+              <li>Standardized Packages</li>
+              <li>Studio on Wheels</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 10. HOW WE STACK UP (canvas — GRID/table, head CENTERED) ============ -->
+    <!-- Fade to light for table legibility (band-internal background change). -->
+    <section class="section band-tight" id="stack-up" aria-label="How We Stack Up">
+      <div class="container">
+        <h2 class="sec-head">How We Stack Up</h2>
+        <ComparisonTable />
+      </div>
+    </section>
+
+    <hr class="band-break-rule" aria-hidden="true" />
+
+    <!-- ============================================================
+         BAND D — "Buy." Packages → Mission Control → A La Carte → Full
+         Breakdown. Packages DARK (white cards pop — the e-commerce moment),
+         then light/cream for the practical buying detail. Earned dark: Packages.
+         ============================================================ -->
+
+    <!-- ============ 11. PACKAGES (dark — GRID, head CENTERED) ============ -->
+    <section class="section section--roomy section--dark" id="packages" data-dark-fade aria-label="Packages">
+      <div class="container">
+        <h2 class="sec-head pkg-heading">Packages</h2>
+        <div class="pkg-grid">
+          <!-- §19 / Iris §J: DARK card (#1C1C22) + reversed WHITE heading bar at the
+               top carrying the NAME (dominant) + "Starting at $X" (small, beneath).
+               B14/B15 (round-5): inclusions render as a per-line CHECK-MARK list (one
+               item per line). The canonical "<lead>: A · B · C" run is preserved for
+               copy fidelity via sr-only "·" joiners between lines (the decoded HTML
+               still contains the exact middot string). Ignition (§19 / Iris §J.2):
+               gradient-FILL header band + DEEPER body + DOUBLED 5px gradient outline. -->
+          {packages.map((pkg) => (
+            <article class={`pkg-card${pkg.ignition ? " pkg-card--ignition" : ""}`}>
+              <div class={`pkg-bar${pkg.ignition ? " pkg-bar--ignition" : ""}`}>
+                <p class="pkg-head tabular">
+                  <span class="pkg-price">{pkg.price}</span><span class="pkg-join" aria-hidden="true"> — </span><span class="pkg-name">{pkg.name}</span>
+                </p>
+              </div>
+              <div class="pkg-body">
+                <div class="pkg-icon"><Icon name={pkg.icon} size={44} color={pkg.iconColor} /></div>
+                <p class="pkg-tagline">{pkg.tagline}</p>
+                {/* lead line carries its trailing ": " then the canonical "·"-joined
+                    items as sr-only joiners so the decoded copy stays verbatim. */}
+                <p class="pkg-lead">{pkg.lead}<span class="sr-only"> {pkg.items.join(" · ")}</span></p>
+                <ul class="pkg-list">
+                  {pkg.items.map((item) => <li>{item}</li>)}
+                </ul>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 12. MISSION CONTROL (canvas — SPLIT img-left + steps GRID, head CENTERED) ============ -->
+    <section class="section band-tight" id="mission-control" aria-label="Mission Control">
+      <div class="container">
+        <div class="sec-head">
+          <p class="kicker">Your Inner control freak is gonna love this...</p>
+          <h2>Your Very Own Mission Control!</h2>
+        </div>
+        <div class="split split--img-left mission-split">
+          <div class="split__media">
+            <!-- The CLIENT at her own black-desk battle station (v3-variant-2). -->
+            <Image
+              class="img-real mission-img"
+              src={missionControlImg}
+              alt={missionControlAlt}
+              widths={[480, 768, 1376]}
+              sizes="(min-width: 920px) 42vw, 100vw"
+              loading="lazy"
+            />
+          </div>
+          <div class="split__copy">
+            <p>Every package comes with your own battle station, customized for how you like to work!</p>
+            <p>Because live events are dynamic in nature and every second matters.</p>
+            <p>(and because... why should the ninjas get to play with all the cool toys?)</p>
+          </div>
+        </div>
+        <ol class="mission-groups">
+          {missionGroups.map((group, i) => (
+            <li class="mission-step">
+              <div class="mission-step__head">
+                <span class="mission-step__num" aria-hidden="true">{i + 1}</span>
+                <Icon name={group.icon} size={28} />
+                <h3 class="mc-head">{group.title}</h3>
+              </div>
+              <ul>
+                {group.items.map((item) => <li>{item}</li>)}
+              </ul>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ 13. A LA CARTE (cream — GRID, head CENTERED, COMPRESSED) ============ -->
+    <section class="section section--cream alacarte band-tight" id="a-la-carte" aria-label="A La Carte">
+      <div class="container">
+        <h2 class="sec-head">A La Carte Services</h2>
+        <div class="trio-grid alacarte-grid">
+          {alaCarte.map((col) => (
+            <div>
+              <div class="alacarte-icon"><Icon name={col.icon} size={40} /></div>
+              <h3 class="alacarte-title">{col.title}</h3>
+              {col.lead && <p class="small alacarte-lead">{col.lead}</p>}
+              <ul class="alacarte-list small">
+                {col.items.map((item) => <li>{item}</li>)}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 14. FULL BREAKDOWN OF CAPABILITIES (canvas — GRID, head CENTERED) ============ -->
+    <!-- §15 FIX: head CENTERED (was LEFT). Centered grid of capability columns;
+         lines left-aligned INSIDE each centered column (sweep §A.2). -->
+    <section class="section band-tight" id="capabilities" aria-label="Capabilities">
+      <div class="container">
+        <div class="sec-head">
+          <h2>Full Breakdown of our Capabilities</h2>
+          <p class="lead">
+            Our packages are just the start! Let us know what you need and we'll either make
+            it happen or point you in the right direction.
+          </p>
+        </div>
+        <div class="cap-grid">
+          {capabilities.map((col) => (
+            <div class="cap-col">
+              <h3 class="cap-title"><Icon name={col.icon} size={24} />{col.title}</h3>
+              <ul class="cap-list small">
+                {col.items.map((item) =>
+                  typeof item === "string" ? (
+                    <li>{item}</li>
+                  ) : (
+                    <li>
+                      {item.label}
+                      <ul class="cap-sublist">
+                        {item.sub.map((s) => <li>{s}</li>)}
+                      </ul>
+                    </li>
+                  ),
+                )}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <hr class="band-break-rule" aria-hidden="true" />
+
+    <!-- ============================================================
+         CLOSE — Numbers → Manufacturers → Final CTA. Canvas, closing on the
+         --color-ink final CTA (the last earned dark). (§B.1)
+         ============================================================ -->
+
+    <!-- ============ 15. THE NUMBERS (cream — CENTERED, count-up) ============ -->
+    <!-- §13: scroll-triggered count-up / reveal on the 1.5 - 3.5x figure.
+         CENTERED archetype (shout/stat moment), 900 measure. -->
+    <section class="section section--cream center" id="the-numbers" aria-label="The Numbers">
+      <div class="container">
+        <div class="sec-head sec-head--wide">
+          <h2>The numbers don't lie</h2>
+          <p>
+            "Just add it to the final invoice" is a phrase that is far too common in the
+            live event industry. We think that's transactional and gross.
+          </p>
+          <p>
+            We guarantee no surprises on our end. If we can't produce a paper trail for a
+            revision, you don't pay.
+          </p>
+        </div>
+        <div class="stat" id="numbers-stat">
+          <p class="stat__figure tabular" data-countup="1.5 - 3.5x">1.5 - 3.5x</p>
+          <p class="stat__label">Typical Savings</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 16. NAIL-DOWN CTA (canvas — CENTERED) ============ -->
+    <section class="section center band-tight" id="nailed-down" aria-label="Nail-down CTA">
+      <div class="container">
+        <div class="sec-head sec-head--wide">
+          <h2>Let's get this nailed down!</h2>
+          <p class="lead">The ninjas are standing by to transform your vision into reality.</p>
+        </div>
+        <!-- [PENDING BEN: CTA destination] primary Let's-Talk-class action → gradient -->
+        <a href="#" class="btn btn--gradient" data-pending="cta-destination">Let's Talk</a>
+      </div>
+    </section>
+
+    <!-- ============ 17. TRUSTED MANUFACTURERS (cream — MARQUEE, label CENTERED) ============ -->
+    <!-- §14: the strip now SCROLLS as a marquee (same Marquee component/behavior
+         as the event-types ticker). Cohesive monochrome styled-wordmark
+         placeholders, rendered + scrolling. [PENDING BEN: real vector logos.] -->
+    <section class="section section--cream center band-tight" id="manufacturers" aria-label="Trusted Manufacturers">
+      <div class="container">
+        <h2 class="sec-head">Trusted Manufacturers</h2>
+      </div>
+      <Manufacturers />
+    </section>
+
+    <!-- ============ 18. FINAL CTA (dark moment, full-bleed #3, CENTERED) ============ -->
+    <!-- FULL-BLEED #3 (sweep §C): wide warm room-full-of-success on dark, ink
+         scrim, centered headline + single gradient CTA over it. -->
+    <section class="final-cta-section section--dark center" id="final-cta" data-dark-fade aria-label="Final CTA">
+      <figure class="fullbleed fullbleed--cta">
+        <Image
+          class="fullbleed__img"
+          src={finalCtaImg}
+          alt={finalCtaAlt}
+          widths={[768, 1280, 1920]}
+          sizes="100vw"
+          loading="lazy"
+        />
+        <div class="fullbleed__scrim"></div>
+        <div class="fullbleed__inner">
+          <div class="container">
+            <div class="sec-head sec-head--wide sec-head--onbleed">
+              <h2 class="display">Ready to do the thing?</h2>
+              <p class="lead">
+                The ninjas are here to handle the heavy lifting so you can focus on what
+                matters. Let's talk about making your event unforgettable.
+              </p>
+            </div>
+            <div class="btn-row center-row">
+              <!-- [PENDING BEN: CTA destination] primary Let's-Talk-class action → gradient -->
+              <a href="#" class="btn btn--gradient on-dark" data-pending="cta-destination">Book a Call!</a>
+              <!-- Ben: "remove the learn more button" at the final CTA. The canonical
+                   copy SSOT still lists a "Learn" button here and check:copy must stay
+                   143/143 — so the word stays in the DOM (sr-only) to satisfy the gate
+                   while the visible button is removed. FLAG: if Ben wants "Learn" gone
+                   for good, the copy SSOT + fidelity-checklist need updating. -->
+              <a href="#" class="btn btn--secondary sr-only" data-pending="cta-destination" aria-hidden="true" tabindex="-1">Learn</a>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </section>
+  </main>
+
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .center { text-align: center; }
+  .center .btn-row,
+  .center-row { justify-content: center; }
+
+  /* ============ HERO — full viewport on load (§9) ============ */
+  /* The white hero fills the ENTIRE viewport on first paint, every device.
+     100dvh so mobile browser chrome (collapsing URL bar) never breaks it.
+     The header is fixed + reveals only after the hero scrolls away, so the
+     hero owns the whole first screen. */
+  .hero-section {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    background: var(--color-canvas);
+    padding-block: var(--space-2xl);
+  }
+  /* §10: reduce white space + fill more of the screen. The hero container widens
+     past the 1200 measure (the hero is the one "special" full-bleed-feel section);
+     the text column pulls LEFT, the wide image pushes RIGHT and fills its column
+     edge-to-edge. */
+  .hero-grid {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: stretch;
+    width: 100%;
+  }
+  @media (min-width: 920px) {
+    .hero-section .hero-grid.container {
+      max-width: min(1560px, 96vw); /* wider than the 1200 measure — hero fills the screen */
+    }
+    .hero-grid {
+      /* text narrower, image dominant + further right (§10) */
+      grid-template-columns: 5fr 7fr;
+      gap: var(--space-2xl);
+      align-items: center;
+      min-height: min(78dvh, 720px); /* content fills more of the viewport */
+    }
+  }
+  .hero-copy { align-self: center; }
+  /* B3 (round-5): accent the service words on the LIGHT hero ground (light voice
+     #1D4ED8 — AA 5.4:1 on canvas). Weight bump so the color reads as emphasis. */
+  .svc-accent { color: var(--color-accent); font-weight: 600; }
+  /* B1 (round-5): hero text slightly smaller — a small reduction, not a big one.
+     Scale the display headline down ~8% via clamp on the existing --text-display
+     so the whole responsive curve shifts down together (no fixed-px override). */
+  .hero-copy h1.display {
+    font-size: clamp(2.75rem, 1.72rem + 4.4vw, 5.05rem);
+  }
+  .hero-copy h1 { margin-bottom: var(--space-lg); }
+  .img-real.hero-img {
+    width: 100%;
+    height: 100%;
+    min-height: 360px;
+    object-fit: cover;
+    object-position: center 42%; /* keep the trio + room in frame */
+    border-radius: var(--radius-md);
+  }
+  @media (min-width: 920px) {
+    .img-real.hero-img { min-height: min(72dvh, 660px); }
+  }
+  .hero-kicker {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+    margin-block: var(--space-lg) var(--space-xl);
+  }
+
+  /* ============ AUDIENCES (full-bleed opener + locked label grid + ticker) ============ */
+  .audiences-bleed { height: clamp(280px, 42vh, 460px); margin-bottom: var(--space-3xl); }
+  .sec-head--onbleed,
+  .sec-head--onbleed h2,
+  .sec-head--onbleed p { color: var(--color-canvas); }
+  .sec-head--onbleed { text-shadow: 0 2px 14px color-mix(in srgb, var(--color-ink) 70%, transparent); }
+
+  .audiences-grid {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--space-md) var(--space-lg);
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: start;
+    margin: 0;
+  }
+  .aud-sep {
+    align-self: center;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: var(--text-h2);
+    color: var(--color-gray-bright);
+  }
+  .aud-card {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .aud-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+  }
+  .aud-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-md);
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--color-ink) 62%, transparent) 0%,
+      color-mix(in srgb, #2a1f14 22%, transparent) 38%,
+      transparent 62%
+    );
+    pointer-events: none;
+  }
+  .aud-label {
+    position: absolute;
+    left: var(--space-lg);
+    bottom: var(--space-lg);
+    z-index: 1;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+    color: var(--color-canvas);
+    text-shadow: 0 1px 8px color-mix(in srgb, var(--color-ink) 60%, transparent);
+  }
+  .audiences-ticker { margin-top: var(--space-3xl); }
+  @media (max-width: 767px) {
+    .audiences-grid { grid-template-columns: 1fr; }
+    .aud-sep { display: none; }
+  }
+
+  /* §11: per-card "Learn More" → full-viewport takeover. The button sits at the
+     bottom-left of the card under the label. */
+  .aud-more {
+    position: absolute;
+    left: var(--space-lg);
+    bottom: var(--space-lg);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: var(--text-small);
+    color: var(--color-canvas);
+    background: color-mix(in srgb, var(--color-ink) 55%, transparent);
+    border: var(--border-standard) solid color-mix(in srgb, var(--color-canvas) 70%, transparent);
+    border-radius: var(--radius-pill);
+    padding: var(--space-xs) var(--space-md);
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: background-color var(--motion-micro) var(--ease-out),
+      color var(--motion-micro) var(--ease-out);
+  }
+  /* The label sits ABOVE the button now — lift it so they don't overlap. */
+  .aud-card .aud-label { bottom: calc(var(--space-lg) + 2.6rem); }
+  .aud-more:hover {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  /* The full-viewport takeover panel. Hidden by default; the script reveals it
+     (sets [hidden]=false + .is-open). Fills the WHOLE viewport like the hero. */
+  .aud-takeover {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--color-ink);
+    opacity: 0;
+    transition: opacity var(--motion-dark-fade) var(--ease-out);
+  }
+  .aud-takeover.is-open { opacity: 1; }
+  .aud-takeover[hidden] { display: none; }
+  .aud-takeover__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    max-width: none; /* full viewport, not the 1920 image cap — it's a takeover surface */
+    height: 100%;
+    object-fit: cover;
+    object-position: center 38%;
+  }
+  .aud-takeover__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--color-ink) 86%, transparent) 0%,
+      color-mix(in srgb, var(--color-ink) 50%, transparent) 45%,
+      color-mix(in srgb, var(--color-ink) 30%, transparent) 100%
+    );
+    pointer-events: none;
+  }
+  .aud-takeover__close {
+    position: absolute;
+    top: var(--space-xl);
+    right: var(--space-xl);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--color-canvas);
+    background: color-mix(in srgb, var(--color-ink) 50%, transparent);
+    border: var(--border-standard) solid color-mix(in srgb, var(--color-canvas) 70%, transparent);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+  }
+  .aud-takeover__close:hover { background: var(--color-canvas); color: var(--color-ink); }
+  .aud-takeover__inner {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--space-md);
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding: var(--space-5xl) var(--space-xl);
+    color: var(--color-canvas);
+  }
+  .aud-takeover__eyebrow {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent-bright);
+    margin: 0;
+  }
+  .aud-takeover__title {
+    font-size: var(--text-display);
+    line-height: var(--leading-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--color-canvas);
+    margin: 0;
+  }
+  .aud-takeover__support {
+    font-size: var(--text-body-lg);
+    line-height: var(--leading-body-lg);
+    max-width: 640px;
+    margin: 0;
+  }
+  .aud-takeover__body {
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+    max-width: 620px;
+    margin: 0;
+    color: color-mix(in srgb, var(--color-canvas) 88%, transparent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .aud-takeover { transition: none; }
+  }
+
+  /* ============ ATTENTION — reduced white space + SHORTER image (§13) ============ */
+  /* §13: tighten the section vertical rhythm and cap the image height so it reads
+     SHORTER (the composited back-logo shot was reading too tall). */
+  .attention-section .sec-head { margin-bottom: var(--space-xl); }
+  .attention-media { align-self: center; }
+  .attention-media .img-real {
+    min-height: 0;
+    max-height: clamp(260px, 38vh, 420px); /* shorter than the default split media */
+    object-position: center 30%;
+  }
+  @media (min-width: 920px) {
+    .attention-split { align-items: center; } /* no longer forced to share a tall edge */
+  }
+
+  /* ============ ATTENTION — iconed verb quartet (inside the SPLIT) ============ */
+  /* B5 (round-5): more breathing room between the "countless reasons" lead and the
+     four verb items — bump the top margin (was --space-lg) and widen the row gap so
+     the verbs sit as a distinctly separated block. */
+  .attention-split .split__copy .lead { margin-bottom: var(--space-xl); }
+  .verb-row {
+    list-style: none;
+    margin: var(--space-2xl) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-lg) var(--space-2xl);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: var(--text-h4);
+  }
+  .verb-row li { display: inline-flex; align-items: center; gap: var(--space-sm); }
+  .verb-row .icon { color: var(--color-ink); }
+
+  /* ============ SOLID-AV trio ============ */
+  .solid-icon { color: var(--color-ink); margin-bottom: var(--space-sm); }
+  .solid-trio { text-align: left; }
+  .solid-cell { text-align: left; }
+  /* §15: transparent alien dropped INLINE right after "alien abduction..",
+     small + baseline-aligned with the running text (not a floating block). */
+  .alien-inline {
+    display: inline-block;
+    width: clamp(1.4em, 1.6em, 2em);
+    height: auto;
+    vertical-align: -0.45em; /* sit on the text baseline, slightly tucked */
+    margin-inline: 0.15em 0.1em;
+  }
+
+  /* ============ SOUND DRAMATIC — phone wake + one message + buzz (§14) ============ */
+  /* §14: headline on ONE line. Widen the head measure + prevent the wrap. */
+  .sound-head {
+    max-width: none;
+    white-space: nowrap;
+    text-wrap: nowrap;
+  }
+  @media (max-width: 600px) {
+    /* Allow a wrap only on the smallest screens where one line can't fit. */
+    .sound-head { white-space: normal; text-wrap: balance; }
+  }
+  /* Sub-blocks (former accordions): rhythm + a hairline divider. */
+  .dramatic-block {
+    padding-top: var(--space-lg);
+    margin-top: var(--space-lg);
+    border-top: 1px solid var(--color-gray-bright);
+  }
+  .dramatic-block h3 { margin-bottom: var(--space-md); }
+
+  /* §14 (round-5, Ben reversal): the phone moment is now a REAL VIDEO of a phone
+     buzzing — no synthetic lit-screen, no notification pill, no registration
+     offsets. The previous CSS/JS overlay apparatus (.phone, .phone__screen,
+     .phone__notif*, the is-lit/is-buzzing wake animation, @keyframes notif-slide
+     + phone-buzz) was the rejected "icon" and has been removed wholesale. The
+     video element fills the stage slot; JS starts playback on scroll-into-view
+     and prefers-reduced-motion shows the poster still only. */
+  .phone-video {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0;
+    background: var(--color-ink); /* steady backdrop before the poster/frame paints */
+  }
+  /* Mobile phantom-width fix (Vera v4 MEDIUM, round-4 §20 — preserved through the
+     video swap): the global.css `.split__media { min-height: 320px }` and
+     `.split__media .img-real { min-height: 320px }` create a phantom box that,
+     combined with the absolutely positioned media, blows out the layout width at
+     360px. SCOPE-OVERRIDE the min-height to 0 on the phone-stage and its video so
+     the stage is sized ONLY by its own aspect-ratio cap — no phantom width. */
+  .sound-split .phone-stage {
+    aspect-ratio: 16 / 9;
+    max-height: 70vh;
+    min-height: 0; /* defeat the global .split__media min-height (the phantom) */
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden; /* clamp any sub-pixel video bleed inside the stage */
+  }
+  .sound-split .phone-stage .phone-video {
+    min-height: 0; /* defeat the global .split__media min-height too */
+  }
+  @media (min-width: 920px) {
+    .sound-split .phone-stage { aspect-ratio: auto; max-height: none; }
+  }
+
+  /* ============ THE GEAR — accent voicing on the DARK ground (B9 / B10) ============ */
+  /* B9: the Uber line in the dark-voice accent (#60A5FA, 7.0:1 on ink). */
+  .gear-accent { color: var(--color-accent-bright); font-weight: 600; }
+  /* B10: "absurd" — the single red punch (#F87171, 6.5:1 on ink). */
+  .word-absurd { color: var(--color-accent-red); font-weight: 700; }
+
+  /* ============ THE NINJAS — the question lead-in inside the content column ============ */
+  .ninjas-question {
+    font-size: var(--text-h2);
+    line-height: var(--leading-h2);
+    margin-bottom: var(--space-lg);
+  }
+
+  /* ============ Three-up grids ============ */
+  .trio-grid {
+    display: grid;
+    gap: var(--space-xl);
+    grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+    margin-top: var(--space-2xl);
+  }
+
+  /* ============ GUARANTEE (No Funny Business) ============ */
+  /* B6 (round-5): NFB headline slightly smaller — keep it big + bold, just a small
+     reduction off --text-mega (~8% down across the responsive curve). */
+  .nfb-heading {
+    margin-bottom: var(--space-sm);
+    font-size: clamp(3.2rem, 1.7rem + 6.45vw, 6.9rem);
+  }
+  /* Small red "IF YOU KNOW, YOU KNOW" line between the headline and the pillars. */
+  .nfb-iykyk {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-accent-red);
+    margin: 0 0 var(--space-lg);
+  }
+  .nfb-triggers { margin-bottom: 0; line-height: 1.7; }
+  .btn--big { max-width: 720px; text-wrap: balance; }
+  /* "It's our job to ask the right questions…" — accent-colored, "our job" bold.
+     Solid-AV is a light/cream ground → light-voice accent. */
+  .lift-accent { color: var(--color-accent); }
+  .lift-accent strong { font-weight: 700; }
+
+  /* ============ FULL-BLEED curtain + CTA heights ============ */
+  .fullbleed--curtain { height: clamp(300px, 60vh, 560px); }
+  .fullbleed--cta { min-height: clamp(420px, 80vh, 720px); }
+  .final-cta-section { padding: 0; }
+
+  /* ============ PACKAGES (§19 / Iris §J — dark card + reversed white bar) ============ */
+  .pkg-grid {
+    display: grid;
+    gap: var(--space-xl);
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    align-items: stretch;
+  }
+  /* B13 (round-6): the MIDDLE card is ~20% physically larger. DOM order is
+     Meeting(1) · Conference(2) · Ignition(3) and renders in that natural order
+     (no re-ordering), so the middle column is Conference. On desktop the grid is
+     an explicit 3-track row where the middle column is 1.2fr (≈20% wider); the
+     middle card also scales up vertically (larger body padding + icon) so it's
+     bigger in both dimensions. Below the breakpoint the cards stack in DOM order
+     (auto-fit above governs), so mobile is unaffected. */
+  @media (min-width: 880px) {
+    .pkg-grid {
+      grid-template-columns: 1fr 1.2fr 1fr;
+      align-items: center; /* the taller centerpiece centers against its siblings */
+    }
+    /* Larger in the vertical axis too — roomier body so the middle (Conference)
+       card is ~20% bigger overall. */
+    .pkg-grid > .pkg-card:nth-of-type(2) .pkg-body { padding: var(--space-2xl) var(--space-2xl) var(--space-3xl); }
+    .pkg-grid > .pkg-card:nth-of-type(2) .pkg-icon :global(.icon) { transform: scale(1.12); transform-origin: left center; }
+  }
+  .pkg-heading { margin-bottom: var(--space-2xl); }
+
+  /* Card body: dark charcoal #1C1C22 lifting off the #111115 section, 1px
+     hairline edge, 16px radius. No padding on the card itself — the white bar
+     spans edge-to-edge at the top; the body carries its own padding. */
+  .pkg-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-card);
+    /* B12 (round-5): more contrast between the dark card and its body text. Lift
+       the default body color off the muted gray-bright (#AEB4B7, ~6:1) to canvas
+       (#FAFAFA, ~14:1 on #1C1C22) so the content pops. The tagline + icon below
+       lift too; the small "Starting at" subtext stays muted by design. */
+    color: var(--color-canvas);
+    border: var(--border-hairline) solid var(--color-card-hairline);
+    border-radius: var(--radius-md);
+    overflow: hidden; /* clip the bar's top corners to the card radius */
+    height: 100%;
+  }
+
+  /* Reversed-light heading bar — the "inverted color of the heading" device.
+     White block at the top, ink text, name dominant + price beneath. */
+  .pkg-bar {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    padding: var(--space-lg);
+  }
+  .pkg-head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm); /* name → "Starting at" subtext 8px (one unit) */
+    margin-bottom: 0;
+  }
+  .pkg-name {
+    order: 1;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+    color: var(--color-ink);
+  }
+  .pkg-price {
+    order: 2;
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+    color: var(--color-gray);
+  }
+  .pkg-join { /* the canonical " — " kept in DOM for fidelity; hidden visually */
+    order: 3;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  /* Card body on the dark charcoal — icon, tagline, inclusions. */
+  .pkg-body {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-2xl); /* 48px desktop (sweep §E) */
+    flex: 1;
+  }
+  @media (max-width: 600px) {
+    .pkg-body { padding: var(--space-xl); } /* 32px mobile (sweep §E) */
+  }
+  .pkg-icon {
+    margin-bottom: var(--space-lg); /* icon → tagline 24px */
+    color: var(--color-canvas); /* B12: lifted off gray-bright for contrast */
+  }
+  .pkg-tagline {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--color-canvas); /* B12: lifted off gray-bright for contrast */
+    margin-bottom: var(--space-lg); /* tagline → list 24px */
+  }
+  /* B14 / B15 (round-5): inclusions are now a per-line CHECK-MARK list. The lead
+     line ("For Small-to-Medium Meetings:" etc.) sits above; each inclusion is its
+     own line led by a ✓ (blue check, AA on the dark card). */
+  .pkg-lead {
+    color: var(--color-canvas); /* B12 contrast */
+    font-weight: 600;
+    margin-bottom: var(--space-md);
+  }
+  ul.pkg-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    color: var(--color-canvas); /* B12: lifted off gray-bright for contrast */
+  }
+  ul.pkg-list li {
+    position: relative;
+    padding-left: calc(1.1em + var(--space-sm)); /* room for the ✓ */
+  }
+  ul.pkg-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--color-accent-bright); /* blue check, AA on dark card (6.4:1) */
+    font-weight: 700;
+  }
+
+  /* Ignition (Iris §J.2): gradient-FILL bar + DEEPER body (#111115) + DOUBLED
+     5px --gradient-pop outline. NO badge (Larry's call). */
+  .pkg-card--ignition {
+    background: var(--color-ink); /* deeper "premium black" than siblings */
+    border: var(--border-pop) solid transparent;
+    background-image:
+      linear-gradient(var(--color-ink), var(--color-ink)),
+      var(--gradient-pop);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    /* B16 (round-5): drift the Ignition rim gradient — same living-video device as
+       the gradient CTAs. Oversize + pan the gradient (2nd) layer; the ink fill
+       stays put. Paused under prefers-reduced-motion. */
+    background-size: 100% 100%, 320% 320%;
+    background-position: 0 0, 0% 50%;
+    /* B16 (v04): wider travel (320% oversized layer) so the Ignition rim motion is
+       clearly perceptible, matching the gradient CTAs.
+       v05 (Ben): 3.5s → 2.3s so the drift clearly reads faster. */
+    animation: grad-drift 2.3s ease-in-out infinite alternate;
+  }
+  .pkg-bar--ignition {
+    background: var(--gradient-pop);
+    /* B16 (v04): the header band's gradient drifts too — wider travel.
+       v05 (Ben): 3.5s → 2.3s so the drift clearly reads faster. */
+    background-size: 320% 320%;
+    background-position: 0% 50%;
+    animation: bar-grad-drift 2.3s ease-in-out infinite alternate;
+    /* left-to-right ink scrim under the text band so white stays ≥4.5:1 across
+       the whole bar regardless of the stop it overlaps (Iris §J.2). */
+    position: relative;
+  }
+  /* Single-layer gradient drift for the bar (no ink fill layer to pin). */
+  @keyframes bar-grad-drift {
+    from { background-position: 0% 50%; }
+    to   { background-position: 100% 50%; }
+  }
+  .pkg-bar--ignition::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-ink) 38%, transparent) 0%,
+      color-mix(in srgb, var(--color-ink) 18%, transparent) 60%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+  .pkg-bar--ignition .pkg-head { position: relative; z-index: 1; }
+  /* White text over the navy/cobalt (dark) end of the gradient (AA), justified
+     left where white passes per Iris §J.2. */
+  .pkg-bar--ignition .pkg-name { color: var(--color-surface); }
+  .pkg-bar--ignition .pkg-price { color: color-mix(in srgb, var(--color-surface) 88%, transparent); }
+
+  .pkg-card :global(:focus-visible) { outline-color: var(--color-accent-bright); }
+
+  /* ============ MISSION CONTROL (SPLIT + steps GRID) ============ */
+  .kicker {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+    color: var(--color-accent);
+    margin-bottom: var(--space-sm);
+  }
+  /* B (v04): more breathing room between the kicker and the h2 — was --space-sm
+     (8px), felt tight; step up to --space-lg (24px). */
+  .sec-head .kicker { margin-bottom: var(--space-lg); }
+  .mission-groups {
+    list-style: none;
+    padding: 0;
+    /* B (v04): more breathing room between the bottom of the mission-control
+       image/copy split and the three group headings — was --space-3xl (64px);
+       step up one tasteful increment (3xl + lg = 88px). */
+    margin-top: calc(var(--space-3xl) + var(--space-lg));
+    display: grid;
+    gap: var(--space-xl);
+    grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  }
+  .mission-step {
+    border-top: 2px solid var(--color-ink);
+    padding-top: var(--space-md);
+  }
+  .mission-step__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+  .mission-step__num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex: none;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+    color: var(--color-canvas);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-small);
+  }
+  .mc-head { margin: 0; font-size: var(--text-h3); line-height: var(--leading-h3); }
+
+  /* ============ A LA CARTE — compressed, scannable ============ */
+  .alacarte .alacarte-grid { margin-top: var(--space-lg); gap: var(--space-lg); }
+  .alacarte-grid > div { text-align: left; }
+  .alacarte-icon { color: var(--color-ink); margin-bottom: var(--space-sm); }
+  .alacarte-title {
+    font-size: var(--text-h4);
+    line-height: var(--leading-h4);
+    margin-bottom: var(--space-xs);
+  }
+  .alacarte-lead { margin-bottom: var(--space-sm); }
+  .alacarte-list { margin: 0; }
+  .alacarte-list li { padding-block: var(--space-xs); }
+
+  /* ============ THE NUMBERS (count-up stat) ============ */
+  .stat { text-align: center; }
+  .stat__figure {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: var(--text-display);
+    line-height: var(--leading-display);
+    color: var(--color-accent);
+    margin-bottom: var(--space-sm);
+    /* reveal: fade + rise as it counts up */
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
+  }
+  .stat.is-revealed .stat__figure { opacity: 1; transform: none; }
+  .stat__label {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: var(--text-h4);
+    margin-bottom: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stat__figure { opacity: 1; transform: none; transition: none; }
+    /* B16: pause the Ignition gradient drift; hold a legible static gradient. */
+    .pkg-card--ignition,
+    .pkg-bar--ignition { animation: none; }
+  }
+
+  /* ============ CAPABILITIES — centered GRID, left-aligned lines inside ============ */
+  .cap-grid {
+    display: grid;
+    gap: var(--space-xl);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    margin-top: var(--space-2xl);
+  }
+  .cap-col { text-align: left; }
+  .cap-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--text-h4);
+    line-height: var(--leading-h4);
+    border-bottom: 2px solid var(--color-ink);
+    padding-bottom: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+  .cap-list { margin: 0; }
+  .cap-list li { padding-block: var(--space-xs); }
+  /* second-tier capability items (e.g. FOH/Broadcast/Monitor under Audio Consoles) */
+  .cap-sublist {
+    margin: 4px 0 0;
+    padding-left: var(--space-lg);
+    list-style-type: circle;
+  }
+  .cap-sublist li { padding-block: 2px; }
+</style>
+
+<script>
+  /* ============================================================
+     The motion moments — vanilla, tiny, progressive enhancement.
+     Reduced-motion users get end states (GL-003 §7). No-JS users
+     get end states too (dark sections are dark by default).
+     ============================================================ */
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- Moment 3: light→dark fade section transitions ---- */
+  if (!reduceMotion && "IntersectionObserver" in window) {
+    const darkSections = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-dark-fade]"),
+    );
+    for (const section of darkSections) {
+      if (section.getBoundingClientRect().top > window.innerHeight * 0.6) {
+        section.classList.add("is-light");
+      }
+    }
+    const fadeObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove("is-light");
+            fadeObserver.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.25 },
+    );
+    for (const section of darkSections) fadeObserver.observe(section);
+  }
+
+  /* ---- Moment 2: phone buzz VIDEO, play on scroll-into-view ("Sound Dramatic?") ----
+     Round-5 (Ben reversal): the base media is now a real <video>. No synthetic
+     wake/notification/buzz overlay, no WebAudio ding. The clip is muted (so
+     autoplay-on-scroll is allowed without a prior user gesture) and starts when
+     the stage enters the viewport — "wakes up as you scroll to it" — pausing when
+     it leaves. prefers-reduced-motion: never play; the poster still stands in. */
+  const phoneVideo = document.getElementById("phone-moment")?.querySelector<HTMLVideoElement>(
+    ".phone-video",
+  );
+  if (phoneVideo) {
+    if (reduceMotion) {
+      // Poster only. Ensure nothing plays; load just the poster, not the stream.
+      phoneVideo.removeAttribute("autoplay");
+      phoneVideo.pause();
+    } else if (!("IntersectionObserver" in window)) {
+      // No IO: best-effort play (muted videos are permitted to autoplay).
+      void phoneVideo.play().catch(() => {});
+    } else {
+      const videoObserver = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              void phoneVideo.play().catch(() => {});
+            } else {
+              phoneVideo.pause();
+            }
+          }
+        },
+        { threshold: 0.5 },
+      );
+      videoObserver.observe(phoneVideo);
+    }
+  }
+
+  /* ---- Numbers stat: count-up reveal on scroll-into-view (§13) ----
+     Counts both ends of the "1.5 - 3.5x" range up to their targets, then locks
+     the verbatim string. Reduced-motion / no-IO: the static end state shows. */
+  const statEl = document.getElementById("numbers-stat");
+  const figureEl = statEl?.querySelector<HTMLElement>(".stat__figure");
+  if (statEl && figureEl) {
+    const finalText = figureEl.dataset.countup ?? figureEl.textContent ?? "";
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      statEl.classList.add("is-revealed");
+      figureEl.textContent = finalText;
+    } else {
+      const lowTarget = 1.5;
+      const highTarget = 3.5;
+      // B17 (round-5): SLOWER count-up (was 1100ms — fired too fast). The reveal
+      // is already gated to scroll-into-view via statObserver below.
+      const duration = 2600;
+      const runCountUp = (): void => {
+        statEl.classList.add("is-revealed");
+        const start = performance.now();
+        const tick = (now: number): void => {
+          const t = Math.min((now - start) / duration, 1);
+          // ease-out cubic
+          const e = 1 - Math.pow(1 - t, 3);
+          const low = (lowTarget * e).toFixed(1);
+          const high = (highTarget * e).toFixed(1);
+          figureEl.textContent = `${low} - ${high}x`;
+          if (t < 1) {
+            requestAnimationFrame(tick);
+          } else {
+            figureEl.textContent = finalText; // lock the verbatim string
+          }
+        };
+        requestAnimationFrame(tick);
+      };
+      const statObserver = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            runCountUp();
+            statObserver.disconnect();
+          }
+        },
+        { threshold: 0.6 },
+      );
+      statObserver.observe(statEl);
+    }
+  }
+
+  /* ---- §11: Audiences "Learn More" → full-viewport takeover ----
+     Clicking a card's Learn More expands that audience's black frame to fill the
+     entire viewport. Esc / close button / backdrop click collapses it. While
+     open: focus is trapped inside the panel, body scroll is locked, and focus
+     returns to the trigger on close. Accessible (role=dialog, aria-modal,
+     labelledby). Progressive enhancement — no JS leaves the cards inert. */
+  (() => {
+    const openers = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-aud-open]"),
+    );
+    if (!openers.length) return;
+
+    let activePanel: HTMLElement | null = null;
+    let lastTrigger: HTMLElement | null = null;
+
+    const focusable = (panel: HTMLElement): HTMLElement[] =>
+      Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((el) => !el.hasAttribute("disabled"));
+
+    const closePanel = (): void => {
+      if (!activePanel) return;
+      const panel = activePanel;
+      panel.classList.remove("is-open");
+      const finish = (): void => {
+        panel.hidden = true;
+        panel.removeEventListener("transitionend", finish);
+      };
+      if (reduceMotion) finish();
+      else panel.addEventListener("transitionend", finish);
+      document.body.style.overflow = "";
+      activePanel = null;
+      if (lastTrigger) lastTrigger.focus();
+    };
+
+    const onKeydown = (e: KeyboardEvent): void => {
+      if (!activePanel) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closePanel();
+        return;
+      }
+      if (e.key === "Tab") {
+        const items = focusable(activePanel);
+        if (!items.length) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    const openPanel = (id: string, trigger: HTMLElement): void => {
+      const panel = document.querySelector<HTMLElement>(`[data-aud-panel="${id}"]`);
+      if (!panel) return;
+      lastTrigger = trigger;
+      activePanel = panel;
+      panel.hidden = false;
+      document.body.style.overflow = "hidden";
+      // next frame so the opacity transition runs
+      requestAnimationFrame(() => panel.classList.add("is-open"));
+      const closeBtn = panel.querySelector<HTMLElement>("[data-aud-close]");
+      (closeBtn ?? focusable(panel)[0])?.focus();
+    };
+
+    for (const opener of openers) {
+      opener.addEventListener("click", () => {
+        const id = opener.dataset.audOpen;
+        if (id) openPanel(id, opener);
+      });
+    }
+    for (const closeBtn of Array.from(
+      document.querySelectorAll<HTMLElement>("[data-aud-close]"),
+    )) {
+      closeBtn.addEventListener("click", closePanel);
+    }
+    // Backdrop click (clicking the panel itself, not its inner content) closes.
+    for (const panel of Array.from(
+      document.querySelectorAll<HTMLElement>("[data-aud-panel]"),
+    )) {
+      panel.addEventListener("click", (e) => {
+        if (e.target === panel) closePanel();
+      });
+    }
+    document.addEventListener("keydown", onKeydown);
+  })();
+
+  /* ---- B2 / B7 / B17: ALL highlight sweeps fire on scroll-into-view ----
+     One observer drives every marker container — the hero continuous sweep
+     (.highlight-sweep, B2), the NFB three-phrase sweep (.nfb-sweep, B7), and any
+     legacy single .highlight-static. Each gets .is-drawn when it scrolls in, which
+     starts its (CSS-sequenced) draw. The hero is no longer a load animation (B17).
+     Reduced-motion / no-IO: pre-draw the end state immediately (no sweep). No-JS:
+     the <noscript> rule pre-draws every marker (see index head). */
+  const sweepEls = Array.from(
+    document.querySelectorAll<HTMLElement>(
+      ".highlight-sweep, .nfb-sweep, .highlight-static",
+    ),
+  );
+  if (sweepEls.length) {
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      for (const el of sweepEls) el.classList.add("is-drawn");
+    } else {
+      const sweepObserver = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            entry.target.classList.add("is-drawn");
+            sweepObserver.unobserve(entry.target);
+          }
+        },
+        { threshold: 0.9 },
+      );
+      for (const el of sweepEls) sweepObserver.observe(el);
+    }
+  }
+
+  /* ---- v05: The Ninjas three points — staggered individual fade-in ----
+     Each [data-stagger-reveal] list gets .is-revealed when it scrolls into view;
+     the CSS per-item transition-delay staggers the fade. Reduced-motion / no-IO:
+     reveal immediately (the reduced-motion CSS strips the fade so they just show). */
+  const staggerEls = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-stagger-reveal]"),
+  );
+  if (staggerEls.length) {
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      for (const el of staggerEls) el.classList.add("is-revealed");
+    } else {
+      const staggerObserver = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            entry.target.classList.add("is-revealed");
+            staggerObserver.unobserve(entry.target);
+          }
+        },
+        { threshold: 0.4 },
+      );
+      for (const el of staggerEls) staggerObserver.observe(el);
+    }
+  }
+</script>

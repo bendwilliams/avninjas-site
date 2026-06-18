@@ -1,0 +1,332 @@
+---
+/**
+ * ComparisonTable — "How We Stack Up".
+ * Template: Ben's own graphic (Team Inbox/2026-06-12-winona-upwork-capture/
+ * files/ben-comparison-table-2026-05-27.png) — pictures over numbers.
+ * Row labels: WIREFRAME wording ("Hidden / Surprise Costs", "Crew Competency
+ * Level" — NOT staging's "Hidden Costs"/"Tech Skill Level").
+ * "Stress Factor" row carried from Ben's graphic.
+ *
+ * Icons: simple inline SVG on the GL-003 icon language (24px grid, 1.5px
+ * stroke, rounded joins, monochrome ink; status colors ONLY inside this
+ * chart). Each is marked [ICON: slug] for the later custom-icon pass via
+ * Ben's description-first process (nuance brief §4.4).
+ *
+ * Color is never the sole carrier (GL-003 §9): skill bars also differ in
+ * height and count; time icons differ in filled arc; crews differ in count.
+ */
+import { Image } from "astro:assets";
+import ninjasLogo from "../assets/logo/av-ninjas-logo.png";
+
+const ninjaCrew = Array.from({ length: 4 });
+const typicalCrew = Array.from({ length: 8 });
+---
+
+<div class="cmp-wrap">
+  <table class="cmp tabular">
+    <caption class="sr-only">How We Stack Up</caption>
+    <thead>
+      <tr>
+        <th scope="col">Feature</th>
+        <!-- Ben 2026-06-16: "Replace the word Ninjas with the logo." The logo IS
+             the column header; an sr-only "AV Ninjas" keeps the header accessible. -->
+        <th scope="col" class="cmp-col-ninjas">
+          <Image src={ninjasLogo} alt="AV Ninjas" height={28} densities={[1, 2]} class="cmp-logo" />
+          <span class="sr-only">AV Ninjas</span>
+        </th>
+        <!-- Ben: lighter font weight for Typical Provider (Ninjas 700, Typical 400). -->
+        <th scope="col" class="cmp-col-typical">Typical Provider</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Upfront Costs</th>
+        <td>$$</td>
+        <td>$$$</td>
+      </tr>
+      <tr>
+        <th scope="row">Hidden / Surprise Costs</th>
+        <td>0</td>
+        <td>$$$$</td>
+      </tr>
+      <tr>
+        <th scope="row">Setup Time</th>
+        <td>
+          <!-- Stopwatch reading LESS time (Ben 2026-06-16: the old time icons
+               "do not make any sense"). A small elapsed wedge (12→2 o'clock) +
+               hand pointing just past 12 = a short sweep. Lucide-language:
+               24px grid, 1.75px stroke, round joins, crown + side button. -->
+          <span class="cmp-time" role="img" aria-label="much less setup time">
+            <svg class="cmp-icon" width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"
+                 fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 2.5h4"></path>
+              <path d="M12 2.5v2"></path>
+              <path d="M18.4 6.6l1.1-1.1"></path>
+              <circle cx="12" cy="14" r="8"></circle>
+              <!-- short elapsed wedge -->
+              <path d="M12 14 V6 A8 8 0 0 1 15.1 6.6 Z" fill="currentColor" stroke="none" opacity="0.9"></path>
+              <!-- hand -->
+              <path d="M12 14 L13.6 7.2"></path>
+            </svg>
+          </span>
+        </td>
+        <td>
+          <!-- Stopwatch reading LONG time: a large elapsed wedge sweeping most of
+               the dial + hand near 9 o'clock. The two icons read "less vs more"
+               at a glance — the fix Ben asked for. -->
+          <span class="cmp-time cmp-time--slow" role="img" aria-label="much longer setup time">
+            <svg class="cmp-icon" width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"
+                 fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 2.5h4"></path>
+              <path d="M12 2.5v2"></path>
+              <path d="M18.4 6.6l1.1-1.1"></path>
+              <circle cx="12" cy="14" r="8"></circle>
+              <!-- large elapsed wedge (12 → 9 the long way round) -->
+              <path d="M12 14 V6 A8 8 0 1 1 5.6 17.6 Z" fill="currentColor" stroke="none" opacity="0.9"></path>
+              <!-- hand near 9 o'clock -->
+              <path d="M12 14 L5.4 12.4"></path>
+            </svg>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Crew Size (typical)</th>
+        <td>
+          <!-- 4 NINJA figures (Ben/GL-003 §5a: ninja-figure glyphs, count carries
+               the meaning). Masked head + headband ties = reads "ninja", not
+               generic person. Lucide language (1.75px, round). -->
+          <span class="cmp-crew" role="img" aria-label="4 ninjas">
+            {ninjaCrew.map(() => (
+              <svg
+                class="cmp-icon cmp-figure cmp-figure--ninja"
+                width="26"
+                height="26"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <!-- running ninja — mid-stride, leaning into the run -->
+                <circle cx="13.2" cy="6" r="2.9"></circle>
+                <!-- mask band across the eyes -->
+                <path d="M10.7 5.6h5"></path>
+                <!-- headband ties streaming BACK behind the run -->
+                <path d="M10.6 4.9 L7 3.7"></path>
+                <path d="M10.6 6.2 L7.4 6.6"></path>
+                <!-- body leaning forward -->
+                <path d="M12.8 8.6 L10.3 14.4"></path>
+                <!-- arms pumping: leading forward, trailing back -->
+                <path d="M12.4 10 L15.2 9.2 L14.5 11.6"></path>
+                <path d="M12.4 10 L9.8 11.4 L10.6 13.4"></path>
+                <!-- legs mid-stride: leading bent forward, trailing pushed back -->
+                <path d="M10.3 14.4 L12.9 16.4 L12.2 20"></path>
+                <path d="M10.3 14.4 L8.2 17.8 L6.8 19.8"></path>
+              </svg>
+            ))}
+          </span>
+        </td>
+        <td>
+          <!-- 8 plain figures — bigger crew, no ninja marks (the contrast is the
+               point: more bodies, thinner skill). -->
+          <span class="cmp-crew" role="img" aria-label="8 people">
+            {typicalCrew.map(() => (
+              <svg
+                class="cmp-icon cmp-figure"
+                width="26"
+                height="26"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="5.5" r="3.2"></circle>
+                <path d="M12 8.7 V14.5"></path>
+                <path d="M7.5 12 L12 10.4 L16.5 12"></path>
+                <path d="M12 14.5 L9 20.5"></path>
+                <path d="M12 14.5 L15 20.5"></path>
+              </svg>
+            ))}
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Crew Competency Level</th>
+        <td>
+          <!-- [ICON: icon-compare-skill-ninjas] 4 solid strong bars — ONE bar per
+               ninja figure above, same per-item slot + gap + centered container as
+               .cmp-crew so bar N sits directly under figure N. All solid green. -->
+          <span class="cmp-barset" role="img" aria-label="4 solid strong bars">
+            {ninjaCrew.map(() => (
+              <svg
+                class="cmp-icon cmp-bar"
+                width="31"
+                height="31"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <rect x="4" y="3" width="16" height="18" rx="1.5" fill="var(--color-success)"></rect>
+              </svg>
+            ))}
+          </span>
+        </td>
+        <td>
+          <!-- [ICON: icon-compare-skill-typical] 8 bars — 2 strong green + 2 mid
+               amber + 4 weak faded — ONE bar per stick figure above, same slot +
+               gap + centered container so bar N aligns under figure N. Height +
+               color + opacity encode the competency story (big crew, thin skill). -->
+          <span class="cmp-barset" role="img" aria-label="2 strong + 2 mid + 4 weak">
+            <svg class="cmp-icon cmp-bar" width="31" height="31" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="3" width="16" height="18" rx="1.5" fill="var(--color-success)"></rect>
+            </svg>
+            <svg class="cmp-icon cmp-bar" width="31" height="31" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="3" width="16" height="18" rx="1.5" fill="var(--color-success)"></rect>
+            </svg>
+            <svg class="cmp-icon cmp-bar" width="31" height="31" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="10" width="16" height="11" rx="1.5" fill="var(--color-warning)"></rect>
+            </svg>
+            <svg class="cmp-icon cmp-bar" width="31" height="31" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="10" width="16" height="11" rx="1.5" fill="var(--color-warning)"></rect>
+            </svg>
+            <svg class="cmp-icon cmp-bar" width="31" height="31" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="16" width="16" height="5" rx="1.5" fill="var(--color-warning)" opacity="0.55"></rect>
+            </svg>
+            <svg class="cmp-icon cmp-bar" width="31" height="31" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="16" width="16" height="5" rx="1.5" fill="var(--color-warning)" opacity="0.55"></rect>
+            </svg>
+            <svg class="cmp-icon cmp-bar" width="31" height="31" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="16" width="16" height="5" rx="1.5" fill="var(--color-warning)" opacity="0.55"></rect>
+            </svg>
+            <svg class="cmp-icon cmp-bar" width="31" height="31" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="16" width="16" height="5" rx="1.5" fill="var(--color-warning)" opacity="0.55"></rect>
+            </svg>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Backup Systems and Redundancies</th>
+        <td>Standard across All Packages</td>
+        <td>Extra $ or Not Present</td>
+      </tr>
+      <tr>
+        <th scope="row">Stress Factor</th>
+        <td>0/10</td>
+        <td>8/10</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .cmp-wrap {
+    overflow-x: auto; /* graceful below ~480px; table scrolls INTERNALLY — sanctioned wide-table exception */
+    contain: paint; /* Vera v5 H-1: stop the clipped 560px table from leaking its intrinsic width into documentElement.scrollWidth. root overflow-x:clip kills the pan; this resets the reported scroll metric so scrollWidth==clientWidth, without touching internal scroll. */
+  }
+  .cmp {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+    text-align: center;
+    /* B11 (round-5): tighter table — body steps down slightly so the whole table
+       reads more compact at the new spacing. Row labels/cells inherit this. */
+    font-size: var(--text-small);
+  }
+  .cmp th,
+  .cmp td {
+    /* B11: tighter rows — step the row padding down one unit (was --space-lg
+       vertical) so the table reads compact, not loose. */
+    padding: var(--space-md) var(--space-md);
+    border-bottom: 1px solid var(--color-cream);
+    vertical-align: middle;
+  }
+  .cmp thead th {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-h4);
+    border-bottom: 2px solid var(--color-ink);
+  }
+  /* Ninjas column = the logo (700 weight context); Typical Provider = lighter 400. */
+  .cmp-col-typical {
+    font-weight: 400 !important;
+    color: var(--color-gray);
+  }
+  .cmp-col-ninjas {
+    vertical-align: middle;
+  }
+  .cmp-logo {
+    height: 28px;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .cmp tbody th[scope="row"] {
+    text-align: left;
+    font-family: var(--font-heading);
+    font-weight: 600;
+  }
+  .cmp thead th:first-child {
+    text-align: left;
+  }
+  .cmp-icon {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  /* B11 (round-5): icons slightly LARGER (the body text got smaller; the icons go
+     up so the chart's visual data reads bigger). Scale the stopwatch + ninja/person
+     figures up ~18% via CSS so the inline width/height attributes don't need editing
+     and the viewBox stays crisp. */
+  .cmp-time .cmp-icon { width: 40px; height: 40px; }
+  .cmp-figure { width: 31px; height: 31px; }
+  .cmp-crew {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    justify-content: center;
+  }
+  .cmp-figure { color: var(--color-ink); }
+  /* The four AV-Ninjas figures "run": a subtle, staggered bob so the mid-stride
+     pose reads as in-motion. Typical-provider figures stay still (untagged).
+     Vertical-only — horizontal centers (and the 0px bar alignment) are unchanged. */
+  .cmp-figure--ninja { animation: ninja-run 0.62s ease-in-out infinite; }
+  .cmp-crew .cmp-figure--ninja:nth-of-type(2) { animation-delay: 0.16s; }
+  .cmp-crew .cmp-figure--ninja:nth-of-type(3) { animation-delay: 0.31s; }
+  .cmp-crew .cmp-figure--ninja:nth-of-type(4) { animation-delay: 0.46s; }
+  @keyframes ninja-run {
+    0%, 100% { transform: translateY(0.6px); }
+    50% { transform: translateY(-1.8px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cmp-figure--ninja { animation: none; }
+  }
+  /* Time icons: Ninjas accent-blue (the "win"), Typical muted gray, each tagged. */
+  .cmp-time {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--color-accent);
+  }
+  .cmp-time--slow {
+    color: var(--color-gray);
+  }
+  /* v04 §3: align each competency bar DIRECTLY under its crew figure. The bar set
+     now mirrors the .cmp-crew geometry EXACTLY — same flex container, same
+     --space-xs gap, same centering, one 31px .cmp-bar slot per figure — so bar N
+     lines up under figure N in both columns (4 ninjas / 8 stick figures). */
+  .cmp-barset {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    justify-content: center;
+  }
+  /* v05 (Ben): bars read FATTER. The 31px slot is UNCHANGED (keeps the perfect
+     0px alignment under .cmp-figure that Vera measured); only the drawn rect inside
+     each bar's 24-unit viewBox got wider (width 7 → 11, re-centered at x=6.5 so the
+     bar stays centered in its slot). Slot geometry is identical, so alignment holds. */
+  .cmp-bar { width: 31px; height: 31px; } /* same slot as .cmp-figure */
+</style>

@@ -1,0 +1,58 @@
+---
+/**
+ * /resources/<slug>/ — article template for the `resources` content
+ * collection. Functional today; renders nothing until markdown entries land
+ * in src/content/resources/. Article body styling inherits the GL-003 type
+ * scale via global element styles.
+ */
+import type { GetStaticPaths } from "astro";
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+
+export const getStaticPaths = (async () => {
+  const entries = await getCollection("resources");
+  return entries
+    .filter((entry) => !entry.data.draft)
+    .map((entry) => ({
+      params: { slug: entry.id },
+      props: { entry },
+    }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const dateFormat = new Intl.DateTimeFormat("en-US", { dateStyle: "long" });
+---
+
+<BaseLayout title={`${entry.data.title} | AV Ninjas`} description={entry.data.description}>
+  <a href="#main" class="skip-link">Skip to content</a>
+  <SiteHeader />
+  <main id="main">
+    <article class="section">
+      <div class="container article-narrow">
+        <header>
+          <h1>{entry.data.title}</h1>
+          {
+            entry.data.pubDate && (
+              <p class="small muted">
+                <time datetime={entry.data.pubDate.toISOString()}>
+                  {dateFormat.format(entry.data.pubDate)}
+                </time>
+              </p>
+            )
+          }
+        </header>
+        <Content />
+      </div>
+    </article>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .article-narrow {
+    max-width: 720px;
+  }
+</style>

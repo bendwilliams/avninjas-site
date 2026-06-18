@@ -1,0 +1,121 @@
+/* ============================================================
+   AV Ninjas design tokens — GL-003 v3.0 (2026-06-16), verbatim.
+   SSOT: Team Knowledge/Guidelines/GL-003-design-system.md
+   Scope: AV Ninjas PUBLIC SITE ONLY. No command-center tokens here, ever.
+   v2: cool-blue accent + cool gradient (teal→stop only); two-use lime
+   highlight; hard-locked type scale (mega/display/h1…) to kill drift.
+   v3: POPPINS — one superfamily for display + body (replaces League Spartan
+   + Glacial Indifference). Body steps nudged down (body-lg 21→20, body 18→17)
+   to widen display↔body contrast per the Winona-feel sweep (§D.4). Banding +
+   alignment-archetype helpers carried in global.css / index.astro.
+   ============================================================ */
+
+:root {
+  /* ---- Color: core (GL-003 §2, Ben-approved Apr 29/30 moodboard) ---- */
+  --color-ink: #111115;        /* headings, body on light, dark section bg, primary CTA fill — never the page base */
+  --color-canvas: #fafafa;     /* default page background */
+  --color-cream: #eaedef;      /* COOL off-white alternate section bg (v3.2, Ben round-5 D1: darker band "a little bit bluer" — subtly cooler ivory, was warm #f0ede4). Ink 16.0:1 / accent 5.0:1 — both still AA. NAME stable: Felix's refs pick up the new value. */
+  --color-surface: #ffffff;    /* cards / elevated surfaces; also the reversed-light pkg heading bar (v3.1 §8) */
+  --color-card: #1c1c22;       /* dark charcoal package-card body (v3.1 §2) — lifts off the #111115 Packages section */
+  --color-card-hairline: #33333b; /* 1px edge on the sibling dark cards (v3.1 §2) */
+  --color-gray: #6d7478;       /* muted text on #FAFAFA/white ONLY (fails AA body on cream — GL-003 §9) */
+  --color-gray-bright: #aeb4b7;/* muted text on dark grounds only */
+
+  /* ---- Color: accent — cool dark blue, two-voiced (GL-003 §2 v2 — supersedes teal) ---- */
+  --color-accent: #1d4ed8;        /* royal/cobalt — on LIGHT grounds. 5.4:1 canvas / 4.9:1 cream */
+  --color-accent-deep: #1e3a8a;   /* navy — accent-FILLED surfaces (white text 8.3:1); gradient navy anchor */
+  --color-accent-bright: #60a5fa; /* sky — on DARK grounds only (7.0:1 ink). BANNED on light (2.0:1) */
+
+  /* ---- Color: emphasis-red — the "absurd" word ONLY (GL-003 §2 v3.2, Ben round-5 D2/B10).
+     A rare single-word punch in the DARK Gear section. NOT --color-error (#b91c1c is
+     status-locked to form validation, §2). Dark-voiced like accent-bright. ---- */
+  --color-accent-red: #f87171;    /* bright red — on DARK grounds (6.5:1 on ink). The word "absurd" in §The Gear. One word, one place. */
+
+  /* ---- Cool gradient — the "pop" device (GL-003 §2 v2). EXACTLY TWO uses:
+     (1) primary "Let's Talk" CTA  (2) Ignition card outline. Nowhere else. ---- */
+  --grad-stop-1: #1e3a8a; /* navy   */
+  --grad-stop-2: #1d4ed8; /* cobalt */
+  --grad-stop-3: #0d9488; /* teal — retired accent lives on ONLY as this stop */
+  --grad-stop-4: #10b981; /* emerald */
+  --gradient-pop: linear-gradient(100deg, var(--grad-stop-1) 0%, var(--grad-stop-2) 28%, var(--grad-stop-3) 64%, var(--grad-stop-4) 100%);
+
+  /* ---- Color: highlight (GL-003 §6 Highlight Law v2 — lime, EXACTLY TWO places:
+     hero audience phrase (animated) + No-Funny-Business trigger line (static)) ---- */
+  --color-highlight: #bef264;  /* lime-green marker — hue-distant from the blue accent so the two never blur */
+
+  /* ---- Color: status (comparison chart + form states only) ---- */
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-error: #b91c1c;
+
+  /* ---- Typography (GL-003 §3 v3 — Poppins, ONE superfamily for both roles) ---- */
+  --font-heading: "Poppins", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Poppins", "Helvetica Neue", Arial, sans-serif;
+
+  /* Type scale — HARD-LOCKED (GL-003 §3 v2 role→step table). Contrast widened
+     vs v1 so the eye always knows where to look. Desktop → mobile via clamp. */
+  --text-mega: clamp(3.5rem, 1.85rem + 7.04vw, 7.5rem);      /* 120 → 56 — the No-Funny-Business giant moment */
+  --text-display: clamp(3rem, 1.875rem + 4.8vw, 5.5rem);     /* 88 → 48 — hero + shout headlines */
+  --text-h1: clamp(2.375rem, 1.875rem + 2.14vw, 3.5rem);     /* 56 → 38 — ALL major section heads, identical */
+  --text-h2: clamp(1.75rem, 1.464rem + 1.22vw, 2.375rem);    /* 38 → 28 — sub-section heads */
+  --text-h3: clamp(1.375rem, 1.214rem + 0.69vw, 1.625rem);   /* 26 → 22 — card titles (package names) */
+  --text-h4: clamp(1.125rem, 1.054rem + 0.31vw, 1.25rem);    /* 20 → 18 — minor heads, column heads */
+  --text-body-lg: 1.25rem;   /* 20 — hero subhead, leads, section intros (21→20 for Poppins, sweep §D.4) */
+  --text-body: 1.0625rem;    /* 17 — default copy (18→17 for Poppins; widens display↔body contrast) */
+  --text-small: 0.875rem;    /* 14 — captions, fine print, "Starting at $X" subtext */
+  --text-eyebrow: 0.8125rem; /* 13 — eyebrow/kicker labels */
+
+  --leading-mega: 0.95;
+  --leading-display: 1.02;
+  --leading-h1: 1.08;
+  --leading-h2: 1.15;
+  --leading-h3: 1.25;
+  --leading-h4: 1.3;
+  --leading-body-lg: 1.5;
+  --leading-body: 1.6;
+  --leading-small: 1.5;
+
+  /* ---- Spacing (GL-003 §4 — 8px base, 4px half-step; all multiples of 4) ---- */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+  --space-5xl: 128px;
+
+  /* ---- Layout ---- */
+  --container-max: 1200px;
+
+  /* ---- Media max-width (GL-003 §4 v3.1 — Ben round-4 §8/§9) ----
+     Images shrink freely but NEVER render wider than 1920px. Applies to all
+     <img>/<picture>/background-image surfaces, the full-bleed 100vw moments,
+     and BOTH tickers' tracks. The hard ceiling, applied via .media-cap. */
+  --max-media: 1920px;
+
+  /* ---- Border widths (GL-003 §4 v3.1 — Ben round-4 §7: gradient wrap 2x bolder, GLOBAL) ----
+     One token rescales every gradient outline + primary CTA wrap at once. */
+  --border-hairline: 1px;     /* neutral card edges, dividers, sibling pkg-card hairline */
+  --border-standard: 1.5px;   /* secondary / outline CTAs */
+  --border-pop: 5px;          /* THE gradient outline — doubled, global (primary CTA + Ignition card) */
+
+  /* ---- Radius (GL-003 §4 — all four corners always identical) ---- */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-pill: 999px;
+
+  /* ---- Motion (GL-003 §7 — sparing; micro-interactions ≤200ms, accordion ≤250ms) ---- */
+  --motion-micro: 150ms;
+  --motion-accordion: 250ms;
+  --motion-dark-fade: 600ms;
+  --motion-highlight-draw: 700ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Mobile: step --border-pop 5px → 4px so the bolder gradient wrap doesn't crowd
+   small pills (GL-003 §4 v3.1 — single token override, never per-component). */
+@media (max-width: 600px) {
+  :root { --border-pop: 4px; }
+}

@@ -1,0 +1,188 @@
+---
+/**
+ * Manufacturers — the "Trusted Manufacturers" logo strip (MARQUEE).
+ *
+ * v17 (Mack, 2026-06-17): Ben logo-strip review — 3 targeted tweaks (other 8 untouched):
+ *   1. NETGEAR re-sourced crisp. Old netgear.png was upscaled-soft (fuzzy edges).
+ *      New source = official 2014 NETGEAR wordmark VECTOR svg (Wikimedia Commons
+ *      File:Netgear_logo_2014.svg → upload.wikimedia.org/.../2/29/Netgear_logo_2014.svg).
+ *      Run through the SAME ink pipeline: render at density 3600 (trim → 7464×1080,
+ *      well above target) → alpha-extract → solid #111115 ink canvas masked by that
+ *      alpha → Lanczos downscale to x328 → PNG8 PaletteAlpha (byte-format-matched to
+ *      the set). Vector source = perfectly sharp at marquee size + 2× retina.
+ *   2. Danley DISPLAY −~20% (height cap 28→22px, mobile 24→19px) via .mfr--danley.
+ *   3. Blackmagic DISPLAY a touch bigger (cap 28→32px, mobile 24→27px) via
+ *      .mfr--blackmagic-design.
+ *   Per-logo caps key off a new mfr--<slug> class on each <li>; vertical centering
+ *   preserved by .mfr-item flex align-items:center. Marquee machinery untouched.
+ *
+ * v16 (Mack, 2026-06-17): REAL RASTER LOGOS, one cohesive monochrome set.
+ *
+ * The prior v15 rendered 6 real inline-SVG marks + 5 hand-built FONT wordmarks
+ * (waves/danley/allen-and-heath/blackmagic-design/roe were just letterforms set
+ * in a typeface, not the brands' actual logos). Ben: "These companies definitely
+ * have logos, you can definitely grab them." So I did.
+ *
+ * SOURCING (all from official brand sources, processed to ink rasters):
+ *   - waves            → waves.com official Graphic Library
+ *                        (media.wavescdn.com/images/downloads/logos/waves/
+ *                         waves-logo-black.png — 2084² transparent)
+ *   - danley           → danleysoundlabs.com header logo
+ *                        (themes/danley/assets/images/global/logo-updated.svg)
+ *   - allen-and-heath  → allen-heath.com header logo (inline SVG sprite symbol
+ *                        #icon--logo--header, viewBox 0 0 1105.5 385)
+ *   - blackmagic-design→ blackmagicdesign.com official header logo
+ *                        (images.blackmagicdesign.com/.../logos/gn-logo.svg)
+ *   - roe              → roevisual.com official press kit
+ *                        (Press releases/ROE Visual Logo/…rgb-and-cmyk-files.zip
+ *                         → RGB/png/ROE LOGO - Black-01.png, 1790×1276 transparent)
+ *   The other 6 (shure, rcf, panasonic, netgear, sennheiser, red) were already
+ *   real marks; re-rasterized through the SAME pipeline so all 11 are uniform.
+ *
+ * TREATMENT (cohesion): every logo was baked to a single ink fill (--color-ink
+ * #111115) on a transparent background via ImageMagick — alpha channel of the
+ * source used as a mask over a solid-ink canvas. So all 11 are ONE consistent
+ * raster-monochrome set (no mix of clean SVG + full-color raster). CSS then
+ * recesses the whole strip to 0.72 opacity at rest → 1.0 on hover (matches the
+ * prior behavior). Logos are HEIGHT-normalized (aspect ratios vary wildly),
+ * auto width, vertically centered. Square/badge marks (rcf, sennheiser) get a
+ * slightly taller cap so they don't read tiny next to the wide wordmarks.
+ *
+ * MARQUEE: unchanged machinery (global.css .marquee / .marquee__track /
+ * duplicated aria-hidden list / seamless loop / pause-on-hover / static wrapped
+ * fallback under prefers-reduced-motion). Wrapped in .ticker-track for the
+ * 1920 cap. Per-logo alt = brand name.
+ *
+ * TRADEMARK: nominative "manufacturers we install / are trained on" use
+ * (standard fair use). Larry to have Vex sanity-check before launch.
+ */
+import { Image } from "astro:assets";
+
+// Glob the processed ink rasters as ImageMetadata so Astro's image pipeline
+// optimizes + emits width/height (no CLS). Eager so the map below is sync.
+const logos = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/logo/manufacturers/*.png",
+  { eager: true },
+);
+
+interface Maker {
+  /** kebab-case file slug in assets/logo/manufacturers/ */
+  slug: string;
+  /** accessible brand name (alt) */
+  name: string;
+  /** layout class: "wide" wordmark (default) or "badge" square-ish mark */
+  shape?: "wide" | "badge";
+}
+
+const makers: Maker[] = [
+  { slug: "shure", name: "Shure" },
+  { slug: "waves", name: "Waves" },
+  { slug: "rcf", name: "RCF", shape: "badge" },
+  { slug: "danley", name: "Danley Sound Labs" },
+  { slug: "panasonic", name: "Panasonic" },
+  { slug: "red", name: "RED" },
+  { slug: "blackmagic-design", name: "Blackmagic Design" },
+  { slug: "allen-and-heath", name: "Allen & Heath" },
+  { slug: "netgear", name: "Netgear" },
+  { slug: "sennheiser", name: "Sennheiser", shape: "badge" },
+  { slug: "roe", name: "ROE Visual" },
+];
+
+function img(slug: string): ImageMetadata {
+  const mod = logos[`../assets/logo/manufacturers/${slug}.png`];
+  if (!mod) throw new Error(`Manufacturers: missing logo asset ${slug}.png`);
+  return mod.default;
+}
+---
+
+<!-- Same .marquee machinery as the event-types ticker (global.css). Wrapped in
+     .ticker-track for the 1920 cap. Seamless loop via the two identical lists +
+     per-list trailing gap. The second list is aria-hidden (decorative dupe). -->
+<div class="ticker-track">
+  <div class="marquee mfr-marquee" aria-label="Trusted manufacturers">
+    <div class="marquee__track">
+      <ul class="marquee__list mfr-list">
+        {makers.map((m) => (
+          <li class={`mfr-item ${m.shape === "badge" ? "is-badge" : "is-wide"} mfr--${m.slug}`}>
+            <Image
+              src={img(m.slug)}
+              alt={m.name}
+              height={m.shape === "badge" ? 38 : 28}
+              densities={[1, 2]}
+              loading="lazy"
+              decoding="async"
+              class="mfr-logo"
+            />
+          </li>
+        ))}
+      </ul>
+      <ul class="marquee__list mfr-list" aria-hidden="true">
+        {makers.map((m) => (
+          <li class={`mfr-item ${m.shape === "badge" ? "is-badge" : "is-wide"} mfr--${m.slug}`}>
+            <Image
+              src={img(m.slug)}
+              alt=""
+              height={m.shape === "badge" ? 38 : 28}
+              densities={[1, 2]}
+              loading="lazy"
+              decoding="async"
+              class="mfr-logo"
+            />
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* The marquee sits on a CREAM band — recolor the strip hairlines to read on
+     cream (the shared .marquee in global.css is tuned for the dark ticker). */
+  .mfr-marquee {
+    margin-top: var(--space-2xl);
+    border-block-color: color-mix(in srgb, var(--color-gray) 35%, transparent);
+  }
+  .mfr-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+  }
+
+  /* Cohesive monochrome treatment: the rasters are ALREADY baked to a single
+     ink fill (--color-ink) on transparent bg, so they read as one set. CSS just
+     recesses the whole strip to 0.72 at rest → 1.0 on hover (matches the prior
+     .mfr-word behavior). HEIGHT-normalized, auto width, vertically centered. */
+  .mfr-logo {
+    display: block;
+    width: auto;
+    opacity: 0.72;
+    transition: opacity var(--motion-micro) var(--ease-out);
+  }
+  .mfr-item:hover .mfr-logo { opacity: 1; }
+
+  /* Height caps (the height attr sets intrinsic px; these are the responsive
+     overrides). Wide wordmarks ~28px; square/badge marks a touch taller so
+     their visual mass balances the wide wordmarks. width:auto keeps aspect. */
+  .is-wide .mfr-logo { height: 28px; }
+  .is-badge .mfr-logo { height: 38px; }
+
+  /* Per-logo display tuning (Ben review, v05) — the set is height-normalized, so
+     these nudge individual marks whose visual mass read off vs. the others.
+     Vertical centering is preserved by .mfr-item's flex align-items:center. */
+  /* Danley still read too large → smaller again (22 → 19px). */
+  .mfr--danley .mfr-logo { height: 19px; }
+  /* Blackmagic still read too small (wide-short wordmark) → larger (32 → 40px). */
+  .mfr--blackmagic-design .mfr-logo { height: 40px; }
+  /* Waves → a touch bigger (28 → 34px). */
+  .mfr--waves .mfr-logo { height: 34px; }
+
+  @media (max-width: 640px) {
+    .is-wide .mfr-logo { height: 24px; }
+    .is-badge .mfr-logo { height: 32px; }
+    /* Same proportional nudges at the mobile cap (24px base). */
+    .mfr--danley .mfr-logo { height: 17px; }
+    .mfr--blackmagic-design .mfr-logo { height: 34px; }
+    .mfr--waves .mfr-logo { height: 30px; }
+  }
+</style>
