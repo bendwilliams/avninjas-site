@@ -20,7 +20,7 @@ const contactEmail = "hello@avninjas.co"; // [PENDING BEN: confirm the real cont
 >
   <main class="legal">
     <div class="legal__wrap">
-      <a href="/" class="legal__back">← Back to home</a>
+      <a href={import.meta.env.BASE_URL} class="legal__back">← Back to home</a>
 
       <h1>Privacy Policy</h1>
       <p class="legal__updated">Last updated: {lastUpdated}</p>
@@ -102,7 +102,7 @@ const contactEmail = "hello@avninjas.co"; // [PENDING BEN: confirm the real cont
         >{contactEmail}</a>.
       </p>
 
-      <a href="/" class="legal__back legal__back--bottom">← Back to home</a>
+      <a href={import.meta.env.BASE_URL} class="legal__back legal__back--bottom">← Back to home</a>
     </div>
   </main>
 </BaseLayout>

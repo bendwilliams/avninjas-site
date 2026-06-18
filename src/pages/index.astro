@@ -565,16 +565,16 @@ const capabilities: CapabilityColumn[] = [
           <div class="split__media phone-stage" id="phone-moment">
             <video
               class="phone-video"
-              src="/media/phone-buzz.mp4"
-              poster="/media/phone-buzz-poster.jpg"
+              src={`${import.meta.env.BASE_URL}media/phone-buzz.mp4`}
+              poster={`${import.meta.env.BASE_URL}media/phone-buzz-poster.jpg`}
               muted
               loop
               playsinline
               preload="metadata"
               aria-label="A smartphone lying face-up on a banquet table during a live ballroom event buzzes with an incoming notification, the engaged crowd and stage beyond."
             >
-              <source src="/media/phone-buzz.webm" type="video/webm" />
-              <source src="/media/phone-buzz.mp4" type="video/mp4" />
+              <source src={`${import.meta.env.BASE_URL}media/phone-buzz.webm`} type="video/webm" />
+              <source src={`${import.meta.env.BASE_URL}media/phone-buzz.mp4`} type="video/mp4" />
             </video>
           </div>
           <div class="split__copy">

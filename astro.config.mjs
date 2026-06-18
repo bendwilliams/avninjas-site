@@ -6,6 +6,9 @@ import { defineConfig } from "astro/config";
 // is chosen AND server features are needed (none are today).
 export default defineConfig({
   output: "static",
-  site: "https://avninjas.co",
+  // GitHub Pages project-site deploy (feedback): served from /avninjas-site/.
+  // For the eventual root deploy (avninjas.co / Vercel), set base back to "/".
+  site: "https://bendwilliams.github.io",
+  base: "/avninjas-site/",
   trailingSlash: "ignore",
 });
