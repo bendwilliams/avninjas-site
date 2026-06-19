@@ -2444,10 +2444,15 @@ const heroHighlightWords = [
     el.textContent = "";
     const lineEls: HTMLElement[] = [];
     lines.forEach((lineText, idx) => {
-      if (idx > 0) el.appendChild(document.createTextNode(" "));
       const span = document.createElement("span");
       span.className = "hl-line";
-      span.textContent = lineText.trim();
+      // The breaking space between lines lives INSIDE the marker (every line but the
+      // last) — so if a later width change merges two lines onto one row, no
+      // unhighlighted gap appears; a trailing space at a real line-end collapses
+      // (invisible). This is what lets us NEVER rebuild an already-drawn highlight:
+      // box-decoration-break + this in-marker space keep the resting state correct at
+      // ANY width with zero rebuilds.
+      span.textContent = lineText.trim() + (idx < lines.length - 1 ? " " : "");
       el.appendChild(span);
       lineEls.push(span);
     });
@@ -2491,13 +2496,17 @@ const heroHighlightWords = [
       }
     };
     window.addEventListener("resize", () => {
-      if (window.innerWidth === lastWidth) return; // height-only (e.g. mobile URL bar)
+      if (window.innerWidth === lastWidth) return; // height-only (e.g. mobile URL bar) — wrap unchanged
       lastWidth = window.innerWidth;
       cancelAnimationFrame(chRaf);
-      // Genuine WIDTH change (desktop resize / mobile rotation): re-segment ALL — a
-      // rebuild of an already-drawn element just snaps it instantly to the correct
-      // end state at the new wrap (no gap), so this is safe and keeps desktop correct.
-      chRaf = requestAnimationFrame(() => continuousHighlights.forEach(buildContinuous));
+      // Width changed → the wrap may change, so re-segment — but ONLY highlights that
+      // haven't drawn yet. NEVER rebuild a drawing/drawn one: rebuilding snaps an
+      // in-flight sweep so both lines jump to full at once (the mobile bug). Mobile
+      // browsers fire tiny (even 1px) width changes during the visual-viewport /
+      // address-bar settle right as the hero is sweeping — exactly when a snap shows.
+      // A drawn highlight stays correct at the new width via box-decoration-break + the
+      // in-marker trailing space, so it never needs a rebuild.
+      chRaf = requestAnimationFrame(rebuildUndrawn);
     });
     if ("fonts" in document) {
       // fonts.ready can land AFTER the sweep starts on mobile — only re-segment what
