@@ -2474,15 +2474,35 @@ const heroHighlightWords = [
   );
   for (const el of continuousHighlights) buildContinuous(el);
   if (continuousHighlights.length && !reduceMotion) {
+    // Re-segmentation rules (these fix the mobile-only sweep bug):
+    //  • The wrap depends on WIDTH only — so ignore height-only resizes. On mobile,
+    //    showing/hiding the address bar fires a resize on every scroll (height change
+    //    only); rebuilding there used to SNAP the in-flight sweep to its end state
+    //    (the bug Ben saw). Desktop never fires those, so it was unaffected.
+    //  • Never rebuild an element that is already drawing/drawn: once its sweep has
+    //    fired, box-decoration-break keeps the resting highlight correct at any width,
+    //    so a rebuild can only risk snapping a mid-flight animation. fonts.ready can
+    //    land after the draw starts on mobile — guarding on is-drawn prevents that snap.
     let chRaf = 0;
+    let lastWidth = window.innerWidth;
+    const rebuildUndrawn = () => {
+      for (const el of continuousHighlights) {
+        if (!el.classList.contains("is-drawn")) buildContinuous(el);
+      }
+    };
     window.addEventListener("resize", () => {
+      if (window.innerWidth === lastWidth) return; // height-only (e.g. mobile URL bar)
+      lastWidth = window.innerWidth;
       cancelAnimationFrame(chRaf);
+      // Genuine WIDTH change (desktop resize / mobile rotation): re-segment ALL — a
+      // rebuild of an already-drawn element just snaps it instantly to the correct
+      // end state at the new wrap (no gap), so this is safe and keeps desktop correct.
       chRaf = requestAnimationFrame(() => continuousHighlights.forEach(buildContinuous));
     });
     if ("fonts" in document) {
-      (document as Document & { fonts: FontFaceSet }).fonts.ready.then(() =>
-        continuousHighlights.forEach(buildContinuous),
-      );
+      // fonts.ready can land AFTER the sweep starts on mobile — only re-segment what
+      // hasn't drawn yet, so a font swap can never snap an in-flight animation.
+      (document as Document & { fonts: FontFaceSet }).fonts.ready.then(rebuildUndrawn);
     }
   }
 
