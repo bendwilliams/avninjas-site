@@ -30,6 +30,16 @@
      A rare single-word punch in the DARK Gear section. NOT --color-error (#b91c1c is
      status-locked to form validation, §2). Dark-voiced like accent-bright. ---- */
   --color-accent-red: #f87171;    /* bright red — on DARK grounds (6.5:1 on ink). The word "absurd" in §The Gear. One word, one place. */
+  /* ---- Color: emphasis-red DEEP — the LIGHT/CREAM-ground voice of the emphasis red.
+     Revision 8 (Ben): the Solid-AV lead "not all 'planning experiences' are the same"
+     is emphasized RED, but it sits on the CREAM band (--color-cream #EAEDEF). The dark
+     -voiced --color-accent-red #F87171 FAILS AA there (2.35:1). This deeper red passes
+     (5.08:1 on cream, 5.73:1 on canvas — both AA body). Parallel to how --color-accent
+     has a light voice (#1D4ED8) and a dark voice (#60A5FA): emphasis-red now has a dark
+     voice (#F87171) and this light/cream voice. NOT --color-error (#B91C1C is status-
+     locked to form validation, §2). FLAG to Iris/Vera to record this token in GL-003 §2
+     under the emphasis-red lane. ---- */
+  --color-accent-red-deep: #c0241f; /* deep red — on LIGHT/CREAM grounds (5.08:1 cream / 5.73:1 canvas — AA). */
 
   /* ---- Cool gradient — the "pop" device (GL-003 §2 v2). EXACTLY TWO uses:
      (1) primary "Let's Talk" CTA  (2) Ignition card outline. Nowhere else. ---- */
@@ -38,6 +48,22 @@
   --grad-stop-3: #0d9488; /* teal — retired accent lives on ONLY as this stop */
   --grad-stop-4: #10b981; /* emerald */
   --gradient-pop: linear-gradient(100deg, var(--grad-stop-1) 0%, var(--grad-stop-2) 28%, var(--grad-stop-3) 64%, var(--grad-stop-4) 100%);
+
+  /* ---- Color: CAPABILITIES category accents (Revision 8, Ben) — the four
+     "Full Breakdown of our Capabilities" category titles were all accent blue in R7;
+     Ben wants them DIFFERENTIATED, one color per category. Four distinct, harmonious,
+     AA-passing colors on the CANVAS ground (#FAFAFA), all drawn from the GL-003 cool
+     palette + gradient family so they read as one intentional system, not random:
+       Audio              → accent blue  #1D4ED8 (6.42:1) — the existing accent, kept
+       Video / Streaming  → deep teal    #0F766E (5.24:1) — gradient teal stop, deepened to AA
+       Presentation / GFX → violet       #6D28D9 (6.81:1) — cool cousin of the blue/teal
+       Lighting / Scenic  → warm amber   #B45309 (4.81:1) — the one warm note (stage light)
+     FLAG to Iris/Vera: this extends beyond strict accent-scarcity, but it's a Ben-
+     directed differentiation, scoped to these four peer sub-heads only. ---- */
+  --cap-color-audio: #1d4ed8;
+  --cap-color-video: #0f766e;
+  --cap-color-gfx: #6d28d9;
+  --cap-color-lighting: #b45309;
 
   /* ---- Color: highlight (GL-003 §6 Highlight Law v2 — lime, EXACTLY TWO places:
      hero audience phrase (animated) + No-Funny-Business trigger line (static)) ---- */

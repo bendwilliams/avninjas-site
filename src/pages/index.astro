@@ -339,6 +339,26 @@ const capabilities: CapabilityColumn[] = [
     ],
   },
 ];
+
+/* Revision 8 (Ben) — WRAP-AWARE hero highlight. The R7 hero highlight was split
+   into two CONTENT segments ("EA's, Execs, Agencies and Event" / "Planners") tuned
+   to the DESKTOP wrap. On mobile the phrase wraps at different points (more lines),
+   so the fixed content split no longer matched the visual lines and MULTIPLE lines
+   lit at once. A content split can only ever match one wrap width. The fix: wrap
+   EACH WORD in its own marker span; JS measures each word's rendered line membership
+   by offsetTop (on load + on resize) and reveals the words one VISUAL LINE at a time,
+   so it reads as one continuous left→right, top→bottom draw at EVERY width. The
+   verbatim copy is unchanged — these are exactly the words of "EA's, Execs, Agencies
+   and Event Planners", rendered as spans joined by single spaces (the fidelity check
+   strips tags + collapses whitespace, so the decoded string is identical). */
+const heroHighlightWords = [
+  "EA's,",
+  "Execs,",
+  "Agencies",
+  "and",
+  "Event",
+  "Planners",
+];
 ---
 
 <BaseLayout
@@ -350,7 +370,7 @@ const capabilities: CapabilityColumn[] = [
        visible without scripts (the JS path animates them on scroll-into-view). -->
   <noscript>
     <style>
-      .highlight-seg,
+      .hl-word,
       .highlight-static,
       .nfb-seg,
       .bf-seg { background-size: 100% 88% !important; transition: none !important; }
@@ -385,14 +405,17 @@ const capabilities: CapabilityColumn[] = [
           <p class="lead">
             We work directly with
             <!-- MOTION MOMENT 1 of 3: the one-and-only animated highlight (GL-003 §6).
-                 B2 (round-5): ONE CONTINUOUS sweep — segment 1 draws, then segment 2
-                 draws as a single flowing draw (line 1 → line 2, NOT parallel). The
-                 phrase is split at its natural wrap so each visual line is its own
-                 sequenced segment; the verbatim copy is unchanged (the split is only
-                 between two highlight spans, no characters added/removed). Slowed
-                 overall via --motion-hero-sweep. -->
-            <span class="highlight-sweep"
-              ><span class="highlight-seg highlight-seg--1">EA's, Execs, Agencies and Event</span> <span class="highlight-seg highlight-seg--2">Planners</span></span>
+                 Revision 8 (Ben): WRAP-AWARE, line-by-line reveal. Each WORD is its own
+                 lime-marker span; JS (B17 observer + measureHeroLines) groups words by
+                 their rendered offsetTop into visual lines and reveals one line at a time,
+                 left→right, top→bottom — correct at 375px AND 1440px (re-measured on
+                 resize). No content-tuned split anymore, so it can never light two lines
+                 at once on a wrap it wasn't tuned for. Reduced-motion / no-JS: drawn end
+                 state (every word pre-highlighted). Verbatim copy unchanged — these spans
+                 are exactly "EA's, Execs, Agencies and Event Planners". -->
+            <span class="highlight-sweep hl-wordwrap" data-hero-highlight>{heroHighlightWords.map((word, i) => (
+              <Fragment>{i > 0 ? " " : ""}<span class="hl-word">{word}</span></Fragment>
+            ))}</span>
             - and our whole business built around making it easy!
           </p>
           <p class="hero-kicker">Skip the headaches. Go Direct!</p>
@@ -649,7 +672,13 @@ const capabilities: CapabilityColumn[] = [
         <div class="sec-head">
           <h2>Solid AV is a Must. Headaches Optional!</h2>
           <p class="lead">
-            Heww boy.. Let's just say not all "planning experiences" are the same. (Cue that
+            <!-- Revision 8 (Ben): emphasize "not all 'planning experiences' are the same"
+                 in RED. This sits on the CREAM band, so the DARK-voiced --color-accent-red
+                 (#F87171) would FAIL AA here (2.35:1). Uses --color-accent-red-deep
+                 (#C0241F, 5.08:1 on cream — AA). The verbatim copy is unchanged; the span
+                 only wraps existing characters (including the nested " " quotes), so the
+                 fidelity check still sees the exact string. -->
+            Heww boy.. Let's just say <span class="emph-red-deep">not all "planning experiences" are the same.</span> (Cue that
             SNL skit about the alien abduction..<Image
               class="alien-inline"
               src={alienImg}
@@ -983,7 +1012,14 @@ const capabilities: CapabilityColumn[] = [
           <div class="split__copy">
             <p>Every package comes with your own battle station, customized for how you like to work!</p>
             <p>Because live events are dynamic in nature and every second matters.</p>
-            <p>(and because... why should the ninjas get to play with all the cool toys?)</p>
+            <!-- Revision 8 (Ben): emphasize "why should the ninjas get to play with all
+                 the cool toys?" in BLUE. Mission Control is a LIGHT (canvas) ground, so
+                 this takes the light-voice accent --color-accent (#1D4ED8, AA 6.4:1) —
+                 NOT --color-accent-bright (#60A5FA, which is the DARK-ground voice and
+                 fails on light, §9). The span wraps existing characters only; "(and
+                 because..." and the trailing ")" stay outside, so both fidelity strings
+                 ("(and because..." and the full line) match unchanged. -->
+            <p>(and because... <span class="emph-accent">why should the ninjas get to play with all the cool toys?)</span></p>
           </div>
         </div>
         <ol class="mission-groups">
@@ -1223,6 +1259,13 @@ const capabilities: CapabilityColumn[] = [
   /* B3 (round-5): accent the service words on the LIGHT hero ground (light voice
      #1D4ED8 — AA 5.4:1 on canvas). Weight bump so the color reads as emphasis. */
   .svc-accent { color: var(--color-accent); font-weight: 600; }
+  /* Revision 8 (Ben): the Solid-AV lead emphasis phrase, RED on the CREAM ground.
+     Light-voiced emphasis red (--color-accent-red-deep #C0241F, AA 5.08:1 on cream)
+     — NOT the dark-voiced #F87171 which fails AA here. Weight bump for the punch. */
+  .emph-red-deep { color: var(--color-accent-red-deep); font-weight: 600; }
+  /* Revision 8 (Ben): the Mission Control "cool toys" aside, BLUE on the light ground.
+     Light-voice accent (--color-accent #1D4ED8, AA 6.4:1 on canvas). */
+  .emph-accent { color: var(--color-accent); font-weight: 600; }
   /* B1 (round-5): hero text slightly smaller — a small reduction, not a big one.
      Scale the display headline down ~8% via clamp on the existing --text-display
      so the whole responsive curve shifts down together (no fixed-px override). */
@@ -1630,6 +1673,32 @@ const capabilities: CapabilityColumn[] = [
   .fullbleed--curtain { height: clamp(300px, 60vh, 560px); }
   .fullbleed--cta { min-height: clamp(420px, 80vh, 720px); }
   .final-cta-section { padding: 0; }
+
+  /* Revision 8 (Ben): the final-CTA text "Ready to do the thing?" was bottom-biased
+     and "thing" spilled past the bottom edge of the image. Root cause: the shared
+     .fullbleed__inner is position:absolute; inset:0, so it is EXACTLY min-height tall
+     and does NOT grow the figure — when the heading + lead + button are taller than
+     min-height (short/narrow viewports), the centered grid content overflowed and the
+     figure (overflow:hidden) clipped the bottom. FIX for the CTA only: make the inner
+     IN-FLOW (relative, not absolute) with its own min-height + flex centering, and pin
+     the image + scrim absolutely BEHIND it. Now the figure always grows to contain the
+     text, and the text is truly vertically centered — nothing clips at any width. */
+  .fullbleed--cta .fullbleed__img,
+  .fullbleed--cta .fullbleed__scrim {
+    position: absolute;
+    inset: 0;
+  }
+  .fullbleed--cta .fullbleed__inner {
+    position: relative; /* in-flow: it now drives the figure height */
+    inset: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* true vertical centering of the CTA text block */
+    min-height: clamp(420px, 80vh, 720px); /* match the figure floor; grows past it if content is taller */
+    /* a touch more vertical breathing room so the block reads centered, never edge-tight */
+    padding-block: var(--space-3xl);
+  }
 
   /* ============ PACKAGES (§19 / Iris §J — dark card + reversed white bar) ============ */
 
@@ -2065,29 +2134,34 @@ const capabilities: CapabilityColumn[] = [
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     margin-top: var(--space-2xl);
   }
-  .cap-col { text-align: left; }
-  /* Revision 7 (Ben): the "Full Breakdown of our Capabilities" section read flat.
-     Add visual interest with an ACCENT treatment on the four category titles
-     (Audio / Video / Presentation-GFX / Lighting): the category ICON now carries the
-     accent blue (light ground → --color-accent #1D4ED8, AA 5.4:1), the heading text
-     itself is set in the accent, and the under-rule is the accent (was plain ink).
-     Tasteful + on-brand per GL-003 §2 (accent as punctuation on a light ground) — it
-     differentiates the four columns and gives the section a clear visual rhythm
-     without adding any new color or breaking the accent-scarcity discipline (the
-     accent here marks four peer section sub-heads, one consistent role). */
+  /* Revision 8 (Ben): each .cap-col carries its OWN category color via --cap-color,
+     set per-column below. The four columns render in fixed order (Audio, Video/
+     Streaming, Presentation/GFX, Lighting/Scenic), so nth-child assigns each its
+     color token. Falls back to the accent blue if an unexpected 5th column appears. */
+  .cap-col { text-align: left; --cap-color: var(--color-accent); }
+  .cap-col:nth-child(1) { --cap-color: var(--cap-color-audio); }    /* Audio — blue */
+  .cap-col:nth-child(2) { --cap-color: var(--cap-color-video); }    /* Video/Streaming — teal */
+  .cap-col:nth-child(3) { --cap-color: var(--cap-color-gfx); }      /* Presentation/GFX — violet */
+  .cap-col:nth-child(4) { --cap-color: var(--cap-color-lighting); } /* Lighting/Scenic — amber */
+  /* Revision 8 (Ben): the four "Full Breakdown of our Capabilities" category titles
+     were all accent-blue in R7. Ben wants them DIFFERENTIATED — each category a
+     different color. The category ICON, the heading text, and the under-rule all take
+     that column's --cap-color (set per-column above). All four are AA on the canvas
+     ground (see tokens.css). Tasteful + on-brand — four peer sub-heads, one consistent
+     role, four harmonious hues from the GL-003 cool palette + gradient family. */
   .cap-title {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
     font-size: var(--text-h4);
     line-height: var(--leading-h4);
-    color: var(--color-accent);
-    border-bottom: 2px solid var(--color-accent);
+    color: var(--cap-color);
+    border-bottom: 2px solid var(--cap-color);
     padding-bottom: var(--space-sm);
     margin-bottom: var(--space-md);
   }
-  /* the category icon takes the accent too (light ground; AA) */
-  .cap-title :global(.icon) { color: var(--color-accent); }
+  /* the category icon takes the same per-column color (light ground; all AA) */
+  .cap-title :global(.icon) { color: var(--cap-color); }
   .cap-list { margin: 0; }
   .cap-list li { padding-block: var(--space-xs); }
   /* second-tier capability items (e.g. FOH/Broadcast/Monitor under Audio Consoles) */
@@ -2306,6 +2380,69 @@ const capabilities: CapabilityColumn[] = [
     }
     document.addEventListener("keydown", onKeydown);
   })();
+
+  /* ---- Revision 8 (Ben): WRAP-AWARE hero highlight — line-by-line, every width ----
+     ROOT CAUSE this fixes: the old hero highlight used two CONTENT segments tuned to
+     the DESKTOP wrap. On mobile the phrase wraps to more lines, so the fixed split no
+     longer matched the visual lines and multiple lines lit at once. A content split can
+     only ever match ONE wrap width. THE FIX: each word is its own marker (.hl-word); we
+     MEASURE each word's rendered visual line by offsetTop and write a per-word
+     --hl-delay so words reveal one VISUAL LINE at a time (line N+1 only after line N),
+     left→right within each line. Re-measured on resize so it's correct at 375px AND
+     1440px and every width between. Reduced-motion / no-JS: the words are pre-drawn (the
+     reduced-motion CSS + <noscript> rule set background-size:100% — no measurement
+     needed, so we simply skip the timing math). */
+  const HL_LINE_MS = 260;   // gap between the START of one visual line and the next
+  const HL_WORD_MS = 70;    // left→right stagger between words WITHIN a visual line
+  const heroHL = document.querySelector<HTMLElement>("[data-hero-highlight]");
+  const heroWords = heroHL
+    ? Array.from(heroHL.querySelectorAll<HTMLElement>(".hl-word"))
+    : [];
+
+  const measureHeroLines = () => {
+    if (!heroWords.length) return;
+    // Group words into visual lines by their rendered offsetTop. A new line starts
+    // whenever a word's top jumps down past a tolerance (half a word's height) from
+    // the current line's top — robust to sub-pixel baseline jitter within a line.
+    let lineIndex = -1;
+    let lineTop = Number.NEGATIVE_INFINITY;
+    let posInLine = 0;
+    for (const word of heroWords) {
+      const top = word.offsetTop;
+      const tol = word.offsetHeight * 0.5;
+      if (top > lineTop + tol) {
+        // new visual line
+        lineIndex += 1;
+        lineTop = top;
+        posInLine = 0;
+      } else {
+        posInLine += 1;
+      }
+      // line drives the dominant cadence (top→bottom); word position adds the
+      // left→right draw within the line. One continuous sweep at any wrap width.
+      const delay = lineIndex * HL_LINE_MS + posInLine * HL_WORD_MS;
+      word.style.setProperty("--hl-delay", `${delay}ms`);
+    }
+  };
+
+  if (heroWords.length && !reduceMotion) {
+    measureHeroLines();
+    // Re-measure when the wrap can change: viewport resize and (if available) the
+    // ResizeObserver on the wrapper. Debounced so a drag-resize doesn't thrash.
+    let hlRaf = 0;
+    const remeasure = () => {
+      cancelAnimationFrame(hlRaf);
+      hlRaf = requestAnimationFrame(measureHeroLines);
+    };
+    window.addEventListener("resize", remeasure);
+    if ("ResizeObserver" in window && heroHL) {
+      new ResizeObserver(remeasure).observe(heroHL);
+    }
+    // Fonts load after first paint and can re-wrap the phrase — re-measure once ready.
+    if ("fonts" in document) {
+      (document as Document & { fonts: FontFaceSet }).fonts.ready.then(measureHeroLines);
+    }
+  }
 
   /* ---- B2 / B7 / B17: ALL highlight sweeps fire on scroll-into-view ----
      One observer drives every marker container — the hero continuous sweep

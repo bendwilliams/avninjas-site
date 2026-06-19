@@ -155,7 +155,14 @@ const navItems = [
       flex-wrap: wrap;
       gap: var(--space-md) var(--space-md);
     }
-    /* CTA beside the logo: it stays on row 1, pushed to the right edge. */
+    /* Revision 8 (Ben): "Let's Talk" was dropping BELOW the logo on mobile — at the
+       44px logo height the logo + CTA together exceeded the row width and the CTA
+       wrapped. Reduce the LOGO on mobile so the logo + CTA both fit on ONE line (row 1),
+       with the nav links on row 2 as before. 36px still clears GL-003's "logo doesn't
+       scale small well" floor while freeing the horizontal room the CTA needs. */
+    .site-header__logo-img { height: 36px; }
+    /* CTA beside the logo: it stays on row 1, pushed to the right edge. flex:none +
+       white-space:nowrap (base rule) keep it from wrapping its own text. */
     .site-header__cta { margin-left: auto; }
     /* Nav drops to its own full-width second row, after the logo + CTA. */
     .site-header__nav {

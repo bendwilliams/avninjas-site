@@ -375,13 +375,43 @@ const typicalCrew = Array.from({ length: 8 });
       padding: 0;
     }
 
-    /* The thead (Feature / AV Ninjas / Typical) is redundant once each row carries
-       its own inline column labels — remove it from the compact layout. The table
-       still has its sr-only <caption> ("How We Stack Up") and per-row <th scope=row>
-       headers; each data cell gets a visible "AV Ninjas"/"Typical" label below, so
-       the head-to-head context survives the reflow. display:none (not absolute)
-       avoids the thead escaping its container and overlapping other sections. */
-    .cmp thead { display: none; }
+    /* Revision 8 (Ben): show the two column labels (AV Ninjas | Typical) ONCE at the
+       TOP — a single sticky-feel header row — instead of repeating "AV Ninjas"/"Typical"
+       in every feature row. The thead is the SEMANTIC home of those labels (real
+       <th scope=col>), so we keep it (was display:none) and lay it out to match the
+       body's 2-col value grid: hide the "Feature" cell, and place AV Ninjas / Typical
+       over the two value columns. The per-row ::before labels are removed below. */
+    .cmp thead { display: block; }
+    .cmp thead tr {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: var(--space-sm);
+      align-items: end;
+      padding-block: var(--space-xs) var(--space-sm);
+      border-bottom: 2px solid var(--color-ink);
+      /* stick the header at the top of the table band as the rows scroll under it,
+         so the two column labels stay associated with the values. */
+      position: sticky;
+      top: 0;
+      background: var(--color-canvas); /* the table's section ground — opaque so rows don't show through */
+      z-index: 1;
+    }
+    /* The "Feature" header cell isn't needed visually on mobile (each row already
+       shows its own feature label); collapse it out of the 2-col header grid. The
+       sr-only caption + per-row scope=row headers keep the table readable to AT. */
+    .cmp thead th:first-child { display: none; }
+    /* AV Ninjas (logo + sr-only) over column 1; Typical Provider over column 2. */
+    .cmp thead th {
+      padding: 0;
+      border-bottom: 0;
+      text-align: center;
+      font-size: var(--text-small);
+    }
+    .cmp thead .cmp-logo { height: 22px; }
+    .cmp-col-typical {
+      /* keep the lighter weight intent on the compact header */
+      font-size: var(--text-small) !important;
+    }
 
     /* Each feature row = a compact card-ish block, but TIGHT (no big-card bloat):
        a thin hairline separator + small vertical rhythm, not heavy padding. */
@@ -413,27 +443,14 @@ const typicalCrew = Array.from({ length: 8 });
     }
     .cmp tbody th[scope="row"] { grid-column: 1 / -1; }
 
-    /* Each data cell: a small inline column label (AV Ninjas / Typical) above the
-       value, so the contrast reads without the thead. Reduced scale + tight pad. */
+    /* Revision 8 (Ben): the per-row "AV NINJAS"/"TYPICAL" ::before labels are REMOVED
+       — the two column labels now live ONCE in the sticky thead above. Each data cell
+       is just the value, aligned under its column. The 2-col grid on the row keeps
+       value 1 under "AV Ninjas" and value 2 under "Typical" without any per-row label. */
     .cmp tbody td {
       padding: var(--space-xs) 0 0;
       text-align: center;
-      position: relative;
     }
-    .cmp tbody td:first-of-type::before { content: "AV Ninjas"; }
-    .cmp tbody td:last-of-type::before { content: "Typical"; }
-    .cmp tbody td::before {
-      display: block;
-      font-family: var(--font-heading);
-      font-size: var(--text-eyebrow);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      margin-bottom: var(--space-xs);
-    }
-    /* AV Ninjas = accent (the "win" side); Typical = muted gray (lighter weight,
-       per Ben's 700/400 desktop intent translated to the compact view). */
-    .cmp tbody td:first-of-type::before { color: var(--color-accent); font-weight: 700; }
-    .cmp tbody td:last-of-type::before { color: var(--color-gray); font-weight: 400; }
 
     /* Reduce the icon/figure scale so a feature reads compactly side-by-side and
        the wide rows wrap 4+4 instead of overflowing. The crew + bar sets already

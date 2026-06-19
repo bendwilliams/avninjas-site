@@ -501,16 +501,20 @@ a {
    scroll-into-view (B7 round-5), dividers never highlighted.
    The marker is NOT the accent (accent is blue). ---- */
 
-/* B2: hero continuous sweep. The wrapper holds two segments; each segment is a
-   lime marker that draws left→right. We SEQUENCE them with a transition-delay so
-   segment 2 only begins after segment 1 finishes → one continuous draw down the
-   two lines. Fired by JS adding .is-drawn (B17, scroll-into-view), reduced-motion
-   / no-JS pre-draw the end state (see the noscript rule + reduced-motion block).
-   --motion-hero-seg is the per-segment draw time (slowed vs the old 700ms;
-   v05: 900ms → 1200ms per Ben "a little bit slower"). Segment 2 ("Planners")
-   is delayed by one --motion-hero-seg so line 1 fully completes first. */
-.highlight-sweep { --motion-hero-seg: 1200ms; }
-.highlight-seg {
+/* B2 — Revision 8: WRAP-AWARE hero highlight, line-by-line. The wrapper holds one
+   lime-marker span PER WORD (.hl-word). JS (measureHeroLines, index.astro) groups
+   the words by rendered offsetTop into VISUAL LINES and writes a --hl-delay on each
+   word so all words on line N start together and lines reveal top→bottom, while words
+   WITHIN a line draw left→right via a small per-word offset baked into --hl-delay.
+   This replaces the old two content-segments tuned to the desktop wrap — that split
+   could only match ONE wrap width, so on mobile (more lines) it lit several lines at
+   once (Ben's recurring bug). Now the split is the ACTUAL rendered line at any width.
+   Fired by JS adding .is-drawn (B17 observer); reduced-motion / no-JS pre-draw the
+   end state (see the noscript rule + reduced-motion block). --motion-hl-word = a word's
+   own draw time; the cumulative line+word delay is set per-word in JS via --hl-delay.
+   LINEAR transition so the line→line hand-off reads as one continuous sweep. */
+.hl-wordwrap { --motion-hl-word: 220ms; }
+.hl-word {
   background-image: linear-gradient(var(--color-highlight), var(--color-highlight));
   background-repeat: no-repeat;
   background-size: 0% 88%;
@@ -518,21 +522,12 @@ a {
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
   color: var(--color-ink); /* ink over highlight ≈16.8:1 */
-  /* LINEAR (not ease-out): constant sweep speed so the line-1 → line-2 hand-off
-     reads as one continuous motion. ease-out decelerated at the end of line 1 and
-     ease-in'd into "Planners", which read as a pause at the wrap (Ben). */
-  transition: background-size var(--motion-hero-seg) linear;
+  /* --hl-delay is written by JS from the word's measured visual-line membership;
+     defaults to 0 so before measurement (or if JS sets nothing) the order is sane. */
+  transition: background-size var(--motion-hl-word) linear;
+  transition-delay: var(--hl-delay, 0ms);
 }
-/* Sequence: segment 1 draws first; segment 2 waits one segment-duration so the
-   sweep reads as a single continuous line-1 → line-2 motion. Segment 2 ("Planners")
-   is much shorter than line 1, so it gets a proportionally shorter duration —
-   same per-character speed = the sweep never appears to slow down or stop. */
-.highlight-seg--1 { transition-delay: 0ms; }
-.highlight-seg--2 {
-  transition-delay: var(--motion-hero-seg);
-  transition-duration: 360ms;
-}
-.highlight-sweep.is-drawn .highlight-seg { background-size: 100% 88%; }
+.highlight-sweep.is-drawn .hl-word { background-size: 100% 88%; }
 
 /* Revision 7 (Ben): Solid-AV "Skip the Back and Forth" reassurance line — the SAME
    per-line sweep methodology as the hero. The phrase wraps across multiple visual
@@ -863,9 +858,9 @@ ul.pillars-list li::before {
 /* ---- Reduced motion (GL-003 §7): all moments degrade to end states ---- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .highlight-seg {
+  .hl-word {
     transition: none;
-    background-size: 100% 88%; /* hero highlight pre-drawn end state (B2) */
+    background-size: 100% 88%; /* hero highlight pre-drawn end state (B2, R8 word-wrap) */
   }
   .highlight-static,
   .nfb-seg,
