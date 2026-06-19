@@ -372,8 +372,16 @@ const heroHighlightWords = [
     <style>
       .hl-word,
       .highlight-static,
-      .nfb-seg,
-      .bf-seg { background-size: 100% 88% !important; transition: none !important; }
+      .nfb-seg { background-size: 100% 88% !important; transition: none !important; }
+      /* No-JS: the bf line is plain text (JS would word-wrap it) — pre-highlight the
+         whole inline marker so it reads as one continuous highlight without scripts. */
+      .highlight-sweep--inline {
+        background-image: linear-gradient(var(--color-highlight), var(--color-highlight));
+        background-repeat: no-repeat;
+        background-size: 100% 88% !important;
+        background-position: 0 60%;
+        color: var(--color-ink);
+      }
       /* v05: no-JS — The Ninjas points are shown immediately (no fade). */
       .ninjas-points li { opacity: 1 !important; transform: none !important; transition: none !important; }
     </style>
@@ -405,16 +413,16 @@ const heroHighlightWords = [
           <p class="lead">
             We work directly with
             <!-- MOTION MOMENT 1 of 3: the one-and-only animated highlight (GL-003 §6).
-                 Revision 8 (Ben): WRAP-AWARE, line-by-line reveal. Each WORD is its own
-                 lime-marker span; JS (B17 observer + measureHeroLines) groups words by
-                 their rendered offsetTop into visual lines and reveals one line at a time,
-                 left→right, top→bottom — correct at 375px AND 1440px (re-measured on
-                 resize). No content-tuned split anymore, so it can never light two lines
-                 at once on a wrap it wasn't tuned for. Reduced-motion / no-JS: drawn end
-                 state (every word pre-highlighted). Verbatim copy unchanged — these spans
-                 are exactly "EA's, Execs, Agencies and Event Planners". -->
-            <span class="highlight-sweep hl-wordwrap" data-hero-highlight>{heroHighlightWords.map((word, i) => (
-              <Fragment>{i > 0 ? " " : ""}<span class="hl-word">{word}</span></Fragment>
+                 Highlight Law v3 (Rev 9): CONTINUOUS highlight. Each WORD is its own
+                 lime marker WITH its trailing space INSIDE the span, so the resting
+                 highlight is gapless (Rev 8's per-word split left the joining spaces
+                 bare → the "spaces between EA's / Execs / Agencies / Events" regression;
+                 fixed here). JS reveals the words in reading order via a uniform per-word
+                 stagger — width-independent, so it can never light two lines at once.
+                 Reduced-motion / no-JS: drawn end state. Verbatim copy unchanged — the
+                 spans are exactly "EA's, Execs, Agencies and Event Planners". -->
+            <span class="highlight-sweep" data-continuous-highlight>{heroHighlightWords.map((word, i) => (
+              <span class="hl-word">{word}{i < heroHighlightWords.length - 1 ? " " : ""}</span>
             ))}</span>
             - and our whole business built around making it easy!
           </p>
@@ -543,6 +551,16 @@ const heroHighlightWords = [
             loading="lazy"
           />
           <div class="aud-takeover__scrim"></div>
+          <!-- Revision 9 (Ben): a back arrow TOP-LEFT in addition to the X top-right —
+               muscle memory looks top-left to leave. Same close behaviour as the X
+               (returns to the page + restores focus to the trigger). -->
+          <button type="button" class="aud-takeover__back" data-aud-close aria-label="Back">
+            <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5"></path>
+              <path d="M12 19l-7-7 7-7"></path>
+            </svg>
+          </button>
           <button type="button" class="aud-takeover__close" data-aud-close aria-label="Close">
             <span aria-hidden="true">×</span>
           </button>
@@ -632,7 +650,7 @@ const heroHighlightWords = [
             </p>
 
             <div class="dramatic-block">
-              <h3 class="subhead">The Invisible Army</h3>
+              <h3 class="subhead">The Distraction Machines in Our Pockets</h3>
               <p>
                 Event organizers are quite literally sparring with an army of the
                 highest-paid social engineers in the world to get - and keep - their
@@ -646,7 +664,7 @@ const heroHighlightWords = [
                 We all know how this goes. At the first hint of dead air, fuzzy audio,
                 or hard-to-read slides, the first phone comes out, then the second..
               </p>
-              <p>Stream dropped for 10 minutes plus? There went 2/3 of your virtual participants... Yikes!</p>
+              <p><strong>Stream dropped for 10 minutes plus? There went 2/3 of your virtual participants... Yikes!</strong></p>
               <p>
                 One thing is for sure: No one has ever gone to the effort of booking a
                 venue, lining up speakers, building an itinerary, etc to fill a room full
@@ -714,34 +732,18 @@ const heroHighlightWords = [
               well… then you already know.
             </p>
             <p>If you haven't—congratulations. We'd recommend opting out altogether!</p>
-            <!-- Revision 6 (Ben): apply the hero's animated highlight-SWEEP to this
-                 phrase. Same mechanism as the hero (.highlight-sweep wrapper +
-                 .highlight-seg lime marker, drawn left→right) — the shared JS observer
-                 fires it on scroll-into-view; reduced-motion / no-JS pre-draw the
-                 end state (global.css + the <noscript> rule). The whole sentence is
-                 ONE segment so the nested quotes — "what does AV stand for?" — stay
-                 inside a single tag boundary and the decoded copy keeps the verbatim
-                 contiguous run '"what does AV stand for?", we've got you!' (the
-                 fidelity check string). The wrapper boundary only injects whitespace
-                 at the OUTER edges, never inside the checked substring.
-                 NOTE: GL-003 §6 Highlight Law sanctions exactly TWO highlighted
-                 phrases; this is a Ben-directed THIRD — flagged to Iris/Vera (audit
-                 tripwire §6 highlight-spread). -->
-            <!-- Revision 7 (Ben): apply the HERO's per-line sweep methodology here.
-                 The phrase wraps across multiple visual lines; the old SINGLE .highlight-seg
-                 grew one marker rect across the whole wrapped inline box, so every line lit
-                 AT ONCE. Now the phrase is split into per-visual-line segments (.bf-seg),
-                 each its own lime marker that draws left→right and is SEQUENCED so each line
-                 completes before the next begins (same device as .highlight-seg--1/--2 on the
-                 hero). Splits fall ONLY at existing spaces, so the decoded copy keeps the
-                 verbatim contiguous run — including the fidelity-checked substring
-                 '"what does AV stand for?", we've got you!' (the boundary between seg 3 and
-                 seg 4 sits at the space after the comma, inside that run; the decode collapses
-                 the injected space + the original space to one, so the substring is intact).
-                 Reduced-motion / no-JS pre-draw the end state (global.css + <noscript>). -->
+            <!-- Highlight Law v3 (Rev 9): CONTINUOUS highlight, SAME engine as the hero.
+                 Authored as ONE plain-text run inside the wrapper; the shared JS
+                 word-wraps it into .hl-word markers at runtime and reveals them in
+                 reading order. No hand-tuned per-line segments (the old .bf-seg--1..4
+                 split was content-tuned and drifted on other wraps — removed). The
+                 verbatim copy is unchanged, so the fidelity-checked contiguous run
+                 '"what does AV stand for?", we've got you!' is intact. Fired on
+                 scroll-into-view; reduced-motion / no-JS pre-draw the end state.
+                 NOTE: GL-003 §6 sanctions two highlighted phrases; this Ben-directed
+                 third is flagged to Iris/Vera (audit tripwire §6 highlight-spread). -->
             <p>
-              <span class="highlight-sweep bf-sweep highlight-sweep--inline"
-                ><span class="bf-seg bf-seg--1">Whether you're an experienced meeting</span> <span class="bf-seg bf-seg--2">planner or you just googled</span> <span class="bf-seg bf-seg--3">"what does AV stand for?",</span> <span class="bf-seg bf-seg--4">we've got you!</span></span>
+              <span class="highlight-sweep highlight-sweep--inline" data-continuous-highlight>Whether you're an experienced meeting planner or you just googled "what does AV stand for?", we've got you!</span>
             </p>
           </div>
           <div class="solid-cell">
@@ -945,9 +947,10 @@ const heroHighlightWords = [
       <div class="packages-glow" aria-hidden="true"></div>
       <div class="container packages-inner">
         <h2 class="sec-head pkg-heading">Packages</h2>
-        <!-- data-stagger-reveal: the existing observer adds .is-revealed on
-             scroll-into-view; per-card transition-delay (CSS) staggers the rise. -->
-        <div class="pkg-grid" data-stagger-reveal>
+        <!-- Revision 9 (Ben): the fade-in/rise entrance is REMOVED — it took too long
+             to load and the per-card colour treatment already creates enough interest.
+             Cards render immediately (no data-stagger-reveal). -->
+        <div class="pkg-grid">
           <!-- §19 / Iris §J: DARK card (#1C1C22) + reversed WHITE heading bar at the
                top carrying the NAME (dominant) + "Starting at $X" (small, beneath).
                B14/B15 (round-5): inclusions render as a per-line CHECK-MARK list (one
@@ -1109,12 +1112,12 @@ const heroHighlightWords = [
         <div class="sec-head sec-head--wide">
           <h2>The numbers don't lie</h2>
           <p>
-            "Just add it to the final invoice" is a phrase that is far too common in the
-            live event industry. We think that's transactional and gross.
+            <strong>"Just add it to the final invoice"</strong> is a phrase that is far too common in the
+            live event industry. <span class="emph-red-deep">We think that's transactional and gross.</span>
           </p>
           <p>
-            We guarantee no surprises on our end. If we can't produce a paper trail for a
-            revision, you don't pay.
+            <span class="emph-accent"><strong>We guarantee no surprises on our end. If we can't produce a paper trail for a
+            revision, you don't pay!</strong></span>
           </p>
         </div>
         <div class="stat" id="numbers-stat">
@@ -1441,6 +1444,27 @@ const heroHighlightWords = [
     backdrop-filter: blur(4px);
   }
   .aud-takeover__close:hover { background: var(--color-canvas); color: var(--color-ink); }
+  /* Revision 9 (Ben): back arrow, TOP-LEFT — same pill treatment as the close X,
+     mirrored to the left edge. Both close the takeover. */
+  .aud-takeover__back {
+    position: absolute;
+    top: var(--space-xl);
+    left: var(--space-xl);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    line-height: 1;
+    color: var(--color-canvas);
+    background: color-mix(in srgb, var(--color-ink) 50%, transparent);
+    border: var(--border-standard) solid color-mix(in srgb, var(--color-canvas) 70%, transparent);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+  }
+  .aud-takeover__back:hover { background: var(--color-canvas); color: var(--color-ink); }
   .aud-takeover__inner {
     position: absolute;
     inset: 0;
@@ -1791,23 +1815,10 @@ const heroHighlightWords = [
     .pkg-heading { margin-bottom: var(--space-3xl); }
   }
 
-  /* Revision 6 — STAGGERED ENTRANCE. Each card starts faded + slightly down; the
-     shared [data-stagger-reveal] observer adds .is-revealed on scroll-into-view,
-     and the per-card transition-delay makes them rise one after another. Matches
-     the established .ninjas-points reveal pattern. Reduced-motion: cards just
-     present (handled in the reduced-motion block below). */
-  .pkg-grid[data-stagger-reveal] > .pkg-card {
-    opacity: 0;
-    transform: translateY(28px);
-    transition:
-      opacity 560ms var(--ease-out),
-      transform 560ms var(--ease-out);
-    will-change: opacity, transform;
-  }
-  .pkg-grid.is-revealed > .pkg-card { opacity: 1; transform: none; }
-  .pkg-grid.is-revealed > .pkg-card:nth-of-type(1) { transition-delay: 0ms; }
-  .pkg-grid.is-revealed > .pkg-card:nth-of-type(2) { transition-delay: 130ms; }
-  .pkg-grid.is-revealed > .pkg-card:nth-of-type(3) { transition-delay: 260ms; }
+  /* Revision 9 (Ben): the staggered fade-in/rise ENTRANCE was removed — it took too
+     long to load and the per-card colour treatment already carries the interest. The
+     cards now render immediately (the .pkg-grid no longer carries data-stagger-reveal,
+     so the shared observer never touches it). Per-card colour styling is unchanged. */
 
   /* Card body: dark charcoal #1C1C22 lifting off the #111115 section, 1px
      hairline edge, 16px radius. No padding on the card itself — the white bar
@@ -2381,67 +2392,48 @@ const heroHighlightWords = [
     document.addEventListener("keydown", onKeydown);
   })();
 
-  /* ---- Revision 8 (Ben): WRAP-AWARE hero highlight — line-by-line, every width ----
-     ROOT CAUSE this fixes: the old hero highlight used two CONTENT segments tuned to
-     the DESKTOP wrap. On mobile the phrase wraps to more lines, so the fixed split no
-     longer matched the visual lines and multiple lines lit at once. A content split can
-     only ever match ONE wrap width. THE FIX: each word is its own marker (.hl-word); we
-     MEASURE each word's rendered visual line by offsetTop and write a per-word
-     --hl-delay so words reveal one VISUAL LINE at a time (line N+1 only after line N),
-     left→right within each line. Re-measured on resize so it's correct at 375px AND
-     1440px and every width between. Reduced-motion / no-JS: the words are pre-drawn (the
-     reduced-motion CSS + <noscript> rule set background-size:100% — no measurement
-     needed, so we simply skip the timing math). */
-  const HL_LINE_MS = 260;   // gap between the START of one visual line and the next
-  const HL_WORD_MS = 70;    // left→right stagger between words WITHIN a visual line
-  const heroHL = document.querySelector<HTMLElement>("[data-hero-highlight]");
-  const heroWords = heroHL
-    ? Array.from(heroHL.querySelectorAll<HTMLElement>(".hl-word"))
-    : [];
-
-  const measureHeroLines = () => {
-    if (!heroWords.length) return;
-    // Group words into visual lines by their rendered offsetTop. A new line starts
-    // whenever a word's top jumps down past a tolerance (half a word's height) from
-    // the current line's top — robust to sub-pixel baseline jitter within a line.
-    let lineIndex = -1;
-    let lineTop = Number.NEGATIVE_INFINITY;
-    let posInLine = 0;
-    for (const word of heroWords) {
-      const top = word.offsetTop;
-      const tol = word.offsetHeight * 0.5;
-      if (top > lineTop + tol) {
-        // new visual line
-        lineIndex += 1;
-        lineTop = top;
-        posInLine = 0;
-      } else {
-        posInLine += 1;
+  /* ---- Highlight Law v3 (Rev 9): CONTINUOUS highlights — reading-order sweep ----
+     ONE engine for every [data-continuous-highlight] (the hero phrase + the "Skip the
+     Back and Forth" line). Each WORD is its own lime marker (.hl-word) carrying its
+     trailing space, so the resting highlight is gapless. We reveal words in READING
+     ORDER via a uniform per-word stagger (--hl-word-stagger): word K starts at
+     K * stagger and fills over --hl-word-draw. Because reading order is independent of
+     the wrap, this is correct at EVERY width with NO measurement — that is what kills
+     the recurring "two lines light at once / one starts before the other finishes /
+     stray inter-word gaps" bugs (all of which came from content-tuned splits + the
+     joining spaces sitting outside the markers). No resize re-measure is needed: the
+     per-word delays never change when the text re-wraps. Reduced-motion / no-JS:
+     CSS pre-draws the end state, so we only run the timing math when motion is allowed. */
+  const HL_STAGGER_MS =
+    parseInt(getComputedStyle(document.documentElement).getPropertyValue("--hl-word-stagger"), 10) || 55;
+  const continuousHighlights = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-continuous-highlight]"),
+  );
+  for (const el of continuousHighlights) {
+    // Word-wrap any element not already split into .hl-word spans (the bf line is
+    // authored as plain text; the hero arrives pre-split from the template). The
+    // joining whitespace is appended to the PRECEDING word's marker so the highlight
+    // is gapless. textContent is preserved exactly (verbatim copy + fidelity check).
+    if (!el.querySelector(".hl-word")) {
+      const tokens = (el.textContent ?? "").split(/(\s+)/);
+      el.textContent = "";
+      for (const tok of tokens) {
+        if (!tok) continue;
+        if (/^\s+$/.test(tok)) {
+          const prev = el.lastElementChild;
+          if (prev) prev.append(tok);
+          else el.append(tok);
+        } else {
+          const span = document.createElement("span");
+          span.className = "hl-word";
+          span.textContent = tok;
+          el.append(span);
+        }
       }
-      // line drives the dominant cadence (top→bottom); word position adds the
-      // left→right draw within the line. One continuous sweep at any wrap width.
-      const delay = lineIndex * HL_LINE_MS + posInLine * HL_WORD_MS;
-      word.style.setProperty("--hl-delay", `${delay}ms`);
     }
-  };
-
-  if (heroWords.length && !reduceMotion) {
-    measureHeroLines();
-    // Re-measure when the wrap can change: viewport resize and (if available) the
-    // ResizeObserver on the wrapper. Debounced so a drag-resize doesn't thrash.
-    let hlRaf = 0;
-    const remeasure = () => {
-      cancelAnimationFrame(hlRaf);
-      hlRaf = requestAnimationFrame(measureHeroLines);
-    };
-    window.addEventListener("resize", remeasure);
-    if ("ResizeObserver" in window && heroHL) {
-      new ResizeObserver(remeasure).observe(heroHL);
-    }
-    // Fonts load after first paint and can re-wrap the phrase — re-measure once ready.
-    if ("fonts" in document) {
-      (document as Document & { fonts: FontFaceSet }).fonts.ready.then(measureHeroLines);
-    }
+    if (reduceMotion) continue;
+    const words = Array.from(el.querySelectorAll<HTMLElement>(".hl-word"));
+    words.forEach((w, i) => w.style.setProperty("--hl-delay", `${i * HL_STAGGER_MS}ms`));
   }
 
   /* ---- B2 / B7 / B17: ALL highlight sweeps fire on scroll-into-view ----

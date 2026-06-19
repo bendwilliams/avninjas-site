@@ -41,7 +41,7 @@ const mustHome = [
   "In Person · Hybrid · All Virtual",
   "With Live Events, Attention is the Currency",
   "Don't Lose Your Audience!",
-  "The Invisible Army",
+  "The Distraction Machines in Our Pockets",
   "The Stakes have Never Been Higher!",
   "Solid AV is a Must. Headaches Optional!",
   "Sleep like a Baby",
@@ -119,7 +119,7 @@ const mustHome = [
   // §10 numbers + capabilities
   "1.5 - 3.5x",
   "Typical Savings",
-  "If we can't produce a paper trail for a revision, you don't pay.",
+  "If we can't produce a paper trail for a revision, you don't pay!",
   "We think that's transactional and gross.",
   "Presentation / GFX",
   "Lighting / Scenic",

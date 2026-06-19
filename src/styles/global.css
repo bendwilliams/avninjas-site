@@ -493,27 +493,35 @@ a {
   gap: var(--space-md);
 }
 
-/* ---- Highlight Law v2 (GL-003 §6) — lime marker, EXACTLY TWO elements site-wide.
-   #1 hero audience phrase: animated left→right draw, ONE CONTINUOUS sweep across
-   two segments (B2 round-5: line 1 flows INTO line 2, not parallel), SLOWED, and
-   gated to scroll-into-view (B17 — all animations trigger on scroll-into-view).
-   #2 No-Funny-Business trigger line: THREE separate per-phrase sweeps on
-   scroll-into-view (B7 round-5), dividers never highlighted.
-   The marker is NOT the accent (accent is blue). ---- */
+/* ============================================================================
+   HIGHLIGHT LAW v3 (GL-003 §6) — ONE methodology, audited site-wide (Rev 9).
+   ----------------------------------------------------------------------------
+   Two INTENTS, one engine. Every animated lime highlight on the site is one of:
 
-/* B2 — Revision 8: WRAP-AWARE hero highlight, line-by-line. The wrapper holds one
-   lime-marker span PER WORD (.hl-word). JS (measureHeroLines, index.astro) groups
-   the words by rendered offsetTop into VISUAL LINES and writes a --hl-delay on each
-   word so all words on line N start together and lines reveal top→bottom, while words
-   WITHIN a line draw left→right via a small per-word offset baked into --hl-delay.
-   This replaces the old two content-segments tuned to the desktop wrap — that split
-   could only match ONE wrap width, so on mobile (more lines) it lit several lines at
-   once (Ben's recurring bug). Now the split is the ACTUAL rendered line at any width.
-   Fired by JS adding .is-drawn (B17 observer); reduced-motion / no-JS pre-draw the
-   end state (see the noscript rule + reduced-motion block). --motion-hl-word = a word's
-   own draw time; the cumulative line+word delay is set per-word in JS via --hl-delay.
-   LINEAR transition so the line→line hand-off reads as one continuous sweep. */
-.hl-wordwrap { --motion-hl-word: 220ms; }
+   (1) CONTINUOUS — a single phrase that must read as ONE marker even when it wraps:
+       the hero audience phrase + the "Skip the Back and Forth" reassurance line.
+       RULE: each word is its own lime marker WITH its trailing space inside the span
+       (so the resting highlight has NO gaps), and words reveal in READING ORDER
+       (left→right, wrapping naturally top→bottom) via a uniform per-word stagger.
+       Draw time > stagger so the sweep front is continuous. Width-independent —
+       reading order never changes with the wrap, so it is correct at 320px and
+       1920px with ZERO measurement. This killed the recurring "lights two lines at
+       once / one starts before another finishes / stray gaps between words" bugs
+       (those came from content-tuned segment splits + spaces left outside markers).
+
+   (2) DISCRETE — intentionally separate phrases: the No-Funny-Business pillars
+       "Transparent Pricing | Painstaking Attention to Detail | No Surprises". RULE:
+       one marker per phrase, each draws fully, then a short --hl-phrase-gap pause,
+       then the next. The " | " dividers are never highlighted.
+
+   Shared engine: lime marker grown via background-size 0%→100%, box-decoration-
+   break: clone, fired by ONE IntersectionObserver adding .is-drawn on scroll-in.
+   Reduced-motion / no-JS: end state pre-drawn. Marker ≠ accent (accent is blue).
+   ============================================================================ */
+
+/* (1) CONTINUOUS — hero phrase + bf reassurance line. .hl-word is one word + its
+   trailing space; JS writes --hl-delay = wordIndex * --hl-word-stagger in reading
+   order. LINEAR draw so the per-word hand-off reads as one unbroken sweep. */
 .hl-word {
   background-image: linear-gradient(var(--color-highlight), var(--color-highlight));
   background-repeat: no-repeat;
@@ -522,41 +530,19 @@ a {
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
   color: var(--color-ink); /* ink over highlight ≈16.8:1 */
-  /* --hl-delay is written by JS from the word's measured visual-line membership;
-     defaults to 0 so before measurement (or if JS sets nothing) the order is sane. */
-  transition: background-size var(--motion-hl-word) linear;
+  transition: background-size var(--hl-word-draw) linear;
   transition-delay: var(--hl-delay, 0ms);
 }
 .highlight-sweep.is-drawn .hl-word { background-size: 100% 88%; }
 
-/* Revision 7 (Ben): Solid-AV "Skip the Back and Forth" reassurance line — the SAME
-   per-line sweep methodology as the hero. The phrase wraps across multiple visual
-   lines; splitting it into per-line .bf-seg markers (each draws left→right) and
-   SEQUENCING them means each line completes before the next starts — fixing the
-   old "all lines highlight at once" (one marker spanning the whole wrapped box).
-   Mechanism mirrors .highlight-seg: lime marker grown via background-size, linear
-   so the hand-off between lines reads continuous. Fired by the shared sweep
-   observer adding .is-drawn to the .highlight-sweep wrapper (this carries it too).
-   --motion-bf-seg = per-line draw time; each segment is delayed by the cumulative
-   duration of the segments before it, so the sweep flows line 1 → 2 → 3 → 4. */
-.bf-sweep { --motion-bf-seg: 620ms; }
-.bf-seg {
-  background-image: linear-gradient(var(--color-highlight), var(--color-highlight));
-  background-repeat: no-repeat;
-  background-size: 0% 88%;
-  background-position: 0 60%;
+/* The "Skip the Back and Forth" line uses the SAME continuous engine as the hero —
+   JS word-wraps it into .hl-word markers at runtime, so there are no hand-tuned
+   per-line segments to drift on a different wrap (the old .bf-seg--1..4 content-tuned
+   split is gone, Rev 9). It sits inline in body copy. */
+.highlight-sweep--inline {
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
-  color: var(--color-ink); /* ink over highlight ≈16.8:1 */
-  transition: background-size var(--motion-bf-seg) linear;
 }
-/* Sequence each line after the one before it — a single continuous top-to-bottom
-   draw, one visual line at a time. */
-.bf-seg--1 { transition-delay: 0ms; }
-.bf-seg--2 { transition-delay: var(--motion-bf-seg); }
-.bf-seg--3 { transition-delay: calc(2 * var(--motion-bf-seg)); }
-.bf-seg--4 { transition-delay: calc(3 * var(--motion-bf-seg)); }
-.bf-sweep.is-drawn .bf-seg { background-size: 100% 88%; }
 
 /* #2 — No-Funny-Business trigger line: SWEEPS/draws across on scroll-into-view
    (round-4 §16 — Ben). Same draw MECHANISM as the hero highlight (left→right
@@ -576,14 +562,11 @@ a {
 }
 .highlight-static.is-drawn { background-size: 100% 88%; }
 
-/* B7: No-Funny-Business — THREE separate per-phrase sweeps, dividers un-highlighted.
-   Each phrase segment is its own lime marker; the " | " dividers are plain text
-   (.nfb-divider, no marker). The segments are sequenced with a ½s gap so they draw
-   one after another (phrase 1 → ½s → phrase 2 → ½s → phrase 3) on scroll-into-view.
-   --motion-nfb-seg = per-phrase draw time; --motion-nfb-gap = the pause between.
-   v05: per-phrase draw 600ms → 850ms per Ben "a little bit more" (slower). The
-   gap is unchanged so the 3 sweeps stay distinctly sequenced. */
-.nfb-sweep { --motion-nfb-seg: 850ms; --motion-nfb-gap: 500ms; }
+/* (2) DISCRETE — No-Funny-Business: THREE separate per-phrase markers, dividers
+   un-highlighted. Each phrase is its own lime marker; the " | " dividers are plain
+   text (.nfb-divider). The phrases are sequenced — draw fully, pause --hl-phrase-gap,
+   next — on scroll-into-view. Rev 9 (Ben "a little bit less of a pause in between
+   each thing"): gap tightened 500ms → 220ms (token). Per-phrase draw unchanged. */
 .nfb-seg {
   background-image: linear-gradient(var(--color-highlight), var(--color-highlight));
   background-repeat: no-repeat;
@@ -593,12 +576,12 @@ a {
   -webkit-box-decoration-break: clone;
   color: var(--color-ink);
   padding-inline: 0.08em;
-  transition: background-size var(--motion-nfb-seg) var(--ease-out);
+  transition: background-size var(--hl-phrase-draw) var(--ease-out);
 }
-/* Stagger: seg1 at 0, seg2 after (seg+gap), seg3 after 2*(seg+gap). */
+/* Stagger: seg1 at 0, seg2 after (draw+gap), seg3 after 2*(draw+gap). */
 .nfb-seg--1 { transition-delay: 0ms; }
-.nfb-seg--2 { transition-delay: calc(var(--motion-nfb-seg) + var(--motion-nfb-gap)); }
-.nfb-seg--3 { transition-delay: calc(2 * (var(--motion-nfb-seg) + var(--motion-nfb-gap))); }
+.nfb-seg--2 { transition-delay: calc(var(--hl-phrase-draw) + var(--hl-phrase-gap)); }
+.nfb-seg--3 { transition-delay: calc(2 * (var(--hl-phrase-draw) + var(--hl-phrase-gap))); }
 .nfb-sweep.is-drawn .nfb-seg { background-size: 100% 88%; }
 /* Dividers are NEVER highlighted — plain text, inherit the section color. */
 .nfb-divider { background: none; }
@@ -863,8 +846,7 @@ ul.pillars-list li::before {
     background-size: 100% 88%; /* hero highlight pre-drawn end state (B2, R8 word-wrap) */
   }
   .highlight-static,
-  .nfb-seg,
-  .bf-seg {
+  .nfb-seg {
     transition: none;
     background-size: 100% 88%; /* sweeps pre-drawn (B7 + R7 back-and-forth) */
   }
