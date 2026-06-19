@@ -53,6 +53,7 @@ import finalCtaImg from "../assets/images/img-final-cta.jpg";
 import audInPersonImg from "../assets/images/img-audiences-in-person.jpg";
 import audHybridImg from "../assets/images/img-audiences-hybrid.jpg";
 import audVirtualImg from "../assets/images/img-audiences-virtual.jpg";
+import audiencesBleedImg from "../assets/images/img-audiences-bleed.jpg";
 // Round-4: the REAL back-logo composite (Mack §13) for the Attention section;
 // the transparent alien (Mack §15) dropped inline after "alien abduction".
 import attentionImg from "../assets/images/img-attention.png";
@@ -76,6 +77,8 @@ const audHybridAlt =
   "A smaller hotel meeting room where a presenter addresses an in-person audience while a large screen beside the stage shows a video-call grid of remote participants.";
 const audVirtualAlt =
   "A single presenter delivers to a softly blurred broadcast camera in a small, clean studio-style set, with a monitor beyond showing a full grid of virtual attendees.";
+const audiencesBleedAlt =
+  "A wide, elevated view of an enormous corporate ballroom packed wall-to-wall with hundreds of business attendees at round banquet tables, receding on a diagonal toward a lit stage at right under rows of chandeliers.";
 
 const audiences: Audience[] = [
   {
@@ -228,6 +231,12 @@ interface PackageTier {
   lead: string; // the prefix before the first "·", incl. its trailing ":"
   items: string[]; // the "·"-separated inclusions
   ignition?: boolean;
+  /** Revision 7 (Ben): per-card subtle color treatment. The sibling cards each get
+   *  their own tone — deliberately OUTSIDE the Ignition cool gradient's range
+   *  (navy/cobalt/teal/emerald) so they read as distinct from it. "amber" = warm
+   *  gold; "plum" = muted purple. Drives the .pkg-card--<tone> class (CSS below).
+   *  Ignition keeps its gradient (no tone). */
+  tone?: "amber" | "plum";
 }
 const packages: PackageTier[] = [
   {
@@ -237,6 +246,7 @@ const packages: PackageTier[] = [
     tagline: "Solid Essentials for Clear Communication",
     lead: "For Small-to-Medium Meetings:",
     items: ["No Frills", "No Compromises", "100% Reliable", "100% Pro"],
+    tone: "amber",
   },
   {
     icon: "pkg-conference",
@@ -250,6 +260,7 @@ const packages: PackageTier[] = [
       "All the Essentials",
       "Insane Value through Efficiencies!",
     ],
+    tone: "plum",
   },
   {
     icon: "pkg-ignition",
@@ -341,7 +352,8 @@ const capabilities: CapabilityColumn[] = [
     <style>
       .highlight-seg,
       .highlight-static,
-      .nfb-seg { background-size: 100% 88% !important; transition: none !important; }
+      .nfb-seg,
+      .bf-seg { background-size: 100% 88% !important; transition: none !important; }
       /* v05: no-JS — The Ninjas points are shown immediately (no fade). */
       .ninjas-points li { opacity: 1 !important; transform: none !important; transition: none !important; }
     </style>
@@ -388,7 +400,19 @@ const capabilities: CapabilityColumn[] = [
             <!-- [PENDING BEN: CTA destination — Calendly/contact not wired (Mack's layer)] -->
             <!-- Primary "Let's Talk" = the gradient POP moment (GL-003 §2 use #1) -->
             <a href="#" class="btn btn--gradient" data-pending="cta-destination">Let's Talk!</a>
-            <a href="#audiences" class="btn btn--secondary">Learn More</a>
+            <!-- Revision 6 (Ben): the hero "Learn More" loses its outline/border and
+                 gains a small DOWN-ARROW to its right — it points to the content
+                 below and reads as a "scroll down" affordance, not a bordered button.
+                 (It still smooth-scrolls to #audiences — navigation, GL-003 §7.) -->
+            <a href="#audiences" class="btn btn--learn">
+              Learn More
+              <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"
+                   fill="none" stroke="currentColor" stroke-width="1.75"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5v14"></path>
+                <path d="M6 13l6 6 6-6"></path>
+              </svg>
+            </a>
           </div>
         </div>
         <Image
@@ -416,8 +440,8 @@ const capabilities: CapabilityColumn[] = [
       <figure class="fullbleed audiences-bleed">
         <Image
           class="fullbleed__img"
-          src={audInPersonImg}
-          alt={audInPersonAlt}
+          src={audiencesBleedImg}
+          alt={audiencesBleedAlt}
           widths={[768, 1280, 1920]}
           sizes="100vw"
           loading="lazy"
@@ -553,8 +577,9 @@ const capabilities: CapabilityColumn[] = [
     <!-- ============ 5. SOUND DRAMATIC (cream — SPLIT img-left, head CENTERED) ============ -->
     <section class="section section--cream band-tight" id="sound-dramatic" aria-label="Sound Dramatic">
       <div class="container">
-        <!-- §14: headline on ONE line (no wrap). -->
-        <h2 class="sec-head sound-head">Sound Dramatic? Consider this...</h2>
+        <!-- §14: headline on ONE line (no wrap). Revision 6 (Ben): copy changed
+             "Sound Dramatic? Consider this..." → "Don't Lose Your Audience!" -->
+        <h2 class="sec-head sound-head">Don't Lose Your Audience!</h2>
         <div class="split split--img-left sound-split">
           <!-- MOTION MOMENT 2 of 3 (§10): a real VIDEO of a phone buzzing on the
                banquet table. No synthetic screen, no notification overlay — the
@@ -660,9 +685,34 @@ const capabilities: CapabilityColumn[] = [
               well… then you already know.
             </p>
             <p>If you haven't—congratulations. We'd recommend opting out altogether!</p>
+            <!-- Revision 6 (Ben): apply the hero's animated highlight-SWEEP to this
+                 phrase. Same mechanism as the hero (.highlight-sweep wrapper +
+                 .highlight-seg lime marker, drawn left→right) — the shared JS observer
+                 fires it on scroll-into-view; reduced-motion / no-JS pre-draw the
+                 end state (global.css + the <noscript> rule). The whole sentence is
+                 ONE segment so the nested quotes — "what does AV stand for?" — stay
+                 inside a single tag boundary and the decoded copy keeps the verbatim
+                 contiguous run '"what does AV stand for?", we've got you!' (the
+                 fidelity check string). The wrapper boundary only injects whitespace
+                 at the OUTER edges, never inside the checked substring.
+                 NOTE: GL-003 §6 Highlight Law sanctions exactly TWO highlighted
+                 phrases; this is a Ben-directed THIRD — flagged to Iris/Vera (audit
+                 tripwire §6 highlight-spread). -->
+            <!-- Revision 7 (Ben): apply the HERO's per-line sweep methodology here.
+                 The phrase wraps across multiple visual lines; the old SINGLE .highlight-seg
+                 grew one marker rect across the whole wrapped inline box, so every line lit
+                 AT ONCE. Now the phrase is split into per-visual-line segments (.bf-seg),
+                 each its own lime marker that draws left→right and is SEQUENCED so each line
+                 completes before the next begins (same device as .highlight-seg--1/--2 on the
+                 hero). Splits fall ONLY at existing spaces, so the decoded copy keeps the
+                 verbatim contiguous run — including the fidelity-checked substring
+                 '"what does AV stand for?", we've got you!' (the boundary between seg 3 and
+                 seg 4 sits at the space after the comma, inside that run; the decode collapses
+                 the injected space + the original space to one, so the substring is intact).
+                 Reduced-motion / no-JS pre-draw the end state (global.css + <noscript>). -->
             <p>
-              Whether you're an experienced meeting planner or you just googled "what does
-              AV stand for?", we've got you!
+              <span class="highlight-sweep bf-sweep highlight-sweep--inline"
+                ><span class="bf-seg bf-seg--1">Whether you're an experienced meeting</span> <span class="bf-seg bf-seg--2">planner or you just googled</span> <span class="bf-seg bf-seg--3">"what does AV stand for?",</span> <span class="bf-seg bf-seg--4">we've got you!</span></span>
             </p>
           </div>
           <div class="solid-cell">
@@ -851,10 +901,24 @@ const capabilities: CapabilityColumn[] = [
          ============================================================ -->
 
     <!-- ============ 11. PACKAGES (dark — GRID, head CENTERED) ============ -->
-    <section class="section section--roomy section--dark" id="packages" data-dark-fade aria-label="Packages">
-      <div class="container">
+    <!-- Revision 6 (Ben/Larry): the e-commerce "moment." DESKTOP = full-viewport
+         cinematic pitch-deck beat (min-height: 100dvh, content vertically centered)
+         on the deep-ink ground, with a tasteful brand-cool radial glow behind the
+         Ignition (hero) card. The three cards scale up with generous spacing. Cards
+         RISE IN, staggered, on scroll-into-view (the shared [data-stagger-reveal]
+         observer; reduced-motion = present, no animation). MOBILE does NOT force
+         100dvh (three cards can't share one phone screen) — it scrolls naturally but
+         keeps the dark ground + the staggered entrance so it still feels like a beat. -->
+    <section class="section section--roomy section--dark packages-section" id="packages" data-dark-fade aria-label="Packages">
+      <!-- Brand cool-gradient radial glow accent behind the Ignition card (GL-003
+           §2 cool gradient as a tasteful accent, not a rave). Decorative; hidden
+           from AT. Sits under the grid; the cards render above it. -->
+      <div class="packages-glow" aria-hidden="true"></div>
+      <div class="container packages-inner">
         <h2 class="sec-head pkg-heading">Packages</h2>
-        <div class="pkg-grid">
+        <!-- data-stagger-reveal: the existing observer adds .is-revealed on
+             scroll-into-view; per-card transition-delay (CSS) staggers the rise. -->
+        <div class="pkg-grid" data-stagger-reveal>
           <!-- §19 / Iris §J: DARK card (#1C1C22) + reversed WHITE heading bar at the
                top carrying the NAME (dominant) + "Starting at $X" (small, beneath).
                B14/B15 (round-5): inclusions render as a per-line CHECK-MARK list (one
@@ -863,7 +927,7 @@ const capabilities: CapabilityColumn[] = [
                still contains the exact middot string). Ignition (§19 / Iris §J.2):
                gradient-FILL header band + DEEPER body + DOUBLED 5px gradient outline. -->
           {packages.map((pkg) => (
-            <article class={`pkg-card${pkg.ignition ? " pkg-card--ignition" : ""}`}>
+            <article class={`pkg-card${pkg.ignition ? " pkg-card--ignition" : ""}${pkg.tone ? ` pkg-card--${pkg.tone}` : ""}`}>
               <div class={`pkg-bar${pkg.ignition ? " pkg-bar--ignition" : ""}`}>
                 <p class="pkg-head tabular">
                   <span class="pkg-price">{pkg.price}</span><span class="pkg-join" aria-hidden="true"> — </span><span class="pkg-name">{pkg.name}</span>
@@ -876,7 +940,19 @@ const capabilities: CapabilityColumn[] = [
                     items as sr-only joiners so the decoded copy stays verbatim. */}
                 <p class="pkg-lead">{pkg.lead}<span class="sr-only"> {pkg.items.join(" · ")}</span></p>
                 <ul class="pkg-list">
-                  {pkg.items.map((item) => <li>{item}</li>)}
+                  {/* Revision 7 (Ben): in the Ignition card, EMPHASIZE the phrase
+                      "All the Sizzle of the Vegas Strip" (tasteful — bold + the
+                      gradient-emerald accent, GL-003 §2 Ignition color exception). The
+                      visible <li> is wrapped in <strong class="pkg-sizzle">; the
+                      copy-fidelity contiguous run lives in the sr-only "·" joiner on
+                      .pkg-lead above (untouched), so emphasis here is safe. */}
+                  {pkg.items.map((item) =>
+                    item === "All the Sizzle of the Vegas Strip" ? (
+                      <li><strong class="pkg-sizzle">{item}</strong></li>
+                    ) : (
+                      <li>{item}</li>
+                    ),
+                  )}
                 </ul>
               </div>
             </article>
@@ -1118,6 +1194,32 @@ const capabilities: CapabilityColumn[] = [
     }
   }
   .hero-copy { align-self: center; }
+
+  /* Revision 6 (Ben): hero "Learn More" — NO outline/border, with a down-arrow to
+     the right of the label. Borderless secondary affordance (a "scroll down" cue),
+     ink text, gap to the arrow. Keeps the .btn pill sizing/typography for rhythm
+     with the gradient primary beside it, but drops the outline entirely. Hover +
+     focus-visible nudge the arrow down to reinforce "go down." */
+  .btn--learn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    background: transparent;
+    border-color: transparent; /* explicitly no outline/border (base .btn is transparent border) */
+    color: var(--color-ink);
+    padding-inline: var(--space-md); /* tighter than the bordered pill — it's not a boxed button */
+  }
+  .btn--learn .btn-arrow {
+    flex: none;
+    transition: transform var(--motion-micro) var(--ease-out);
+  }
+  .btn--learn:hover,
+  .btn--learn:focus-visible { color: var(--color-accent); }
+  .btn--learn:hover .btn-arrow,
+  .btn--learn:focus-visible .btn-arrow { transform: translateY(2px); }
+  @media (prefers-reduced-motion: reduce) {
+    .btn--learn .btn-arrow { transition: none; }
+  }
   /* B3 (round-5): accent the service words on the LIGHT hero ground (light voice
      #1D4ED8 — AA 5.4:1 on canvas). Weight bump so the color reads as emphasis. */
   .svc-accent { color: var(--color-accent); font-weight: 600; }
@@ -1128,16 +1230,17 @@ const capabilities: CapabilityColumn[] = [
     font-size: clamp(2.75rem, 1.72rem + 4.4vw, 5.05rem);
   }
   .hero-copy h1 { margin-bottom: var(--space-lg); }
+  /* Revision 7 (Ben): the hero image (now 1264×848, native ~3:2) displays at its
+     NATIVE aspect ratio — UNCROPPED. The prior forced full-bleed crop (height:100%
+     + min-height + object-fit:cover + object-position) cropped the new 3:2 regen, so
+     it is removed. The <img> keeps its intrinsic ratio (width:100%, height:auto), so
+     the picture shows the whole frame at ~3:2 and shrinks responsively. */
   .img-real.hero-img {
     width: 100%;
-    height: 100%;
-    min-height: 360px;
-    object-fit: cover;
-    object-position: center 42%; /* keep the trio + room in frame */
+    height: auto;
+    object-fit: contain; /* no crop — show the whole native frame */
+    align-self: center;  /* don't let the grid stretch the image off-ratio */
     border-radius: var(--radius-md);
-  }
-  @media (min-width: 920px) {
-    .img-real.hero-img { min-height: min(72dvh, 660px); }
   }
   .hero-kicker {
     font-family: var(--font-heading);
@@ -1476,6 +1579,18 @@ const capabilities: CapabilityColumn[] = [
     margin-bottom: var(--space-sm);
     font-size: clamp(3.2rem, 1.7rem + 6.45vw, 6.9rem);
   }
+  /* Revision 6 (Ben) 7c: on phones the --text-mega clamp still rendered "NO FUNNY
+     BUSINESS, GUARANTEED." big enough that "GUARANTEED." (11 uppercase chars) bled /
+     wrapped awkwardly onto its own ragged line. Tune a smaller, fluid size below the
+     mobile breakpoint so the headline sits cleanly — still big and bold (it's the
+     mega contrast moment), just sized to fit a 320–600px line. Above 600px the
+     unchanged clamp above governs (desktop contrast intact). */
+  @media (max-width: 600px) {
+    .nfb-heading {
+      font-size: clamp(2rem, 1.1rem + 4.6vw, 2.8rem);
+      letter-spacing: 0.005em;
+    }
+  }
   /* Small red "IF YOU KNOW, YOU KNOW" line between the headline and the pillars. */
   .nfb-iykyk {
     font-family: var(--font-heading);
@@ -1487,6 +1602,24 @@ const capabilities: CapabilityColumn[] = [
     margin: 0 0 var(--space-lg);
   }
   .nfb-triggers { margin-bottom: 0; line-height: 1.7; }
+  /* Revision 6 (Ben) 7d: on MOBILE the three trigger phrases break onto their own
+     3 lines and the vertical "|" dividers are removed. Desktop (≥601px) keeps the
+     inline single-line form WITH the "|" dividers (unchanged). Each phrase is its
+     own .nfb-seg lime marker, so the per-phrase highlight sweep keeps working on
+     both layouts — stacking the segments doesn't touch the sweep mechanism. The
+     dividers are aria-hidden decorative text (not canonical copy), so hiding them
+     on mobile is safe for copy fidelity + a11y. */
+  @media (max-width: 600px) {
+    .nfb-triggers {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+    .nfb-triggers .nfb-divider { display: none; } /* drop the "|" on mobile */
+    /* fit-content so the lime marker hugs each phrase (not a full-width band). */
+    .nfb-triggers .nfb-seg { width: fit-content; }
+  }
   .btn--big { max-width: 720px; text-wrap: balance; }
   /* "It's our job to ask the right questions…" — accent-colored, "our job" bold.
      Solid-AV is a light/cream ground → light-voice accent. */
@@ -1499,6 +1632,60 @@ const capabilities: CapabilityColumn[] = [
   .final-cta-section { padding: 0; }
 
   /* ============ PACKAGES (§19 / Iris §J — dark card + reversed white bar) ============ */
+
+  /* Revision 6 (Ben/Larry): the Packages section is a cinematic full-viewport
+     "moment" on DESKTOP. Position context for the cool-gradient glow accent; the
+     full-height + vertical-centering is applied at the desktop breakpoint only
+     (mobile must NOT force 100dvh — three cards can't share one phone screen). */
+  .packages-section {
+    position: relative;
+    overflow: hidden; /* clip the radial glow to the section */
+  }
+  .packages-inner {
+    position: relative;
+    z-index: 1; /* content sits above the glow */
+  }
+  /* The brand cool-gradient radial glow behind the Ignition (hero) card. On the
+     desktop 3-track grid Ignition is the LAST (right) column, so the glow is
+     weighted to the right; on mobile it centers. Tasteful, low-opacity — a
+     premium pitch-deck wash, not a rave (GL-003 §2 cool gradient as accent). */
+  .packages-glow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        60% 55% at 50% 50%,
+        color-mix(in srgb, var(--grad-stop-2) 26%, transparent) 0%,
+        color-mix(in srgb, var(--grad-stop-3) 14%, transparent) 42%,
+        transparent 72%
+      );
+    opacity: 0.55;
+  }
+  @media (min-width: 880px) {
+    /* DESKTOP: full-viewport pitch-deck beat — fill the screen, center the
+       content vertically. min-height (not height) so taller content never clips. */
+    .packages-section {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    /* Glow weighted to the right where the Ignition (hero) card sits, leaning into
+       its existing gradient pop so the hero tier dominates the dark ground. */
+    .packages-glow {
+      background:
+        radial-gradient(
+          46% 62% at 78% 52%,
+          color-mix(in srgb, var(--grad-stop-2) 30%, transparent) 0%,
+          color-mix(in srgb, var(--grad-stop-3) 16%, transparent) 40%,
+          transparent 70%
+        );
+      opacity: 0.6;
+    }
+  }
+
   .pkg-grid {
     display: grid;
     gap: var(--space-xl);
@@ -1516,13 +1703,42 @@ const capabilities: CapabilityColumn[] = [
     .pkg-grid {
       grid-template-columns: 1fr 1.2fr 1fr;
       align-items: center; /* the taller centerpiece centers against its siblings */
+      /* Revision 6: cards SCALE UP with generous spacing on the full-viewport
+         desktop moment — wider inter-card gutter + a roomier max measure so the
+         trio reads big and premium against the dark ground. */
+      gap: var(--space-2xl); /* 48px gutter (was --space-xl/32px) */
+      max-width: 1100px;
+      margin-inline: auto;
     }
     /* Larger in the vertical axis too — roomier body so the middle (Conference)
        card is ~20% bigger overall. */
     .pkg-grid > .pkg-card:nth-of-type(2) .pkg-body { padding: var(--space-2xl) var(--space-2xl) var(--space-3xl); }
     .pkg-grid > .pkg-card:nth-of-type(2) .pkg-icon :global(.icon) { transform: scale(1.12); transform-origin: left center; }
   }
+  /* Revision 6: more air above the cards on the full-height desktop moment so the
+     heading breathes at the top of the centered beat. */
   .pkg-heading { margin-bottom: var(--space-2xl); }
+  @media (min-width: 880px) {
+    .pkg-heading { margin-bottom: var(--space-3xl); }
+  }
+
+  /* Revision 6 — STAGGERED ENTRANCE. Each card starts faded + slightly down; the
+     shared [data-stagger-reveal] observer adds .is-revealed on scroll-into-view,
+     and the per-card transition-delay makes them rise one after another. Matches
+     the established .ninjas-points reveal pattern. Reduced-motion: cards just
+     present (handled in the reduced-motion block below). */
+  .pkg-grid[data-stagger-reveal] > .pkg-card {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 560ms var(--ease-out),
+      transform 560ms var(--ease-out);
+    will-change: opacity, transform;
+  }
+  .pkg-grid.is-revealed > .pkg-card { opacity: 1; transform: none; }
+  .pkg-grid.is-revealed > .pkg-card:nth-of-type(1) { transition-delay: 0ms; }
+  .pkg-grid.is-revealed > .pkg-card:nth-of-type(2) { transition-delay: 130ms; }
+  .pkg-grid.is-revealed > .pkg-card:nth-of-type(3) { transition-delay: 260ms; }
 
   /* Card body: dark charcoal #1C1C22 lifting off the #111115 section, 1px
      hairline edge, 16px radius. No padding on the card itself — the white bar
@@ -1682,7 +1898,68 @@ const capabilities: CapabilityColumn[] = [
   .pkg-bar--ignition .pkg-name { color: var(--color-surface); }
   .pkg-bar--ignition .pkg-price { color: color-mix(in srgb, var(--color-surface) 88%, transparent); }
 
+  /* ============ Revision 7 (Ben): sibling-card SUBTLE per-card color ============
+     Only Ignition had color (its cycling cool gradient). Give Meeting Essentials and
+     Conference each their own subtle tone so the three cards read as differentiated.
+     CRITICAL (Ben): the tones must be CLEARLY outside every color the Ignition
+     gradient cycles through (navy/cobalt/teal/emerald = cool blue→green). So:
+       • Meeting Essentials → WARM AMBER / GOLD  (far warm side of the wheel)
+       • Conference        → MUTED PLUM / PURPLE (violet — off the cool blue→green run)
+     Subtle, not loud (PV 4–7): a soft tinted HEADING BAR wash (ink text stays AA) +
+     a tinted ICON + tinted CHECK-MARKS, all in one hue per card. The cards stay the
+     same dark --color-card body + hairline; only the accent hue changes. This is a
+     deliberate deviation from GL-003 §8 (sibling checks = blue --color-accent-bright)
+     and §5a (sibling icons = monochrome) — Ben-directed; flagged to Iris/Vera.
+
+     Contrast (on the dark card body #1C1C22): amber #E6B566 ≈ 8.3:1, plum #CBA6E4
+     ≈ 7.9:1 — both pass AA for the small check text. Ink #111115 on the soft bar
+     washes (#FBF3E1 amber / #F1EBF7 plum, ~95% L) stays ≈16:1 — AA for name+price. */
+  .pkg-card--amber { --pkg-tone: #e6b566; --pkg-bar-wash: #fbf3e1; }
+  .pkg-card--plum  { --pkg-tone: #cba6e4; --pkg-bar-wash: #f1ebf7; }
+
+  /* Soft tinted heading bar — replaces the plain white reversed bar with a gentle
+     wash of the card's hue. Ink name + price stay AA on the near-white wash. */
+  .pkg-card--amber > .pkg-bar,
+  .pkg-card--plum > .pkg-bar { background: var(--pkg-bar-wash); }
+
+  /* Tinted icon + check-marks — the card's accent, replacing the canvas/blue. */
+  .pkg-card--amber .pkg-icon,
+  .pkg-card--plum .pkg-icon { color: var(--pkg-tone); }
+  .pkg-card--amber ul.pkg-list li::before,
+  .pkg-card--plum ul.pkg-list li::before { color: var(--pkg-tone); }
+  /* A thin accent rule under the heading bar so the hue reads even at a glance. */
+  .pkg-card--amber > .pkg-bar,
+  .pkg-card--plum > .pkg-bar { border-bottom: var(--border-standard) solid var(--pkg-tone); }
+  /* Focus ring within a toned card uses its tone (still AA / visible on dark). */
+  .pkg-card--amber :global(:focus-visible),
+  .pkg-card--plum :global(:focus-visible) { outline-color: var(--pkg-tone); }
+
   .pkg-card :global(:focus-visible) { outline-color: var(--color-accent-bright); }
+
+  /* Revision 7 (Ben): emphasize "All the Sizzle of the Vegas Strip" in the Ignition
+     card. Bold + the --gradient-pop clipped to the text — the card's own sanctioned
+     cool gradient (GL-003 §2 Ignition surface / §5a Ignition color exception), so the
+     phrase literally "sizzles" without introducing a new color or breaking scarcity.
+     A solid --color-accent-bright fallback paints first (older engines / no
+     background-clip:text) so the phrase is always legible + AA (6.4:1 on the ink
+     body) even if the gradient clip isn't supported. */
+  .pkg-sizzle {
+    font-weight: 800;
+    color: var(--color-accent-bright); /* AA fallback on the Ignition ink body */
+    /* AA-safe "sizzle" gradient: only the BRIGHT stops (sky → teal → emerald, all
+       ≥5:1 on the Ignition ink body). The full --gradient-pop's navy/cobalt LEFT
+       stops painted the leading words <3:1 on dark — failed AA (Vera R7 MED). */
+    background-image: linear-gradient(100deg, var(--color-accent-bright) 0%, var(--grad-stop-3) 52%, var(--grad-stop-4) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.005em;
+  }
+  /* Reduced-motion is irrelevant here (no animation); high-contrast / forced-colors
+     fall back to the solid accent-bright via the color above. */
+  @media (forced-colors: active) {
+    .pkg-sizzle { -webkit-text-fill-color: currentColor; color: currentColor; }
+  }
 
   /* ============ MISSION CONTROL (SPLIT + steps GRID) ============ */
   .kicker {
@@ -1772,6 +2049,13 @@ const capabilities: CapabilityColumn[] = [
     /* B16: pause the Ignition gradient drift; hold a legible static gradient. */
     .pkg-card--ignition,
     .pkg-bar--ignition { animation: none; }
+    /* Revision 6: the staggered card entrance degrades to its end state — cards
+       just present, no rise, no fade (GL-003 §7 reduced-motion floor). */
+    .pkg-grid[data-stagger-reveal] > .pkg-card {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 
   /* ============ CAPABILITIES — centered GRID, left-aligned lines inside ============ */
@@ -1782,16 +2066,28 @@ const capabilities: CapabilityColumn[] = [
     margin-top: var(--space-2xl);
   }
   .cap-col { text-align: left; }
+  /* Revision 7 (Ben): the "Full Breakdown of our Capabilities" section read flat.
+     Add visual interest with an ACCENT treatment on the four category titles
+     (Audio / Video / Presentation-GFX / Lighting): the category ICON now carries the
+     accent blue (light ground → --color-accent #1D4ED8, AA 5.4:1), the heading text
+     itself is set in the accent, and the under-rule is the accent (was plain ink).
+     Tasteful + on-brand per GL-003 §2 (accent as punctuation on a light ground) — it
+     differentiates the four columns and gives the section a clear visual rhythm
+     without adding any new color or breaking the accent-scarcity discipline (the
+     accent here marks four peer section sub-heads, one consistent role). */
   .cap-title {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
     font-size: var(--text-h4);
     line-height: var(--leading-h4);
-    border-bottom: 2px solid var(--color-ink);
+    color: var(--color-accent);
+    border-bottom: 2px solid var(--color-accent);
     padding-bottom: var(--space-sm);
     margin-bottom: var(--space-md);
   }
+  /* the category icon takes the accent too (light ground; AA) */
+  .cap-title :global(.icon) { color: var(--color-accent); }
   .cap-list { margin: 0; }
   .cap-list li { padding-block: var(--space-xs); }
   /* second-tier capability items (e.g. FOH/Broadcast/Monitor under Audio Consoles) */

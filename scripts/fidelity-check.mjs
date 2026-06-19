@@ -40,7 +40,7 @@ const mustHome = [
   "Audiences of Every Shape and Size",
   "In Person · Hybrid · All Virtual",
   "With Live Events, Attention is the Currency",
-  "Sound Dramatic? Consider this...",
+  "Don't Lose Your Audience!",
   "The Invisible Army",
   "The Stakes have Never Been Higher!",
   "Solid AV is a Must. Headaches Optional!",

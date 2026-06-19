@@ -1,8 +1,9 @@
 ---
 /**
  * Marquee — ambient texture, NOT a motion moment (GL-003 §7/§8).
- * Slow linear loop (48s), pauses on hover, renders as a static wrapped list
- * under prefers-reduced-motion (handled in global.css).
+ * Slow linear loop (48s); renders as a static wrapped list under
+ * prefers-reduced-motion (handled in global.css). Revision 6 (Ben): pause-on-hover
+ * REMOVED — the stop read as "these items are clickable links," which they are not.
  *
  * SEAMLESS LOOP (round-4 §12): the content set is TRIPLICATED (three identical
  * lists, the two extras aria-hidden). Each list carries its own trailing gap, the

@@ -223,13 +223,18 @@ const typicalCrew = Array.from({ length: 8 });
 </div>
 
 <style>
+  /* Revision 6 (Ben/Larry): NO horizontal scroll, and NOT a tall stack of big
+     cards either. DESKTOP keeps the real 2-column table (unchanged). MOBILE
+     (≤767px) reflows each feature into ONE compact row — AV Ninjas vs Typical
+     side-by-side at reduced scale — see the @media block at the end of this style.
+     The old internal-scroll hack (overflow-x:auto + 560px min-width + contain:paint)
+     is REMOVED; document-level h-scroll stays 0 at 320→767 because nothing forces
+     an intrinsic width wider than the viewport anymore. */
   .cmp-wrap {
-    overflow-x: auto; /* graceful below ~480px; table scrolls INTERNALLY — sanctioned wide-table exception */
-    contain: paint; /* Vera v5 H-1: stop the clipped 560px table from leaking its intrinsic width into documentElement.scrollWidth. root overflow-x:clip kills the pan; this resets the reported scroll metric so scrollWidth==clientWidth, without touching internal scroll. */
+    width: 100%;
   }
   .cmp {
     width: 100%;
-    min-width: 560px;
     border-collapse: collapse;
     text-align: center;
     /* B11 (round-5): tighter table — body steps down slightly so the whole table
@@ -311,8 +316,18 @@ const typicalCrew = Array.from({ length: 8 });
     gap: var(--space-xs);
     color: var(--color-accent);
   }
+  /* Revision 7 (Ben changed his mind): the Typical-Provider "Setup Time" stopwatch
+     now uses --color-warning (#B45309) — the EXACT same token as the Typical
+     Provider's amber/"mid" Crew-Competency-Level bars in this same table — so the
+     stopwatch and the warning competency bars read as one coherent "this is the
+     weaker side" signal. Supersedes the Revision-6 --color-accent-red. NOTE: GL-003
+     §2/§9 currently records the stopwatch as a sanctioned --color-accent-red use
+     (Revision-6); flag to Iris/Vera to re-point that to --color-warning. Meaning is
+     still carried by the long elapsed-wedge SHAPE (color not the sole carrier, §9);
+     #B45309 on the light table is 4.99:1 as text (AA) — a stronger contrast floor
+     than the prior red, so this is an accessibility improvement too. */
   .cmp-time--slow {
-    color: var(--color-gray);
+    color: var(--color-warning);
   }
   /* v04 §3: align each competency bar DIRECTLY under its crew figure. The bar set
      now mirrors the .cmp-crew geometry EXACTLY — same flex container, same
@@ -329,4 +344,113 @@ const typicalCrew = Array.from({ length: 8 });
      each bar's 24-unit viewBox got wider (width 7 → 11, re-centered at x=6.5 so the
      bar stays centered in its slot). Slot geometry is identical, so alignment holds. */
   .cmp-bar { width: 31px; height: 31px; } /* same slot as .cmp-figure */
+
+  /* ============================================================
+     Revision 6 — MOBILE REFLOW (≤767px). NO horizontal scroll, and COMPACT —
+     "about as compact as the table is now, just reflowed" (Ben's constraint).
+     Each feature becomes ONE tight block: the feature label on top, then the two
+     data cells (AV Ninjas | Typical) SIDE-BY-SIDE below at reduced scale, so the
+     head-to-head CONTRAST is preserved. The wide rows (8 typical figures, the
+     bars) WRAP to fit (4+4) instead of overflowing. The desktop table above is
+     untouched (this whole block is inside the max-width media query).
+     ============================================================ */
+  @media (max-width: 767px) {
+    /* Collapse the table semantics to blocks so each row stacks and each row's
+       cells can lay out as a 2-up grid. The <table> stays valid HTML; only the
+       visual box model changes (screen readers still read the table structure;
+       the per-cell column label restores the head-to-head context the hidden
+       thead would otherwise carry). */
+    .cmp,
+    .cmp tbody,
+    .cmp tr,
+    .cmp th,
+    .cmp td {
+      display: block;
+    }
+    /* Strip the per-cell hairline + desktop cell padding on mobile — the row block
+       carries its own separator, so cell borders would just add noise + height. */
+    .cmp th,
+    .cmp td {
+      border-bottom: 0;
+      padding: 0;
+    }
+
+    /* The thead (Feature / AV Ninjas / Typical) is redundant once each row carries
+       its own inline column labels — remove it from the compact layout. The table
+       still has its sr-only <caption> ("How We Stack Up") and per-row <th scope=row>
+       headers; each data cell gets a visible "AV Ninjas"/"Typical" label below, so
+       the head-to-head context survives the reflow. display:none (not absolute)
+       avoids the thead escaping its container and overlapping other sections. */
+    .cmp thead { display: none; }
+
+    /* Each feature row = a compact card-ish block, but TIGHT (no big-card bloat):
+       a thin hairline separator + small vertical rhythm, not heavy padding. */
+    .cmp tbody tr {
+      border-bottom: 1px solid var(--color-cream);
+      padding-block: var(--space-sm);
+    }
+    .cmp tbody tr:last-child { border-bottom: 0; }
+
+    /* Feature label on its own line, tight. */
+    .cmp tbody th[scope="row"] {
+      text-align: left;
+      padding: 0 0 var(--space-xs);
+      font-size: var(--text-small);
+      font-weight: 600;
+    }
+
+    /* The two data cells sit SIDE-BY-SIDE (AV Ninjas | Typical) — the head-to-head
+       contrast is the whole point. A 2-col grid keeps them aligned and equal-width.
+       A faint center divider reinforces the "vs" without adding height. */
+    .cmp tbody tr {
+      /* re-establish a grid on the row for the two td children; the row-label th
+         spans both columns via grid-column. */
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: var(--space-sm);
+      row-gap: 0;
+      align-items: start;
+    }
+    .cmp tbody th[scope="row"] { grid-column: 1 / -1; }
+
+    /* Each data cell: a small inline column label (AV Ninjas / Typical) above the
+       value, so the contrast reads without the thead. Reduced scale + tight pad. */
+    .cmp tbody td {
+      padding: var(--space-xs) 0 0;
+      text-align: center;
+      position: relative;
+    }
+    .cmp tbody td:first-of-type::before { content: "AV Ninjas"; }
+    .cmp tbody td:last-of-type::before { content: "Typical"; }
+    .cmp tbody td::before {
+      display: block;
+      font-family: var(--font-heading);
+      font-size: var(--text-eyebrow);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-xs);
+    }
+    /* AV Ninjas = accent (the "win" side); Typical = muted gray (lighter weight,
+       per Ben's 700/400 desktop intent translated to the compact view). */
+    .cmp tbody td:first-of-type::before { color: var(--color-accent); font-weight: 700; }
+    .cmp tbody td:last-of-type::before { color: var(--color-gray); font-weight: 400; }
+
+    /* Reduce the icon/figure scale so a feature reads compactly side-by-side and
+       the wide rows wrap 4+4 instead of overflowing. The crew + bar sets already
+       flex-wrap + center; smaller slots make 8 figures wrap to 4+4 within half the
+       viewport width. */
+    .cmp-time .cmp-icon { width: 30px; height: 30px; } /* was 40px */
+    .cmp-figure { width: 22px; height: 22px; }         /* was 31px */
+    .cmp-bar { width: 22px; height: 22px; }            /* keep bar slot == figure slot so bar N still sits under figure N */
+    .cmp-crew,
+    .cmp-barset { gap: 3px; }
+
+    /* Hard cap each crew/bar set so 8 figures wrap to two rows of four within the
+       narrow half-column (4 × 22px + 3 × 3px gaps ≈ 97px). Keeps the row short. */
+    .cmp-crew,
+    .cmp-barset {
+      max-width: 100px;
+      margin-inline: auto;
+    }
+  }
 </style>

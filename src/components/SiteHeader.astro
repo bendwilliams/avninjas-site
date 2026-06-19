@@ -7,8 +7,14 @@
  *     30–50% larger than typical per GL-003 §4 — "doesn't scale small well").
  *   • Menu hidden while at the very top (over the hero); appears only after
  *     the user scrolls past the hero entirely.
- *   • Menu items: "Audience and Event Formats" (→ #audiences), "The Ninja Way"
- *     (→ #the-ninjas), "Packages" (→ #packages). No CTA button to the right.
+ *   • Menu items (Revision 6): "Event Formats" (→ #audiences; shortened from
+ *     "Audience and Event Formats" so the 3 items fit one line on mobile),
+ *     "The Ninja Way" (→ #the-ninjas), "Packages" (→ #packages).
+ *   • Revision 6 (Ben): a "Let's Talk" CTA button to the RIGHT of "Packages"
+ *     (the site's primary action — gradient pop per GL-003 §2/§8). href="#" +
+ *     data-pending="cta-destination" like the other CTAs (Mack's layer wires it).
+ *   • Revision 6 (Ben) MOBILE: the "Let's Talk" CTA sits beside the logo in the
+ *     header top row (the nav links wrap to their own line beneath).
  *
  * Header obeys the same container/max-width as the rest of the site (Ben, May 27).
  * Logo: real transparent PNG (master mark), src/assets/logo/av-ninjas-logo.png.
@@ -19,7 +25,9 @@ import { Image } from "astro:assets";
 import logo from "../assets/logo/av-ninjas-logo.png";
 
 const navItems = [
-  { label: "Audience and Event Formats", href: "#audiences" },
+  // Revision 6 (Ben): shortened "Audience and Event Formats" → "Event Formats" so
+  // the three nav items fit on one line on mobile (short label used everywhere).
+  { label: "Event Formats", href: "#audiences" },
   { label: "The Ninja Way", href: "#the-ninjas" },
   { label: "Packages", href: "#packages" },
 ] as const;
@@ -44,6 +52,16 @@ const navItems = [
         ))}
       </ul>
     </nav>
+    <!-- Revision 6 (Ben): primary "Let's Talk" CTA, to the right of "Packages".
+         Gradient pop — the same primary action as the hero/mid/final CTAs (GL-003
+         §2 use #1: recurrence of the one promoted action is sanctioned, not spread).
+         Placeholder destination like the others. On mobile this sits beside the
+         logo (the nav wraps below — see the media query). -->
+    <a
+      href="#"
+      class="btn btn--gradient site-header__cta"
+      data-pending="cta-destination"
+    >Let's Talk</a>
   </div>
 </header>
 
@@ -74,10 +92,12 @@ const navItems = [
   .site-header__inner {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: var(--space-lg);
     padding-block: var(--space-md);
   }
+  /* Logo left, nav takes the slack, CTA pinned right (Revision 6). */
+  .site-header__nav { margin-left: auto; }
+  .site-header__cta { margin-left: var(--space-lg); }
   .site-header__logo {
     display: inline-flex;
     border-radius: var(--radius-sm);
@@ -106,14 +126,48 @@ const navItems = [
   .site-header__nav a:hover {
     color: var(--color-accent);
   }
-  /* Mobile: keep the logo, let the three short links wrap under it gracefully. */
+
+  /* Header CTA (Revision 6): the gradient primary, sized DOWN for the nav bar —
+     the base .btn (--text-body-lg + --space-lg/2xl padding) is body-CTA scale and
+     too large for a header. Keep the gradient pop + pill, trim the type + padding. */
+  .site-header__cta.btn {
+    font-size: var(--text-small);
+    padding: var(--space-sm) var(--space-lg);
+    flex: none;
+    white-space: nowrap;
+  }
+  /* Revision 7 (Ben): the NAV "Let's Talk" gradient outline is too thick at the
+     global --border-pop (5px / 4px mobile). Thin it for the small header pill ONLY —
+     the hero "Let's Talk!", the No-Funny-Business CTA, and the final CTA are left at
+     the global --border-pop (untouched). Scoped override of the border WIDTH only;
+     the --gradient-pop rim + background-clip mask are unchanged, so it stays the same
+     gradient pop, just a finer rim suited to the smaller nav button. */
+  .site-header__cta.btn--gradient {
+    border-width: 2px;
+  }
+
+  /* Mobile: logo + "Let's Talk" CTA share the top row (CTA beside the logo, Ben
+     Revision 6 7b); the three short nav links wrap to their own full-width line
+     beneath. The CTA is pinned right of the logo by pushing the nav to 100% width
+     on the second row. */
   @media (max-width: 600px) {
     .site-header__inner {
       flex-wrap: wrap;
+      gap: var(--space-md) var(--space-md);
+    }
+    /* CTA beside the logo: it stays on row 1, pushed to the right edge. */
+    .site-header__cta { margin-left: auto; }
+    /* Nav drops to its own full-width second row, after the logo + CTA. */
+    .site-header__nav {
+      order: 3;
+      flex-basis: 100%;
+      margin-left: 0;
     }
     .site-header__nav ul {
       gap: var(--space-md) var(--space-lg);
       font-size: var(--text-small);
+      justify-content: flex-start;
+      flex-wrap: nowrap; /* the 3 short labels fit one line (Ben Revision 6 7a) */
     }
   }
   /* No-JS / reduced-motion safety: the header is simply present (end state). */

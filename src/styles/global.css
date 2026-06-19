@@ -533,6 +533,36 @@ a {
   transition-duration: 360ms;
 }
 .highlight-sweep.is-drawn .highlight-seg { background-size: 100% 88%; }
+
+/* Revision 7 (Ben): Solid-AV "Skip the Back and Forth" reassurance line — the SAME
+   per-line sweep methodology as the hero. The phrase wraps across multiple visual
+   lines; splitting it into per-line .bf-seg markers (each draws left→right) and
+   SEQUENCING them means each line completes before the next starts — fixing the
+   old "all lines highlight at once" (one marker spanning the whole wrapped box).
+   Mechanism mirrors .highlight-seg: lime marker grown via background-size, linear
+   so the hand-off between lines reads continuous. Fired by the shared sweep
+   observer adding .is-drawn to the .highlight-sweep wrapper (this carries it too).
+   --motion-bf-seg = per-line draw time; each segment is delayed by the cumulative
+   duration of the segments before it, so the sweep flows line 1 → 2 → 3 → 4. */
+.bf-sweep { --motion-bf-seg: 620ms; }
+.bf-seg {
+  background-image: linear-gradient(var(--color-highlight), var(--color-highlight));
+  background-repeat: no-repeat;
+  background-size: 0% 88%;
+  background-position: 0 60%;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  color: var(--color-ink); /* ink over highlight ≈16.8:1 */
+  transition: background-size var(--motion-bf-seg) linear;
+}
+/* Sequence each line after the one before it — a single continuous top-to-bottom
+   draw, one visual line at a time. */
+.bf-seg--1 { transition-delay: 0ms; }
+.bf-seg--2 { transition-delay: var(--motion-bf-seg); }
+.bf-seg--3 { transition-delay: calc(2 * var(--motion-bf-seg)); }
+.bf-seg--4 { transition-delay: calc(3 * var(--motion-bf-seg)); }
+.bf-sweep.is-drawn .bf-seg { background-size: 100% 88%; }
+
 /* #2 — No-Funny-Business trigger line: SWEEPS/draws across on scroll-into-view
    (round-4 §16 — Ben). Same draw MECHANISM as the hero highlight (left→right
    background-size grow), but fired by an IntersectionObserver-added .is-drawn
@@ -668,7 +698,10 @@ ul.pillars-list li::before {
      keep it a stable, fully-painted composited layer. */
   backface-visibility: hidden;
 }
-.marquee:hover .marquee__track { animation-play-state: paused; }
+/* Revision 6 (Ben): pause-on-hover REMOVED from BOTH tickers (event-types strip +
+   manufacturer strip). The stop-on-hover made viewers think the items were clickable
+   links. The marquee now runs continuously regardless of hover. Reduced-motion still
+   renders the static wrapped list (below). */
 .marquee__list {
   display: flex;
   gap: var(--space-2xl);
@@ -835,9 +868,10 @@ ul.pillars-list li::before {
     background-size: 100% 88%; /* hero highlight pre-drawn end state (B2) */
   }
   .highlight-static,
-  .nfb-seg {
+  .nfb-seg,
+  .bf-seg {
     transition: none;
-    background-size: 100% 88%; /* sweeps pre-drawn (B7) */
+    background-size: 100% 88%; /* sweeps pre-drawn (B7 + R7 back-and-forth) */
   }
   /* v05: The Ninjas points show immediately, no staggered fade. */
   .ninjas-points li {
