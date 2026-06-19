@@ -19,3 +19,9 @@ public/v4/
 # dev-only scripts that leak local/vault paths — keep out of the public repo
 scripts/screenshots*.mjs
 **/.tmp-*/
+
+# Local-only scratch (contain absolute vault paths — keep out of public repo)
+_asset-backups/
+scripts/verify-highlights-rev9.mjs
+scripts/verify-rev9-fixes.mjs
+scripts/filmstrip-hero-rev9.mjs
