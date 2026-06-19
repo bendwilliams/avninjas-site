@@ -498,16 +498,17 @@ a {
    ----------------------------------------------------------------------------
    Two INTENTS, one engine. Every animated lime highlight on the site is one of:
 
-   (1) CONTINUOUS — a single phrase that must read as ONE marker even when it wraps:
-       the hero audience phrase + the "Skip the Back and Forth" reassurance line.
-       RULE: each word is its own lime marker WITH its trailing space inside the span
-       (so the resting highlight has NO gaps), and words reveal in READING ORDER
-       (left→right, wrapping naturally top→bottom) via a uniform per-word stagger.
-       Draw time > stagger so the sweep front is continuous. Width-independent —
-       reading order never changes with the wrap, so it is correct at 320px and
-       1920px with ZERO measurement. This killed the recurring "lights two lines at
-       once / one starts before another finishes / stray gaps between words" bugs
-       (those came from content-tuned segment splits + spaces left outside markers).
+   (1) CONTINUOUS — a single phrase that must read as ONE highlighter stroke even when
+       it wraps: the hero audience phrase + the "Skip the Back and Forth" reassurance
+       line. RULE: ONE lime marker PER VISUAL LINE (.hl-line). Each line's marker is a
+       single bar whose width wipes 0→100% left→right as ONE continuous unit (NOT
+       per-word — words must never fill individually). Lines hand off top→bottom: line
+       N+1 begins exactly when line N's wipe finishes, so the whole phrase reads as one
+       unbroken stroke that turns the corner at each wrap. Per-line duration is
+       proportional to the line's pixel width, so the sweep VELOCITY is constant across
+       lines. JS measures the rendered lines (so it is correct at 320px AND 1920px) and
+       re-measures on resize. Internal spaces live INSIDE the line marker (gapless); the
+       break-point space between lines sits outside the markers (invisible at line end).
 
    (2) DISCRETE — intentionally separate phrases: the No-Funny-Business pillars
        "Transparent Pricing | Painstaking Attention to Detail | No Surprises". RULE:
@@ -519,10 +520,12 @@ a {
    Reduced-motion / no-JS: end state pre-drawn. Marker ≠ accent (accent is blue).
    ============================================================================ */
 
-/* (1) CONTINUOUS — hero phrase + bf reassurance line. .hl-word is one word + its
-   trailing space; JS writes --hl-delay = wordIndex * --hl-word-stagger in reading
-   order. LINEAR draw so the per-word hand-off reads as one unbroken sweep. */
-.hl-word {
+/* (1) CONTINUOUS — hero phrase + bf reassurance line. JS rebuilds each into one
+   .hl-line marker PER VISUAL LINE; each line's bar wipes 0→100% width as a single
+   continuous unit. Per-line transition-duration + transition-delay are set inline by
+   JS (duration ∝ line width for constant velocity; delay = sum of prior line
+   durations, so lines hand off with no overlap and no pause). LINEAR easing. */
+.hl-line {
   background-image: linear-gradient(var(--color-highlight), var(--color-highlight));
   background-repeat: no-repeat;
   background-size: 0% 88%;
@@ -530,19 +533,21 @@ a {
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
   color: var(--color-ink); /* ink over highlight ≈16.8:1 */
-  transition: background-size var(--hl-word-draw) linear;
-  transition-delay: var(--hl-delay, 0ms);
+  transition: background-size 300ms linear; /* duration overridden per-line by JS */
 }
-.highlight-sweep.is-drawn .hl-word { background-size: 100% 88%; }
+.highlight-sweep.is-drawn .hl-line { background-size: 100% 88%; }
 
 /* The "Skip the Back and Forth" line uses the SAME continuous engine as the hero —
-   JS word-wraps it into .hl-word markers at runtime, so there are no hand-tuned
-   per-line segments to drift on a different wrap (the old .bf-seg--1..4 content-tuned
-   split is gone, Rev 9). It sits inline in body copy. */
+   authored as plain text, rebuilt into per-line .hl-line markers at runtime, so there
+   are no hand-tuned per-line segments to drift on a different wrap (the old
+   .bf-seg--1..4 content-tuned split is gone, Rev 9). It sits inline in body copy. */
 .highlight-sweep--inline {
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
+/* Transient measuring spans (one per word) — no marker; removed the same tick once
+   the rendered lines are grouped. Kept style-neutral so wrapping matches the text. */
+.hl-measure { background: none; }
 
 /* #2 — No-Funny-Business trigger line: SWEEPS/draws across on scroll-into-view
    (round-4 §16 — Ben). Same draw MECHANISM as the hero highlight (left→right
@@ -841,14 +846,11 @@ ul.pillars-list li::before {
 /* ---- Reduced motion (GL-003 §7): all moments degrade to end states ---- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .hl-word {
-    transition: none;
-    background-size: 100% 88%; /* hero highlight pre-drawn end state (B2, R8 word-wrap) */
-  }
+  .hl-line,
   .highlight-static,
   .nfb-seg {
     transition: none;
-    background-size: 100% 88%; /* sweeps pre-drawn (B7 + R7 back-and-forth) */
+    background-size: 100% 88%; /* continuous + discrete sweeps pre-drawn (end state) */
   }
   /* v05: The Ninjas points show immediately, no staggered fade. */
   .ninjas-points li {

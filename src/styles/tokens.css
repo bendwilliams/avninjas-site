@@ -138,14 +138,14 @@
   --motion-dark-fade: 600ms;
   --motion-highlight-draw: 700ms;
   /* Highlight Law v3 motion (GL-003 §6) — ONE methodology shared by every animated
-     highlight (Rev 9). CONTINUOUS highlights (hero phrase, bf reassurance line)
-     reveal one WORD at a time in reading order: --hl-word-draw is how long a single
-     word's lime marker fills; --hl-word-stagger is the start-to-start gap between
-     consecutive words. Draw > stagger so the sweep front stays continuous (and each
-     word carries its trailing space, so there are no resting gaps). DISCRETE
-     sequences (NFB pillars) keep their own per-phrase draw and pause between phrases. */
-  --hl-word-draw: 200ms;
-  --hl-word-stagger: 55ms;
+     highlight (Rev 9). CONTINUOUS highlights (hero phrase, bf reassurance line) wipe
+     as ONE highlighter stroke: one marker per visual line, each line's bar sweeping
+     left→right, lines handing off top→bottom. --hl-sweep-speed is the stroke VELOCITY
+     in px/second (JS sets each line's duration = lineWidth / speed, so the velocity is
+     constant across lines regardless of length); --hl-sweep-min is the floor for a very
+     short line. DISCRETE sequences (NFB pillars) keep their own per-phrase draw + pause. */
+  --hl-sweep-speed: 620;     /* px per second — the continuous highlighter velocity */
+  --hl-sweep-min: 220ms;     /* minimum wipe time for a short line */
   --hl-phrase-draw: 850ms;   /* NFB per-phrase draw — unchanged */
   --hl-phrase-gap: 220ms;    /* R9: pause between NFB phrases, tightened from 500ms */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);

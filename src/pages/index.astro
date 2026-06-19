@@ -370,17 +370,19 @@ const heroHighlightWords = [
        visible without scripts (the JS path animates them on scroll-into-view). -->
   <noscript>
     <style>
-      .hl-word,
       .highlight-static,
       .nfb-seg { background-size: 100% 88% !important; transition: none !important; }
-      /* No-JS: the bf line is plain text (JS would word-wrap it) — pre-highlight the
-         whole inline marker so it reads as one continuous highlight without scripts. */
-      .highlight-sweep--inline {
+      /* No-JS: the continuous highlights are plain text inside .highlight-sweep (JS
+         would rebuild them into per-line markers). Pre-highlight the whole wrapper so
+         they read as one continuous highlight without scripts. */
+      .highlight-sweep {
         background-image: linear-gradient(var(--color-highlight), var(--color-highlight));
         background-repeat: no-repeat;
         background-size: 100% 88% !important;
         background-position: 0 60%;
         color: var(--color-ink);
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
       }
       /* v05: no-JS — The Ninjas points are shown immediately (no fade). */
       .ninjas-points li { opacity: 1 !important; transform: none !important; transition: none !important; }
@@ -413,17 +415,13 @@ const heroHighlightWords = [
           <p class="lead">
             We work directly with
             <!-- MOTION MOMENT 1 of 3: the one-and-only animated highlight (GL-003 §6).
-                 Highlight Law v3 (Rev 9): CONTINUOUS highlight. Each WORD is its own
-                 lime marker WITH its trailing space INSIDE the span, so the resting
-                 highlight is gapless (Rev 8's per-word split left the joining spaces
-                 bare → the "spaces between EA's / Execs / Agencies / Events" regression;
-                 fixed here). JS reveals the words in reading order via a uniform per-word
-                 stagger — width-independent, so it can never light two lines at once.
-                 Reduced-motion / no-JS: drawn end state. Verbatim copy unchanged — the
-                 spans are exactly "EA's, Execs, Agencies and Event Planners". -->
-            <span class="highlight-sweep" data-continuous-highlight>{heroHighlightWords.map((word, i) => (
-              <span class="hl-word">{word}{i < heroHighlightWords.length - 1 ? " " : ""}</span>
-            ))}</span>
+                 Highlight Law v3 (Rev 9): CONTINUOUS highlight — ONE highlighter stroke.
+                 Authored as plain text; JS rebuilds it into one .hl-line marker per
+                 RENDERED line, and each line's bar wipes left→right as a single unit
+                 (never per-word), handing off top→bottom. Correct at every wrap width.
+                 Reduced-motion / no-JS: drawn end state. Verbatim copy unchanged —
+                 exactly "EA's, Execs, Agencies and Event Planners". -->
+            <span class="highlight-sweep" data-continuous-highlight>{heroHighlightWords.join(" ")}</span>
             - and our whole business built around making it easy!
           </p>
           <p class="hero-kicker">Skip the headaches. Go Direct!</p>
@@ -2392,48 +2390,100 @@ const heroHighlightWords = [
     document.addEventListener("keydown", onKeydown);
   })();
 
-  /* ---- Highlight Law v3 (Rev 9): CONTINUOUS highlights — reading-order sweep ----
+  /* ---- Highlight Law v3 (Rev 9): CONTINUOUS highlights — ONE highlighter stroke ----
      ONE engine for every [data-continuous-highlight] (the hero phrase + the "Skip the
-     Back and Forth" line). Each WORD is its own lime marker (.hl-word) carrying its
-     trailing space, so the resting highlight is gapless. We reveal words in READING
-     ORDER via a uniform per-word stagger (--hl-word-stagger): word K starts at
-     K * stagger and fills over --hl-word-draw. Because reading order is independent of
-     the wrap, this is correct at EVERY width with NO measurement — that is what kills
-     the recurring "two lines light at once / one starts before the other finishes /
-     stray inter-word gaps" bugs (all of which came from content-tuned splits + the
-     joining spaces sitting outside the markers). No resize re-measure is needed: the
-     per-word delays never change when the text re-wraps. Reduced-motion / no-JS:
-     CSS pre-draws the end state, so we only run the timing math when motion is allowed. */
-  const HL_STAGGER_MS =
-    parseInt(getComputedStyle(document.documentElement).getPropertyValue("--hl-word-stagger"), 10) || 55;
+     Back and Forth" line). The phrase is rebuilt into ONE marker PER RENDERED LINE
+     (.hl-line); each line's lime bar wipes 0→100% width as a single continuous unit —
+     NEVER per-word (that read as words popping one at a time). Lines hand off
+     top→bottom: line N+1's wipe starts exactly when line N's finishes (delay = sum of
+     prior line durations), so the whole phrase reads as one unbroken stroke that turns
+     the corner at each wrap. Per-line duration = lineWidth / --hl-sweep-speed, so the
+     stroke VELOCITY is constant regardless of line length. We MEASURE the rendered
+     lines (correct at any width) and re-measure on resize. Reduced-motion / no-JS:
+     CSS pre-draws the end state. */
+  const csRoot = getComputedStyle(document.documentElement);
+  const SWEEP_PX_PER_MS =
+    (parseFloat(csRoot.getPropertyValue("--hl-sweep-speed")) || 620) / 1000;
+  const SWEEP_MIN_MS = parseInt(csRoot.getPropertyValue("--hl-sweep-min"), 10) || 220;
+
+  const buildContinuous = (el: HTMLElement): void => {
+    // Verbatim source text, stored once so resize rebuilds are lossless.
+    const text =
+      el.dataset.hlText ??
+      (el.dataset.hlText = (el.textContent ?? "").replace(/\s+/g, " ").trim());
+
+    // 1) MEASURE: lay the words out in transient spans and group by rendered line
+    //    (offsetTop). The leading space is kept inside each measuring span so the
+    //    wrap matches the real text flow.
+    const tokens = text.split(" ");
+    el.textContent = "";
+    const measure = tokens.map((w, i) => {
+      const s = document.createElement("span");
+      s.className = "hl-measure";
+      s.textContent = (i ? " " : "") + w;
+      el.appendChild(s);
+      return s;
+    });
+    const lines: string[] = [];
+    let lineTop: number | null = null;
+    let cur = "";
+    for (const s of measure) {
+      const top = s.offsetTop;
+      if (lineTop === null || Math.abs(top - lineTop) > s.offsetHeight * 0.5) {
+        if (cur) lines.push(cur);
+        cur = "";
+        lineTop = top;
+      }
+      cur += s.textContent;
+    }
+    if (cur) lines.push(cur);
+
+    // 2) REBUILD: one .hl-line marker per visual line. Internal spaces stay INSIDE the
+    //    marker (gapless); a real space between markers is the wrap break-point (sits
+    //    outside the markers, invisible at line end).
+    el.textContent = "";
+    const lineEls: HTMLElement[] = [];
+    lines.forEach((lineText, idx) => {
+      if (idx > 0) el.appendChild(document.createTextNode(" "));
+      const span = document.createElement("span");
+      span.className = "hl-line";
+      span.textContent = lineText.trim();
+      el.appendChild(span);
+      lineEls.push(span);
+    });
+
+    // 3) TIMING: constant-velocity stroke. duration ∝ width; delay = sum of prior.
+    const drawn = el.classList.contains("is-drawn");
+    let cumulative = 0;
+    for (const span of lineEls) {
+      const dur = Math.max(SWEEP_MIN_MS, Math.round(span.offsetWidth / SWEEP_PX_PER_MS));
+      if (drawn || reduceMotion) {
+        // Already revealed (resize) or motion off: snap, don't re-animate.
+        span.style.transitionDuration = "0ms";
+        span.style.transitionDelay = "0ms";
+      } else {
+        span.style.transitionDuration = `${dur}ms`;
+        span.style.transitionDelay = `${cumulative}ms`;
+      }
+      cumulative += dur;
+    }
+  };
+
   const continuousHighlights = Array.from(
     document.querySelectorAll<HTMLElement>("[data-continuous-highlight]"),
   );
-  for (const el of continuousHighlights) {
-    // Word-wrap any element not already split into .hl-word spans (the bf line is
-    // authored as plain text; the hero arrives pre-split from the template). The
-    // joining whitespace is appended to the PRECEDING word's marker so the highlight
-    // is gapless. textContent is preserved exactly (verbatim copy + fidelity check).
-    if (!el.querySelector(".hl-word")) {
-      const tokens = (el.textContent ?? "").split(/(\s+)/);
-      el.textContent = "";
-      for (const tok of tokens) {
-        if (!tok) continue;
-        if (/^\s+$/.test(tok)) {
-          const prev = el.lastElementChild;
-          if (prev) prev.append(tok);
-          else el.append(tok);
-        } else {
-          const span = document.createElement("span");
-          span.className = "hl-word";
-          span.textContent = tok;
-          el.append(span);
-        }
-      }
+  for (const el of continuousHighlights) buildContinuous(el);
+  if (continuousHighlights.length && !reduceMotion) {
+    let chRaf = 0;
+    window.addEventListener("resize", () => {
+      cancelAnimationFrame(chRaf);
+      chRaf = requestAnimationFrame(() => continuousHighlights.forEach(buildContinuous));
+    });
+    if ("fonts" in document) {
+      (document as Document & { fonts: FontFaceSet }).fonts.ready.then(() =>
+        continuousHighlights.forEach(buildContinuous),
+      );
     }
-    if (reduceMotion) continue;
-    const words = Array.from(el.querySelectorAll<HTMLElement>(".hl-word"));
-    words.forEach((w, i) => w.style.setProperty("--hl-delay", `${i * HL_STAGGER_MS}ms`));
   }
 
   /* ---- B2 / B7 / B17: ALL highlight sweeps fire on scroll-into-view ----
