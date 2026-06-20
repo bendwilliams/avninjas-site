@@ -2531,17 +2531,44 @@ const heroHighlightWords = [
     if (reduceMotion || !("IntersectionObserver" in window)) {
       for (const el of sweepEls) el.classList.add("is-drawn");
     } else {
-      const sweepObserver = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (!entry.isIntersecting) continue;
-            entry.target.classList.add("is-drawn");
-            sweepObserver.unobserve(entry.target);
-          }
-        },
-        { threshold: 0.9 },
-      );
-      for (const el of sweepEls) sweepObserver.observe(el);
+      const armSweeps = () => {
+        const sweepObserver = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              const el = entry.target as HTMLElement;
+              // Re-measure a continuous highlight at the EXACT moment it draws, so its
+              // per-line segmentation matches the REAL settled wrap — not a transient
+              // measurement taken at script-run before layout/fonts settled. That stale
+              // early measurement was the mobile bug: the whole phrase measured as ONE
+              // segment, then its two wrapped rows filled together ("both lines at once").
+              if (el.hasAttribute("data-continuous-highlight")) buildContinuous(el);
+              // Next frame so the freshly-rebuilt 0% spans paint before is-drawn flips
+              // them to 100% — otherwise the transition has nothing to animate from.
+              requestAnimationFrame(() => el.classList.add("is-drawn"));
+              sweepObserver.unobserve(el);
+            }
+          },
+          { threshold: 0.9 },
+        );
+        for (const el of sweepEls) sweepObserver.observe(el);
+      };
+      // Arm only AFTER fonts are ready: the hero is visible immediately and draws on
+      // load, so it must be measured with FINAL font metrics (a fallback font wraps
+      // differently and yields the wrong segment count). Fallback timeout keeps it
+      // working if the fonts API is missing or slow.
+      if ("fonts" in document) {
+        let armed = false;
+        const arm = () => {
+          if (armed) return;
+          armed = true;
+          armSweeps();
+        };
+        (document as Document & { fonts: FontFaceSet }).fonts.ready.then(arm);
+        setTimeout(arm, 600);
+      } else {
+        armSweeps();
+      }
     }
   }
 
