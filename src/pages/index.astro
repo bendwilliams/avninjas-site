@@ -4,9 +4,11 @@
  *
  * COPY LAW (Ben, May 27): every word and punctuation mark below is verbatim
  * from Deliverables/2026-06-12-av-ninjas-website-build-inputs/06-canonical-copy/
- * homepage-copy.md. Doubled periods, "?!?", "Eek!!", "Heww boy..", the hero
- * grammar ("our whole business built around making it easy!") are STRATEGIC,
- * not typos. Do not "fix" anything here without Ben's ruling.
+ * homepage-copy.md. Doubled periods, "?!?", "Eek!!", "Heww boy.." are
+ * STRATEGIC, not typos. Do not "fix" anything here without Ben's ruling.
+ * RULING (Ben, 2026-06-22): hero now reads "...whole business IS built around
+ * making it easy!" (the "is" was added) and the Ignition lead drops its trailing
+ * colon → "This is gonna be fun!". These supersede the earlier verbatim copy.
  *
  * v4 = Iris's holistic sweep (Deliverables/.../11-iris-design-sweep.md):
  *   • Poppins superfamily (tokens.css + global.css).
@@ -268,7 +270,7 @@ const packages: PackageTier[] = [
     price: "Starting at <$50K",
     name: "Ignition Package",
     tagline: "Where Boring Goes to Die",
-    lead: "This is gonna be fun!:",
+    lead: "This is gonna be fun!",
     items: [
       "Unforgettable Impact",
       "All the Sizzle of the Vegas Strip",
@@ -422,7 +424,7 @@ const heroHighlightWords = [
                  Reduced-motion / no-JS: drawn end state. Verbatim copy unchanged —
                  exactly "EA's, Execs, Agencies and Event Planners". -->
             <span class="highlight-sweep" data-continuous-highlight>{heroHighlightWords.join(" ")}</span>
-            - and our whole business built around making it easy!
+            - and our whole business is built around making it easy!
           </p>
           <p class="hero-kicker">Skip the headaches. Go Direct!</p>
           <div class="btn-row">
@@ -1148,7 +1150,61 @@ const heroHighlightWords = [
       <Manufacturers />
     </section>
 
-    <!-- ============ 18. FINAL CTA (dark moment, full-bleed #3, CENTERED) ============ -->
+    <!-- ============ 18. SERVICE AREA (canvas — map + region list) ============ -->
+    <!-- Ben (2026-06-22): a geography section at the bottom, no big section head.
+         Inline SVG map of the Southeast (geometry generated from US-states GeoJSON;
+         see scripts/) — Nashville, TN pinned; primary service-area states filled in
+         accent; the FL peninsula is faint with only the PANHANDLE in the accent fill
+         (clipped west of Tallahassee). Solid accent only — NOT the gradient (that
+         device stays at its two sanctioned uses, GL-003 §2). -->
+    <section class="section service-area band-tight" id="service-area" aria-label="Service Area">
+      <div class="container">
+        <div class="service-area__grid">
+          <figure class="service-map">
+            <svg viewBox="0 0 820 800" role="img"
+                 aria-label="Map of the southeastern United States. Nashville, Tennessee is marked, and our primary service area — Tennessee, Kentucky, Alabama, Georgia, Mississippi, and the Florida panhandle — is highlighted.">
+              <title>AV Ninjas service area — based in Nashville, TN</title>
+              <defs>
+                <clipPath id="fl-panhandle"><rect x="0" y="0" width="582.9" height="800"/></clipPath>
+              </defs>
+              <!-- FL peninsula: faint (outside the primary area) -->
+              <path class="st st--faint" d="M433.0 667.1L466.6 666.6L476.0 690.0L569.4 695.3L656.9 701.5L660.2 718.7L668.5 718.3L671.4 701.9L668.8 686.9L675.2 680.8L690.9 687.4L709.6 690.5L713.7 725.3L722.3 764.6L742.1 816.2L772.4 871.4L767.9 875.4L769.4 901.0L782.1 929.6L801.9 987.4L806.0 1005.5L805.6 1024.1L798.2 1090.7L791.8 1092.0L785.1 1112.8L787.3 1119.4L774.2 1134.4L769.0 1130.9L756.3 1137.0L734.6 1140.6L728.3 1132.2L731.2 1119.8L715.9 1084.1L704.0 1077.5L693.5 1082.3L685.3 1062.5L683.0 1046.1L668.8 1028.0L665.5 1016.1L667.7 998.9L659.9 995.8L661.7 1006.0L654.6 1008.6L632.9 964.9L624.4 953.9L644.9 921.7L631.5 923.5L622.5 933.6L613.5 917.7L625.5 873.6L627.7 837.0L619.5 828.1L616.9 816.2L603.8 813.6L588.5 794.2L576.1 786.2L575.4 774.3L566.8 769.9L559.7 756.7L533.5 739.0L510.7 743.0L511.8 755.3L504.4 753.1L476.0 768.1L445.7 771.7L446.4 762.8L439.3 752.2L403.8 728.4L378.4 718.3L355.6 715.6L336.6 717.4L295.1 724.9L305.2 713.0L299.9 706.4L302.5 693.1L287.2 677.7L289.5 667.1L433.0 667.1Z"/>
+              <!-- Primary service-area states -->
+              <path class="st st--primary" d="M258.4 224.0L257.3 209.5L272.3 213.0L358.2 211.2L433.7 214.3L447.2 213.5L498.0 216.1L556.3 217.0L557.4 215.7L693.5 216.5L690.5 235.5L677.8 239.5L669.2 254.5L656.9 251.4L630.0 266.8L628.1 258.9L618.7 264.2L603.8 282.3L586.2 286.7L569.4 299.1L550.7 299.5L533.9 311.4L528.7 324.7L515.2 326.4L513.3 345.4L425.5 345.8L305.9 344.5L248.3 345.0L230.0 345.0L104.5 345.0L111.2 342.7L117.9 328.6L116.8 309.2L129.5 296.0L131.7 283.6L141.8 279.2L144.1 264.2L157.5 243.9L157.2 224.0L160.9 224.0L165.4 224.0L173.6 223.2L258.4 224.0Z"/>
+              <path class="st st--primary" d="M541.8 40.9L557.1 51.9L567.9 46.2L593.7 52.4L601.2 44.4L610.9 41.8L613.9 55.5L621.7 57.7L631.1 68.7L629.2 93.0L637.4 108.4L648.3 120.3L651.6 129.6L664.7 138.9L673.7 140.2L647.5 161.8L622.5 173.7L622.5 179.9L612.4 185.2L611.6 192.3L598.6 195.4L594.1 204.2L557.4 215.7L556.3 217.0L498.0 216.1L447.2 213.5L433.7 214.3L358.2 211.2L272.3 213.0L257.3 209.5L258.4 224.0L173.6 223.2L165.4 224.0L169.1 213.9L179.2 217.4L184.8 184.8L181.4 180.4L191.9 166.2L199.8 165.4L224.8 177.7L233.4 171.1L227.0 160.5L229.7 152.1L257.7 144.6L251.3 130.5L260.3 119.0L266.7 111.5L283.9 110.6L289.5 104.9L295.4 110.6L304.4 108.0L321.6 119.9L327.2 111.5L344.4 103.6L348.9 111.5L364.2 108.4L363.1 99.6L378.0 89.5L380.7 98.7L396.0 106.2L403.8 100.9L410.2 80.6L422.1 76.7L426.6 66.5L438.2 59.9L437.5 44.0L455.0 47.5L467.7 40.0L479.7 39.6L474.1 17.5L479.3 14.0L505.5 14.0L519.3 30.8L520.4 37.8L541.8 40.9Z"/>
+              <path class="st st--primary" d="M305.9 344.5L425.5 345.8L437.5 415.1L454.3 517.0L462.1 539.6L469.6 552.4L466.6 560.3L474.5 565.1L462.9 575.3L463.3 585.4L457.3 599.1L464.0 623.4L459.1 644.6L466.6 666.6L433.0 667.1L289.5 667.1L287.2 677.7L302.5 693.1L299.9 706.4L305.2 713.0L295.1 724.9L285.7 727.5L268.5 714.3L266.7 694.4L261.4 692.2L255.1 707.2L252.8 721.8L235.3 717.8L230.0 594.7L245.7 441.6L255.4 353.3L248.3 345.0L305.9 344.5Z"/>
+              <path class="st st--primary" d="M230.0 345.0L248.3 345.0L255.4 353.3L245.7 441.6L230.0 594.7L235.3 717.8L227.8 721.4L211.3 719.6L204.6 714.3L188.2 717.8L165.4 727.1L158.3 732.8L150.0 724.4L147.4 711.2L136.2 693.6L142.9 667.1L14.0 667.1L18.9 661.3L14.0 645.5L22.2 644.6L23.3 615.0L30.1 616.8L34.2 598.7L50.3 587.2L58.5 568.7L57.0 544.8L46.9 534.7L47.6 518.4L52.5 514.8L46.1 505.6L51.4 494.5L47.6 477.8L53.6 471.2L41.7 460.6L52.5 435.9L64.8 423.1L60.7 414.2L74.9 401.0L74.5 395.7L86.9 391.3L85.8 375.4L92.9 371.9L97.7 358.2L108.6 352.0L104.5 345.0L230.0 345.0Z"/>
+              <path class="st st--primary" d="M595.9 344.5L581.4 361.7L580.2 370.1L603.0 387.3L610.1 386.0L620.6 403.6L622.9 412.9L633.7 429.7L649.4 439.8L658.4 454.8L676.7 468.5L675.9 477.8L687.9 492.8L706.2 505.1L710.7 518.4L711.4 535.6L720.8 541.3L731.6 562.9L732.0 576.6L747.7 583.7L730.9 611.0L727.9 625.2L720.8 637.5L720.0 650.3L712.6 656.0L709.6 690.5L690.9 687.4L675.2 680.8L668.8 686.9L671.4 701.9L668.5 718.3L660.2 718.7L656.9 701.5L569.4 695.3L476.0 690.0L466.6 666.6L459.1 644.6L464.0 623.4L457.3 599.1L463.3 585.4L462.9 575.3L474.5 565.1L466.6 560.3L469.6 552.4L462.1 539.6L454.3 517.0L437.5 415.1L425.5 345.8L513.3 345.4L561.2 345.8L595.9 344.5Z"/>
+              <!-- FL panhandle: highlighted, clipped west of Tallahassee -->
+              <path class="st st--primary" clip-path="url(#fl-panhandle)" d="M433.0 667.1L466.6 666.6L476.0 690.0L569.4 695.3L656.9 701.5L660.2 718.7L668.5 718.3L671.4 701.9L668.8 686.9L675.2 680.8L690.9 687.4L709.6 690.5L713.7 725.3L722.3 764.6L742.1 816.2L772.4 871.4L767.9 875.4L769.4 901.0L782.1 929.6L801.9 987.4L806.0 1005.5L805.6 1024.1L798.2 1090.7L791.8 1092.0L785.1 1112.8L787.3 1119.4L774.2 1134.4L769.0 1130.9L756.3 1137.0L734.6 1140.6L728.3 1132.2L731.2 1119.8L715.9 1084.1L704.0 1077.5L693.5 1082.3L685.3 1062.5L683.0 1046.1L668.8 1028.0L665.5 1016.1L667.7 998.9L659.9 995.8L661.7 1006.0L654.6 1008.6L632.9 964.9L624.4 953.9L644.9 921.7L631.5 923.5L622.5 933.6L613.5 917.7L625.5 873.6L627.7 837.0L619.5 828.1L616.9 816.2L603.8 813.6L588.5 794.2L576.1 786.2L575.4 774.3L566.8 769.9L559.7 756.7L533.5 739.0L510.7 743.0L511.8 755.3L504.4 753.1L476.0 768.1L445.7 771.7L446.4 762.8L439.3 752.2L403.8 728.4L378.4 718.3L355.6 715.6L336.6 717.4L295.1 724.9L305.2 713.0L299.9 706.4L302.5 693.1L287.2 677.7L289.5 667.1L433.0 667.1Z"/>
+              <!-- Nashville -->
+              <g class="city" transform="translate(345.3,250.9)">
+                <circle class="city__halo" r="15"/>
+                <circle class="city__ring" r="8"/>
+                <circle class="city__dot" r="4"/>
+              </g>
+              <text class="city__label" x="365.3" y="258.9">Nashville</text>
+            </svg>
+          </figure>
+          <div class="service-area__copy">
+            <p class="eyebrow">Where the ninjas work</p>
+            <p class="lead">We're based in <strong>Nashville, TN</strong> — and on the ground across the Southeast.</p>
+            <p class="region-label">Primary service area:</p>
+            <ul class="region-list">
+              <li>Tennessee</li>
+              <li>Kentucky</li>
+              <li>Alabama</li>
+              <li>Georgia</li>
+              <li>Mississippi</li>
+              <li>Florida Panhandle</li>
+            </ul>
+            <p class="out-of-area">Out-of-area? We may still be able to help — just ask!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 19. FINAL CTA (dark moment, full-bleed #3, CENTERED) ============ -->
     <!-- FULL-BLEED #3 (sweep §C): wide warm room-full-of-success on dark, ink
          scrim, centered headline + single gradient CTA over it. -->
     <section class="final-cta-section section--dark center" id="final-cta" data-dark-fade aria-label="Final CTA">
@@ -2180,6 +2236,99 @@ const heroHighlightWords = [
     list-style-type: circle;
   }
   .cap-sublist li { padding-block: 2px; }
+
+  /* ============ SERVICE AREA — map + region list (Ben, 2026-06-22) ============ */
+  .service-area__grid {
+    display: grid;
+    gap: var(--space-2xl);
+    align-items: center;
+    justify-items: center;
+  }
+  @media (min-width: 880px) {
+    .service-area__grid {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+      gap: var(--space-4xl);
+    }
+    .service-area__copy { text-align: left; }
+  }
+  .service-map {
+    margin: 0;
+    width: 100%;
+    max-width: 340px;
+  }
+  .service-map svg { width: 100%; height: auto; display: block; }
+  /* Map surfaces — solid accent for the served region; faint gray for the rest.
+     NOT the gradient (that device is reserved for its two uses, GL-003 §2). */
+  .st { stroke-linejoin: round; }
+  .st--primary {
+    fill: var(--color-accent);
+    stroke: var(--color-canvas);
+    stroke-width: 2.5;
+  }
+  .st--faint {
+    fill: var(--color-gray);
+    fill-opacity: 0.14;
+    stroke: var(--color-gray);
+    stroke-opacity: 0.35;
+    stroke-width: 2;
+  }
+  /* Nashville marker */
+  .city__halo { fill: var(--color-accent-deep); opacity: 0.18; }
+  .city__ring { fill: var(--color-canvas); }
+  .city__dot  { fill: var(--color-accent-deep); }
+  .city__label {
+    fill: var(--color-canvas);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 30px;
+    /* legible over the accent fill it sits on */
+    paint-order: stroke;
+    stroke: var(--color-accent-deep);
+    stroke-width: 4;
+  }
+  .service-area__copy { max-width: 38ch; }
+  .service-area .region-label {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-gray);
+    margin: var(--space-lg) 0 var(--space-sm);
+  }
+  /* Plain typographic list — names separated by an accent middot, NOT pills/buttons. */
+  .region-list {
+    list-style: none;
+    margin: 0 0 var(--space-lg);
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-sm);
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-weight: 500;
+    font-size: var(--text-body-lg);
+    line-height: var(--leading-h4);
+    color: var(--color-ink);
+  }
+  @media (min-width: 880px) { .region-list { justify-content: flex-start; } }
+  .region-list li { display: inline-flex; align-items: center; }
+  .region-list li:not(:last-child)::after {
+    content: "·";
+    margin-left: var(--space-sm);
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+  .out-of-area { color: var(--color-gray); }
+  .out-of-area::before {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 2px;
+    background: var(--color-accent);
+    margin: 0 auto var(--space-md);
+  }
+  @media (min-width: 880px) { .out-of-area::before { margin-inline: 0; } }
 </style>
 
 <script>

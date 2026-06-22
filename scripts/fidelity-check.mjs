@@ -34,7 +34,7 @@ const mustHome = [
   // §2 hero
   "Hey! We're the AV Ninjas.",
   "We provide sound, video, and lighting for meetings and events.",
-  "We work directly with EA's, Execs, Agencies and Event Planners - and our whole business built around making it easy!",
+  "We work directly with EA's, Execs, Agencies and Event Planners - and our whole business is built around making it easy!",
   "Skip the headaches. Go Direct!",
   // §3 headings
   "Audiences of Every Shape and Size",
@@ -74,7 +74,7 @@ const mustHome = [
   "from scratch.. on-site..",
   "(and because... why should the ninjas get to play with all the cool toys?)",
   '"what does AV stand for?", we\'ve got you!',
-  "This is gonna be fun!:",
+  "This is gonna be fun!",
   "You bet they can! But how??",
   // §6 nine fixes — fixed forms
   "AV Ninjas",
@@ -108,7 +108,7 @@ const mustHome = [
   "The Meat and Potatoes: Standard Ballroom Setup (Audio, Video and basic Front Lighting) · Streaming Capabilities Included · All the Essentials · Insane Value through Efficiencies!",
   "Starting at <$50K — Ignition Package",
   "Where Boring Goes to Die",
-  "This is gonna be fun!: Unforgettable Impact · All the Sizzle of the Vegas Strip · Transformational vs. Informational · Full Engagement",
+  "This is gonna be fun! Unforgettable Impact · All the Sizzle of the Vegas Strip · Transformational vs. Informational · Full Engagement",
   // §9 mission control
   "(way faster than texting)",
   "Keep the whole crew apprised of last minute changes",
