@@ -1,0 +1,68 @@
+---
+/**
+ * 404 — Not Found.
+ *
+ * WHY THIS EXISTS (Crawford pass-2 P0, 2026-06-22): the site had NO 404 page, so
+ * Cloudflare Pages served `index.html` with HTTP 200 for every unmatched path
+ * (`/v4/`, `/anything-bogus/`, …). That made stale/junk URLs look like live,
+ * indexable duplicates of the homepage — a soft-404 problem. Astro emits this page
+ * as `dist/404.html`; Cloudflare Pages serves that file with a real HTTP 404 for
+ * any path it can't match, which kills the soft-404 across the whole site at once
+ * (including the `/v4/` ghost). No host-side cache rule or per-path redirect needed.
+ *
+ * noindex: a 404 must never be indexed. BaseLayout already wires the
+ * `noindex` prop to a <meta name="robots" content="noindex, nofollow">.
+ *
+ * Design-system fidelity: tokens only (GL-003), shared SiteHeader/SiteFooter,
+ * skip-link + #main for keyboard/screen-reader parity with every other page, and
+ * the canonical `.btn .btn--primary` CTA back to the homepage.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+
+const HOME = import.meta.env.BASE_URL; // "/" — base-path-safe link home
+---
+
+<BaseLayout
+  title="Page not found — AV Ninjas"
+  description="That page doesn't exist. Head back to the AV Ninjas homepage or get in touch."
+  noindex={true}
+>
+  <a href="#main" class="skip-link">Skip to content</a>
+  <SiteHeader />
+  <main id="main">
+    <section class="section">
+      <div class="container notfound">
+        <p class="eyebrow">404</p>
+        <h1>This page took the night off.</h1>
+        <p class="lead">
+          We couldn't find what you were looking for. The link may be old, or the
+          page may have moved. No drama — let's get you back on track.
+        </p>
+        <div class="notfound__actions">
+          <a href={HOME} class="btn btn--primary">Back to home</a>
+          <a href={`${HOME}resources/`} class="btn btn--secondary">Browse resources</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .notfound {
+    max-width: 640px;
+  }
+  .notfound h1 {
+    margin-bottom: var(--space-lg);
+  }
+  .notfound .lead {
+    margin-bottom: var(--space-2xl);
+  }
+  .notfound__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+  }
+</style>

@@ -6,4 +6,4 @@ User-agent: *
 Disallow: /hvco/
 Allow: /
 
-Sitemap: https://avninjas.co/sitemap-index.xml
+Sitemap: https://www.avninjas.co/sitemap-index.xml
