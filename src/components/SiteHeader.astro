@@ -90,6 +90,20 @@ const navItems = [
     opacity: 1;
     pointer-events: auto;
   }
+
+  /* HIGH-1 (Vera v5 re-gate): the header is position:fixed, so it occludes the top
+     of #main. The HOMEPAGE's #main contains #hero — the hero owns the top of the
+     viewport (100dvh) and the header is hidden until the hero scrolls away, so it
+     must NOT be offset. Every SECONDARY page's #main has no #hero, so on load the
+     shown header would render OVER the first content element (breadcrumb / <h1>);
+     those get a top offset equal to the tokenized header height.
+
+     Pure CSS via :has() — build-time-static, so there's no first-paint flash and no
+     JS dependency (the no-JS end state is correct on every page). --header-h is the
+     SSOT (tokens.css), so the offset can't drift from the real header height. */
+  .site-header ~ :global(#main:not(:has(#hero))) {
+    padding-top: var(--header-h);
+  }
   .site-header__inner {
     display: flex;
     align-items: center;

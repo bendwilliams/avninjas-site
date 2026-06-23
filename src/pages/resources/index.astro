@@ -1,11 +1,14 @@
 ---
 /**
- * /resources/ — CMS-shell index. Lists every entry in the `resources`
- * content collection (src/content/resources/*.md). Empty today by design:
- * no canonical article copy exists yet.
+ * /resources/ — CMS-shell index. Lists every published entry in the `resources`
+ * content collection (src/content/resources/*.md), newest first. The four wedge
+ * articles (A1 hotel-vs-independent, A2 hidden-charges, A6 event-AV-cost, B4
+ * glossary) are the first real content; the page links them so they're reachable
+ * and in the sitemap (Crawford audit §4 — the built-and-waiting home for these).
  *
- * The "Resources" H1 is a structural label (no canonical string exists for
- * this page) — flagged for Ben alongside the intro placeholder.
+ * The "Resources" H1 is a structural label (no canonical string exists for this
+ * page) — flagged for Ben. The intro line is likewise a sensible placeholder, not
+ * canonical copy; swap when Ben/Hook ratify a Resources hub intro.
  */
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
@@ -19,25 +22,40 @@ const entries = (await getCollection("resources"))
   );
 ---
 
-<BaseLayout title="Resources | AV Ninjas">
+<BaseLayout
+  title="Resources | AV Ninjas"
+  description="Plain-English guides to corporate event AV — what it costs, the hidden charges to watch for, hotel vs. independent AV, and a jargon-free glossary."
+>
   <a href="#main" class="skip-link">Skip to content</a>
   <SiteHeader />
   <main id="main">
     <section class="section">
       <div class="container res-narrow">
+        <!-- "Resources" H1 + the intro line are structural placeholders, not
+             canonical copy — flagged for Ben (no ratified Resources-hub headline
+             exists yet). -->
         <h1>Resources</h1>
         {
           entries.length === 0 ? (
             <p class="muted">[PENDING BEN: resources intro copy — no articles published yet]</p>
           ) : (
-            <ul class="res-list">
-              {entries.map((entry) => (
-                <li>
-                  <a href={`/resources/${entry.id}/`}>{entry.data.title}</a>
-                  {entry.data.description && <p class="small muted">{entry.data.description}</p>}
-                </li>
-              ))}
-            </ul>
+            <>
+              <p class="lead muted res-intro">
+                Plain-English answers to the AV questions corporate event planners
+                actually ask — what it costs, where the surprise charges hide, and
+                how to keep the final bill matching the quote.
+              </p>
+              <ul class="res-list">
+                {entries.map((entry) => (
+                  <li>
+                    <a href={`/resources/${entry.id}/`}>{entry.data.title}</a>
+                    {entry.data.description && (
+                      <p class="small muted res-list__desc">{entry.data.description}</p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </>
           )
         }
       </div>
@@ -50,22 +68,33 @@ const entries = (await getCollection("resources"))
   .res-narrow {
     max-width: 720px;
   }
+  .res-intro {
+    margin-bottom: var(--space-2xl);
+  }
   .res-list {
     list-style: none;
     padding: 0;
   }
   .res-list li {
-    padding-block: var(--space-md);
+    padding-block: var(--space-lg);
     border-bottom: 1px solid var(--color-cream);
+  }
+  .res-list li:first-child {
+    border-top: 1px solid var(--color-cream);
   }
   .res-list a {
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: var(--text-h3);
+    line-height: var(--leading-h3);
     color: var(--color-ink);
     text-decoration: none;
   }
   .res-list a:hover {
     color: var(--color-accent);
+  }
+  .res-list__desc {
+    margin-top: var(--space-sm);
+    margin-bottom: 0;
   }
 </style>

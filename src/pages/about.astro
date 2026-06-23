@@ -1,0 +1,157 @@
+---
+/**
+ * /about/ — About / team surface (Hook copy pack §4, ANONYMIZED version).
+ *
+ * Copy is VERBATIM from Hook's draft. Two gated items are deliberately ABSENT,
+ * with clean insertion points marked below:
+ *   • OWNER-BIO-INSERTION-POINT — Hook's About copy is first-person-plural with NO
+ *     named owner, headcount, or years (none ratified in the corpus). When Ben
+ *     sends name + years + credential, Hook writes the one-line bio; drop it in at
+ *     the marker AND add the same Person as `founder` of #organization (Crawford §3).
+ *   • The construction-company case study ships ANONYMIZED ("a Nashville construction
+ *     company"). Hook hard-flagged: a NAMED version is BLOCKED until the client gives
+ *     explicit permission. Do not name the client, the IT director, or add a real
+ *     pull-quote / logo / review schema until Ben confirms the client said yes.
+ *
+ * Schema (Crawford content-page spec §3): AboutPage whose mainEntity references the
+ * sitewide LocalBusiness #organization node (declared in BaseLayout) — tells engines
+ * "this page is ABOUT the AV Ninjas entity," reinforcing the Nashville-vs-San-Diego
+ * entity resolution WITHOUT re-declaring a second business node. Stays generic: no
+ * founder/employee Person and no client Organization node until Ben ratifies (§3).
+ * `isPartOf` is intentionally omitted — BaseLayout declares #organization but not a
+ * #website node, and Crawford's rule is "don't reference an @id that doesn't exist."
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+
+const SITE = "https://avninjas.co";
+
+// AboutPage JSON-LD (Crawford §3). `name` mirrors the visible "Who's behind AV
+// Ninjas" heading; `description` mirrors the visible opening paragraph. mainEntity
+// references the existing LocalBusiness node by @id (no second business node).
+const aboutSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "AboutPage",
+      "@id": `${SITE}/about/#webpage`,
+      url: `${SITE}/about/`,
+      name: "Who's behind AV Ninjas",
+      description:
+        "AV Ninjas is an independent corporate AV crew based in Nashville — sound, video, and lighting for meetings, conferences, and events, with transparent pricing and no surprise charges.",
+      mainEntity: { "@id": `${SITE}/#organization` },
+      inLanguage: "en-US",
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="About AV Ninjas — Independent Corporate AV in Nashville"
+  description="AV Ninjas is an independent corporate AV crew based in Nashville — sound, video, and lighting for meetings, conferences, and events, with transparent pricing and no surprise charges."
+>
+  <!-- AboutPage structured data (Crawford §3). Mirrors the visible heading + opener. -->
+  <script type="application/ld+json" set:html={JSON.stringify(aboutSchema)} is:inline />
+  <a href="#main" class="skip-link">Skip to content</a>
+  <SiteHeader />
+  <main id="main">
+    <article class="section">
+      <div class="container about-narrow">
+        <!-- Visible heading the AboutPage `name` mirrors. -->
+        <h1>Who's behind AV Ninjas</h1>
+
+        <!-- Visible opening paragraph the AboutPage `description` mirrors. -->
+        <p class="lead">
+          AV Ninjas is an independent corporate AV crew based in Nashville. We do
+          sound, video, and lighting for meetings, conferences, and events — and we
+          work directly with the people who actually plan them: executive assistants,
+          corporate event planners, and the agencies producing events for their
+          clients.
+        </p>
+
+        <p>
+          We started AV Ninjas because we'd watched too many good events get
+          nickel-and-dimed by venue-affiliated AV vendors — surprise line items,
+          contracts you'd need a lawyer to read, a crew that shows up scrambling. So
+          we built the opposite. One transparent price. A paper trail for every
+          change. And a small, choreographed crew that does most of the work
+          <em>before</em> the wheels hit the venue — because when 95% of the setup is
+          already done in the road cases, there's nothing to scramble about on show
+          day.
+        </p>
+
+        <p>
+          We've solved this problem a few hundred times. And we'll never make you feel
+          dumb for not knowing the jargon — figuring that part out is our job, not
+          yours.
+        </p>
+
+        {/* OWNER-BIO-INSERTION-POINT (visible + schema):
+            When Ben sends name + years-in-live-events + any credential, Hook writes a
+            one-line bio that slots in HERE as a short "Meet <Name>" block, AND the
+            same person is added to BaseLayout's #organization node as:
+              "founder": { "@type": "Person", "@id": "https://avninjas.co/#author-<slug>",
+                           "name": "<full name>", "jobTitle": "<role>" }
+            This is the cheapest single E-E-A-T upgrade on the site (Crawford §1/§3). */}
+
+        <section class="case-study" aria-labelledby="case-study-heading">
+          <!-- NAMED VERSION BLOCKED on client permission (Hook hard flag). This is
+               the safe-to-publish ANONYMIZED version. Do NOT name the client, the IT
+               director, add a logo/real pull-quote, or add review/testimonial schema
+               with a real name until Ben confirms the client granted permission. -->
+          <h2 id="case-study-heading">
+            "Our projector guy flaked. Now they're the only crew we call."
+          </h2>
+
+          <p>
+            A Nashville construction company had a meeting coming up and a problem: the
+            vendor they'd always used for projectors dropped the ball on scheduling,
+            days out. Their IT director — who'd never hired a "real" AV crew, never
+            signed an AV contract, and figured pro AV was overkill for an in-house
+            meeting — called us mostly out of options.
+          </p>
+
+          <p>
+            We handled it. No drama, no surprise line items, no contract he needed a
+            lawyer to read. The meeting ran clean. So he called us for the next one.
+            And the one after that. He's now booked us three and four times over, for
+            the simple reason that he never has to think about AV when we've got it.
+          </p>
+
+          <p>
+            That's the whole pitch, honestly. You shouldn't have to become an AV expert
+            to run a good meeting. That's what we're for.
+          </p>
+        </section>
+      </div>
+    </article>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .about-narrow {
+    max-width: 720px;
+  }
+  .about-narrow h1 {
+    margin-bottom: var(--space-lg);
+  }
+  .about-narrow .lead {
+    margin-bottom: var(--space-xl);
+  }
+  .about-narrow p {
+    line-height: var(--leading-body);
+    margin-bottom: var(--space-md);
+  }
+  .case-study {
+    margin-top: var(--space-3xl);
+    padding-top: var(--space-2xl);
+    border-top: 1px solid var(--color-cream);
+  }
+  .case-study h2 {
+    font-size: var(--text-h2);
+    line-height: var(--leading-h2);
+    margin-bottom: var(--space-lg);
+  }
+</style>

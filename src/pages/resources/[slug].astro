@@ -1,15 +1,31 @@
 ---
 /**
- * /resources/<slug>/ — article template for the `resources` content
- * collection. Functional today; renders nothing until markdown entries land
- * in src/content/resources/. Article body styling inherits the GL-003 type
- * scale via global element styles.
+ * /resources/<slug>/ — article template for the `resources` content collection.
+ *
+ * Structured data (Crawford content-page spec, 2026-06-22): each page emits ONE
+ * JSON-LD <script> with a @graph of two nodes — Article + BreadcrumbList.
+ *   • Article.headline ← entry.data.title (= the visible <h1>, verbatim).
+ *   • Article.description ← entry.data.directAnswer (= the visible lift-block lead).
+ *     Same string drives both → schema mirrors visible content (Crawford's hard
+ *     rule); cannot drift, by construction.
+ *   • Article.publisher → the sitewide LocalBusiness @id declared in BaseLayout.
+ *   • Article.author → OMITTED. Crawford §1: ship with no author node until Ben
+ *     ratifies a name; a fabricated author is a trust risk, a missing one is
+ *     neutral. The single insertion point is marked AUTHOR-INSERTION-POINT below
+ *     (one edit re-adds both the visible byline and the schema author @id).
+ *   • BreadcrumbList ← the VISIBLE breadcrumb nav rendered below (Home → Resources
+ *     → this article). Crawford's gate: only mark up a breadcrumb the user can see.
+ *
+ * Article body styling inherits the GL-003 type scale via global element styles;
+ * .article-prose adds the table/checklist/cross-link rhythm the wedge pages need.
  */
 import type { GetStaticPaths } from "astro";
 import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SiteHeader from "../../components/SiteHeader.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
+
+const SITE = "https://avninjas.co";
 
 export const getStaticPaths = (async () => {
   const entries = await getCollection("resources");
@@ -23,28 +39,106 @@ export const getStaticPaths = (async () => {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+
 const dateFormat = new Intl.DateTimeFormat("en-US", { dateStyle: "long" });
+const pubDate = entry.data.pubDate;
+const updatedDate = entry.data.updatedDate ?? entry.data.pubDate;
+const directAnswer = entry.data.directAnswer;
+const breadcrumbLabel = entry.data.breadcrumbLabel ?? entry.data.title;
+
+const pageUrl = `${SITE}/resources/${entry.id}/`;
+
+// ---- Article + BreadcrumbList JSON-LD (Crawford §2). Built from the SAME
+// frontmatter that renders the visible H1 / lead / breadcrumb, so the markup
+// mirrors visible content. `author` is intentionally absent (Crawford §1) until
+// Ben ratifies a name — see AUTHOR-INSERTION-POINT below.
+const articleNode: Record<string, unknown> = {
+  "@type": "Article",
+  "@id": `${pageUrl}#article`,
+  isPartOf: { "@id": `${pageUrl}#webpage` },
+  mainEntityOfPage: pageUrl,
+  url: pageUrl,
+  headline: entry.data.title,
+  inLanguage: "en-US",
+  publisher: { "@id": `${SITE}/#organization` },
+};
+if (directAnswer) articleNode.description = directAnswer;
+if (pubDate) articleNode.datePublished = pubDate.toISOString();
+if (updatedDate) articleNode.dateModified = updatedDate.toISOString();
+// AUTHOR-INSERTION-POINT (schema): when Ben names an author, add the Person node
+// to BaseLayout (or here) and uncomment the line below — its @id must match the
+// visible byline rendered in <header> (AUTHOR-INSERTION-POINT (visible)).
+// articleNode.author = { "@id": `${SITE}/#author-<slug-of-name>` };
+
+const breadcrumbNode = {
+  "@type": "BreadcrumbList",
+  "@id": `${pageUrl}#breadcrumb`,
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: `${SITE}/` },
+    { "@type": "ListItem", position: 2, name: "Resources", item: `${SITE}/resources/` },
+    // Current page: no `item` URL — the correct Google pattern (Crawford §2.2).
+    { "@type": "ListItem", position: 3, name: breadcrumbLabel },
+  ],
+};
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@graph": [articleNode, breadcrumbNode],
+};
 ---
 
 <BaseLayout title={`${entry.data.title} | AV Ninjas`} description={entry.data.description}>
+  <!-- Article + BreadcrumbList structured data (Crawford §2). Mirrors the visible
+       H1 (headline), lift-block lead (description), and breadcrumb nav below. -->
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} is:inline />
   <a href="#main" class="skip-link">Skip to content</a>
   <SiteHeader />
   <main id="main">
     <article class="section">
       <div class="container article-narrow">
-        <header>
+        <!-- VISIBLE breadcrumb trail — the source the BreadcrumbList JSON-LD mirrors
+             (Crawford gate: don't mark up a breadcrumb the user can't see). -->
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <ol>
+            <li><a href={import.meta.env.BASE_URL}>Home</a></li>
+            <li><a href="/resources/">Resources</a></li>
+            <li aria-current="page">{breadcrumbLabel}</li>
+          </ol>
+        </nav>
+
+        <header class="article-head">
           <h1>{entry.data.title}</h1>
-          {
-            entry.data.pubDate && (
-              <p class="small muted">
-                <time datetime={entry.data.pubDate.toISOString()}>
-                  {dateFormat.format(entry.data.pubDate)}
-                </time>
-              </p>
-            )
-          }
+          <p class="small muted article-meta">
+            {
+              pubDate && (
+                <time datetime={pubDate.toISOString()}>{dateFormat.format(pubDate)}</time>
+              )
+            }
+            {/* AUTHOR-INSERTION-POINT (visible byline): when Ben ratifies an author,
+                render "By <Name>" here (Hook owns the bio line) and re-enable the
+                schema author @id above. Until then no byline ships — Crawford §1. */}
+          </p>
         </header>
-        <Content />
+
+        {
+          directAnswer && (
+            <p class="lead article-lead">{directAnswer}</p>
+          )
+        }
+
+        {
+          entry.data.pendingBen && (
+            <aside class="pending-banner" role="note">
+              <strong>Build-state note (not for production):</strong> this page
+              contains content marked <code>[PENDING BEN]</code> — see the inline
+              markers. Do not publish until Ben confirms those values.
+            </aside>
+          )
+        }
+
+        <div class="article-prose">
+          <Content />
+        </div>
       </div>
     </article>
   </main>
@@ -54,5 +148,149 @@ const dateFormat = new Intl.DateTimeFormat("en-US", { dateStyle: "long" });
 <style>
   .article-narrow {
     max-width: 720px;
+  }
+
+  /* Breadcrumb — mirrors the BreadcrumbList nodes (Home / Resources / current). */
+  .breadcrumb {
+    margin-bottom: var(--space-lg);
+  }
+  .breadcrumb ol {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-heading);
+    font-size: var(--text-small);
+    font-weight: 600;
+  }
+  .breadcrumb li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--color-gray);
+  }
+  /* Separator between crumbs (not before the first). */
+  .breadcrumb li + li::before {
+    content: "/";
+    color: var(--color-gray);
+  }
+  .breadcrumb a {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+  .breadcrumb [aria-current="page"] {
+    color: var(--color-ink);
+  }
+
+  .article-head h1 {
+    margin-bottom: var(--space-sm);
+  }
+  .article-meta {
+    margin-bottom: var(--space-xl);
+  }
+  .article-meta:empty {
+    display: none;
+  }
+
+  /* The lift-block lead — Hook's two-sentence direct answer, the visible source the
+     Article JSON-LD `description` mirrors. Set apart as the opening statement. */
+  .article-lead {
+    font-weight: 500;
+    color: var(--color-ink);
+    border-left: var(--border-pop) solid var(--color-accent);
+    padding-left: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+  }
+
+  /* Staging-only banner for [PENDING BEN] pages (A6). Visually loud on purpose so
+     un-ratified content can never ship unnoticed. Remove with the pendingBen flag. */
+  .pending-banner {
+    border: var(--border-standard) solid var(--color-warning);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--color-warning) 8%, transparent);
+    color: var(--color-ink);
+    padding: var(--space-md) var(--space-lg);
+    margin-bottom: var(--space-2xl);
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+  }
+  .pending-banner code {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 0.95em;
+  }
+
+  /* ---- Article prose rhythm (GL-003 type scale via global element styles) ----
+     The wedge pages use H2 sub-heads, real semantic tables, and checklists. These
+     rules give the long-form body comfortable measure + spacing without inventing
+     new tokens (all spacing/colors are GL-003 tokens). */
+  .article-prose :global(h2) {
+    font-size: var(--text-h2);
+    line-height: var(--leading-h2);
+    margin-top: var(--space-3xl);
+    margin-bottom: var(--space-md);
+  }
+  .article-prose :global(h3) {
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-sm);
+  }
+  .article-prose :global(p),
+  .article-prose :global(ul),
+  .article-prose :global(ol) {
+    line-height: var(--leading-body);
+    margin-bottom: var(--space-md);
+  }
+  .article-prose :global(li) {
+    margin-bottom: var(--space-sm);
+  }
+  /* Hook's cross-links between the wedge pages — accent, underlined on hover. */
+  .article-prose :global(a) {
+    color: var(--color-accent);
+  }
+
+  /* Real semantic comparison/cost tables (Hook structured A2/A6 as tables).
+     HIGH-2 (Vera v5 re-gate): each table is wrapped at BUILD time (rehypeWrapTables
+     in astro.config.mjs) in a .table-scroll container that provides horizontal scroll
+     on narrow viewports — the pattern this comment always intended but no element
+     delivered. Mirrors the homepage comparison-table overflow pattern
+     (.cmp-wrap{overflow-x:auto}). The wrapper owns the overflow; the table keeps a
+     sensible min-width so its columns don't crush to unreadable at 375px — instead the
+     last column stays reachable by swipe. Build-time wrapping = no JS, no first-paint
+     flash, and it survives JS-disabled. */
+  .article-prose :global(.table-scroll) {
+    overflow-x: auto;
+    margin-block: var(--space-xl);
+    -webkit-overflow-scrolling: touch; /* momentum scroll on touch */
+  }
+  .article-prose :global(table) {
+    width: 100%;
+    /* Refuses to shrink below this on narrow viewports; the overflow lives in
+       .table-scroll so the last column is swipe-reachable rather than clipped. */
+    min-width: 32rem;
+    border-collapse: collapse;
+    font-size: var(--text-body);
+  }
+  .article-prose :global(th),
+  .article-prose :global(td) {
+    text-align: left;
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--color-cream);
+    vertical-align: top;
+  }
+  .article-prose :global(thead th) {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    border-bottom: var(--border-standard) solid var(--color-ink);
+  }
+  .article-prose :global(blockquote) {
+    margin: var(--space-xl) 0;
+    padding-left: var(--space-lg);
+    border-left: var(--border-standard) solid var(--color-gray);
+    color: var(--color-ink);
   }
 </style>

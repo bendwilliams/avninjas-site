@@ -12,9 +12,7 @@ npm-debug.log*
 .claude-secrets/
 .vercel/
 shots/
-
-# local version-comparison snapshot — not for the public site
-public/v4/
+qa-shots/
 
 # dev-only scripts that leak local/vault paths — keep out of the public repo
 scripts/screenshots*.mjs

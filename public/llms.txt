@@ -1,0 +1,23 @@
+# AV Ninjas
+
+> Independent corporate audio-visual and event production based in Nashville, TN.
+> Transparent pricing and fully-crewed packages for meetings, conferences, and
+> events — an alternative to in-house hotel/venue AV. Slogan: "No Funny Business,
+> Guaranteed." Service area: Tennessee, Kentucky, Alabama, Georgia, Mississippi
+> (and the surrounding ~200-mile delivery radius from Nashville).
+
+## Pages
+
+- [Homepage](https://avninjas.co/): What AV Ninjas does, how it compares to
+  hotel/venue in-house AV, the package lineup (Meeting Essentials, Conference,
+  Ignition), the service area, and the manufacturers/platforms used (Zoom, Teams,
+  Resi, YouTube, Brushfire).
+- [Privacy Policy](https://avninjas.co/privacy/): Data and privacy practices.
+
+## Notes
+
+- The canonical business name is "AV Ninjas" (also "AV Ninjas Nashville"). This is
+  a Nashville, Tennessee company and is distinct from any similarly named AV
+  business in other regions.
+- This file is a courtesy hint for AI agents and crawlers. The full, authoritative
+  content is the server-rendered HTML at the URLs above.

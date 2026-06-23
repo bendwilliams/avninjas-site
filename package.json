@@ -10,6 +10,7 @@
     "check:copy": "node scripts/fidelity-check.mjs"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
     "@fontsource/poppins": "^5.2.7",
     "astro": "^5.0.0"
   },

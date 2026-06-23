@@ -1,0 +1,9 @@
+# AV Ninjas — robots.txt
+# /hvco/ is a paid-funnel landing page (LinkedIn ads), not an organic surface.
+# Keep it out of the index; everything else is crawlable.
+
+User-agent: *
+Disallow: /hvco/
+Allow: /
+
+Sitemap: https://avninjas.co/sitemap-index.xml

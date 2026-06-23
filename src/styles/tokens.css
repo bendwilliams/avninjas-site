@@ -115,6 +115,16 @@
   /* ---- Layout ---- */
   --container-max: 1200px;
 
+  /* ---- Fixed header height (Vera v5 re-gate, HIGH-1) ----
+     SSOT for the fixed .site-header's outer height. It is the SINGLE source the
+     secondary-page top offset reads from, so the offset can NEVER drift from the
+     real header height. Derivation (must stay in sync with SiteHeader.astro):
+       logo-img 44px + padding-block (--space-md ×2 = 32px) + 1px border-bottom
+       = 77px desktop. On mobile the header is taller (nav wraps to a 2nd row),
+       so the mobile override below bumps this up. Rounded to an 8px-grid value
+       with a hair of breathing room. */
+  --header-h: 80px;
+
   /* ---- Media max-width (GL-003 §4 v3.1 — Ben round-4 §8/§9) ----
      Images shrink freely but NEVER render wider than 1920px. Applies to all
      <img>/<picture>/background-image surfaces, the full-bleed 100vw moments,
@@ -154,5 +164,12 @@
 /* Mobile: step --border-pop 5px → 4px so the bolder gradient wrap doesn't crowd
    small pills (GL-003 §4 v3.1 — single token override, never per-component). */
 @media (max-width: 600px) {
-  :root { --border-pop: 4px; }
+  :root {
+    --border-pop: 4px;
+    /* At ≤600px the header wraps: row 1 = logo (36px) + "Let's Talk" CTA, row 2 =
+       the 3 nav links. The stacked header is ~2× tall, so the secondary-page top
+       offset must grow to match (HIGH-1). Same single-token-override discipline as
+       --border-pop above — never a per-component value. */
+    --header-h: 132px;
+  }
 }

@@ -2,6 +2,14 @@
 /**
  * BaseLayout — shared HTML shell for every page.
  * Fonts are preloaded (self-hosted woff2, font-display: swap in global.css).
+ *
+ * SEO infrastructure (Crawford audit, 2026-06-22):
+ *   • Self-referencing rel="canonical" (audit §3.2) — consolidates signals and
+ *     kills any GH-Pages-preview-domain duplicate.
+ *   • Sitewide LocalBusiness JSON-LD (audit §5.1) — the entity-disambiguation
+ *     play vs the San Diego "AV Ninjas". Service-area-only by Ben's ratification:
+ *     NO telephone, NO streetAddress, NO sameAs until Ben confirms them.
+ *   • Optional noindex (for the /hvco/ paid-funnel LP).
  */
 import "../styles/tokens.css";
 import "../styles/global.css";
@@ -11,9 +19,67 @@ interface Props {
   title: string;
   /** Meta description. Canonical-copy strings only — no invented marketing text. */
   description?: string | undefined;
+  /** Emit a robots noindex,nofollow tag (paid-funnel LPs, e.g. /hvco/). */
+  noindex?: boolean | undefined;
 }
 
-const { title, description } = Astro.props;
+const { title, description, noindex } = Astro.props;
+
+// Self-referencing canonical. Astro.site = "https://www.avninjas.co" (astro.config).
+// Strip the trailing slash off the pathname (except root) so the canonical is
+// stable regardless of trailingSlash: "ignore".
+const canonicalPath = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const canonicalURL = new URL(canonicalPath, Astro.site).href;
+
+// Sitewide LocalBusiness / Organization JSON-LD — Crawford spec §5.1, verbatim.
+// SERVICE-AREA-ONLY: telephone, streetAddress, geo, and sameAs are intentionally
+// omitted — they ship only after Ben ratifies the NAP (audit §5.1 notes, §10).
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": "https://avninjas.co/#organization",
+  name: "AV Ninjas",
+  alternateName: "AV Ninjas Nashville",
+  url: "https://avninjas.co/",
+  logo: "https://avninjas.co/apple-touch-icon.png",
+  image: "https://avninjas.co/apple-touch-icon.png",
+  description:
+    "Independent corporate audio-visual and event production in Nashville, TN — transparent pricing, fully-crewed packages for meetings, conferences, and events.",
+  slogan: "No Funny Business, Guaranteed.",
+  areaServed: [
+    { "@type": "State", name: "Tennessee" },
+    { "@type": "State", name: "Kentucky" },
+    { "@type": "State", name: "Alabama" },
+    { "@type": "State", name: "Georgia" },
+    { "@type": "State", name: "Mississippi" },
+    { "@type": "State", name: "Arkansas" },
+    { "@type": "State", name: "Missouri" },
+    { "@type": "State", name: "North Carolina" },
+    { "@type": "State", name: "Indiana" },
+    { "@type": "State", name: "Ohio" },
+    { "@type": "State", name: "South Carolina" },
+    { "@type": "State", name: "Illinois" },
+    { "@type": "State", name: "Virginia" },
+  ],
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Nashville",
+    addressRegion: "TN",
+    addressCountry: "US",
+  },
+  knowsAbout: [
+    "corporate audio visual production",
+    "conference AV",
+    "hybrid event production",
+    "event live streaming",
+    "stage lighting",
+  ],
+  makesOffer: [
+    { "@type": "Offer", name: "Meeting Essentials", category: "Corporate AV Package" },
+    { "@type": "Offer", name: "Conference Package", category: "Corporate AV Package" },
+    { "@type": "Offer", name: "Ignition Package", category: "Corporate AV Package" },
+  ],
+};
 ---
 
 <!doctype html>
@@ -23,6 +89,8 @@ const { title, description } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonicalURL} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="icon" type="image/x-icon" href={`${import.meta.env.BASE_URL}favicon.ico`} sizes="16x16 32x32 48x48" />
     <link rel="icon" type="image/png" href={`${import.meta.env.BASE_URL}favicon-512.png`} sizes="512x512" />
     <link rel="apple-touch-icon" href={`${import.meta.env.BASE_URL}apple-touch-icon.png`} />
@@ -43,6 +111,8 @@ const { title, description } = Astro.props;
       crossorigin
     />
     <meta name="generator" content={Astro.generator} />
+    <!-- Sitewide LocalBusiness / Organization structured data (audit §5.1). -->
+    <script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} is:inline />
   </head>
   <body>
     <slot />
