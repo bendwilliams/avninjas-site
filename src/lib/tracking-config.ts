@@ -15,9 +15,14 @@
 
 /**
  * Google Tag Manager container ID.
- * PLACEHOLDER — not a real container. Replace with Ben's real ID, then rebuild.
+ * Real container: "www.avninjas.co" (Web), created 2026-06-25 under the
+ * "Essential Audio" GTM account. GTM_ENABLED below flips true automatically.
  */
-export const GTM_CONTAINER_ID = "GTM-XXXXXXX"; // TODO: real container id (Ben's Google account)
+// Typed as `string` (not the literal) so the GTM_ENABLED placeholder guard below
+// stays meaningful: a literal type would let TS prove `!== "GTM-XXXXXXX"` is
+// always true (ts2367) and reject the build. The runtime safety check is the
+// point — keep it compilable.
+export const GTM_CONTAINER_ID: string = "GTM-K8QPDGQJ";
 
 /** True only once a real-looking GTM id is set (gates the snippet so the placeholder never loads a bogus container). */
 export const GTM_ENABLED =

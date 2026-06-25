@@ -219,6 +219,18 @@ const privacyHref = `${import.meta.env.BASE_URL}privacy`;
   .consent[hidden] {
     display: none;
   }
+  /*
+   * Scoped guard: the `hidden` attribute must win for the inner blocks. The UA
+   * rule `[hidden] { display: none }` is a single type selector (specificity
+   * 0,0,1) and loses to class rules like `.consent__actions { display: flex }`
+   * (0,1,0). Without this, opening Preferences left the main action row visible
+   * alongside the granular panel — two competing "Accept all" controls (Vera
+   * MEDIUM). Restore the intended single-view toggle: when [data-consent-main]
+   * or [data-consent-prefs-panel] carries `hidden`, it is truly hidden.
+   */
+  .consent [hidden] {
+    display: none !important;
+  }
   .consent__panel {
     width: 100%;
     max-width: var(--container-max);
