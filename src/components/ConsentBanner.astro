@@ -1,0 +1,316 @@
+---
+/**
+ * ConsentBanner.astro — cookie/consent dialog. Felix, foundations-tracking-privacy.
+ *
+ * Behavior:
+ *   • Shows only when AVNConsent.hasChoice() === false (no stored choice).
+ *   • Accept all / Reject all / Preferences (granular: Analytics, Advertising).
+ *   • Calls into /scripts/consent.js, which updates Google Consent Mode v2 and
+ *     persists the choice (cookie + localStorage). Essential cookies are not
+ *     toggleable — they're required for the site to function.
+ *   • Privacy-preserving: Consent Mode defaults are DENIED (set in <head>), so
+ *     nothing non-essential fires until the visitor clicks Accept.
+ *
+ * Accessibility: role="dialog", aria-labelledby/aria-describedby, focus moves to
+ * the dialog on show, Escape is intentionally NOT a dismiss (a choice is required
+ * for the banner to close — Reject all is the keyboard-equivalent "no"), focus is
+ * trapped while open, design-system focus rings throughout.
+ *
+ * Design-system: tokens only — --color-*, --space-*, --radius-*, --text-*, the
+ * pill/btn system, --gradient-pop is NOT used here (banner is not the primary
+ * "Let's Talk" action nor the Ignition card — gradient scarcity, GL-003 §2).
+ */
+const privacyHref = `${import.meta.env.BASE_URL}privacy`;
+---
+
+<div
+  id="avn-consent-banner"
+  class="consent"
+  role="dialog"
+  aria-modal="false"
+  aria-labelledby="consent-title"
+  aria-describedby="consent-desc"
+  hidden
+>
+  <div class="consent__panel">
+    <div class="consent__copy">
+      <h2 id="consent-title" class="consent__title">We value your privacy</h2>
+      <p id="consent-desc" class="consent__desc">
+        We use essential cookies to make this site work. With your consent, we'd
+        also like to use analytics and advertising cookies to understand how the
+        site is used and measure our ads. You can change your mind any time. See
+        our <a href={privacyHref}>Privacy Policy</a>.
+      </p>
+    </div>
+
+    <!-- Main actions -->
+    <div class="consent__actions" data-consent-main>
+      <button type="button" class="btn btn--secondary consent__btn" data-consent-prefs>
+        Preferences
+      </button>
+      <button type="button" class="btn btn--secondary consent__btn" data-consent-reject>
+        Reject all
+      </button>
+      <button type="button" class="btn btn--primary consent__btn" data-consent-accept>
+        Accept all
+      </button>
+    </div>
+
+    <!-- Preferences panel (granular) -->
+    <form class="consent__prefs" data-consent-prefs-panel hidden>
+      <fieldset class="consent__fieldset">
+        <legend class="sr-only">Cookie preferences</legend>
+
+        <div class="consent__pref-row">
+          <div class="consent__pref-text">
+            <span class="consent__pref-name">Essential</span>
+            <span class="consent__pref-note">Required for the site to work. Always on.</span>
+          </div>
+          <input type="checkbox" checked disabled aria-label="Essential cookies (always on)" />
+        </div>
+
+        <div class="consent__pref-row">
+          <label class="consent__pref-text" for="consent-analytics">
+            <span class="consent__pref-name">Analytics</span>
+            <span class="consent__pref-note">Helps us understand how the site is used.</span>
+          </label>
+          <input type="checkbox" id="consent-analytics" data-consent-cat="analytics" />
+        </div>
+
+        <div class="consent__pref-row">
+          <label class="consent__pref-text" for="consent-ads">
+            <span class="consent__pref-name">Advertising</span>
+            <span class="consent__pref-note">Lets us measure and improve our ads.</span>
+          </label>
+          <input type="checkbox" id="consent-ads" data-consent-cat="ads" />
+        </div>
+      </fieldset>
+
+      <div class="consent__actions consent__actions--prefs">
+        <button type="button" class="btn btn--secondary consent__btn" data-consent-prefs-back>
+          Back
+        </button>
+        <button type="submit" class="btn btn--primary consent__btn" data-consent-save>
+          Save preferences
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Wait for consent.js (loaded in <head>) to expose window.AVNConsent.
+  function initConsentBanner() {
+    const banner = document.getElementById("avn-consent-banner") as HTMLElement | null;
+    if (!banner) return;
+    const dialog: HTMLElement = banner;
+    const AVN = (window as any).AVNConsent;
+    if (!AVN) {
+      // consent.js not ready yet — retry next frame.
+      requestAnimationFrame(initConsentBanner);
+      return;
+    }
+
+    const mainActions = dialog.querySelector("[data-consent-main]") as HTMLElement;
+    const prefsPanel = dialog.querySelector("[data-consent-prefs-panel]") as HTMLFormElement;
+    const btnAccept = dialog.querySelector("[data-consent-accept]") as HTMLButtonElement;
+    const btnReject = dialog.querySelector("[data-consent-reject]") as HTMLButtonElement;
+    const btnPrefs = dialog.querySelector("[data-consent-prefs]") as HTMLButtonElement;
+    const btnBack = dialog.querySelector("[data-consent-prefs-back]") as HTMLButtonElement;
+    const catAnalytics = dialog.querySelector('[data-consent-cat="analytics"]') as HTMLInputElement;
+    const catAds = dialog.querySelector('[data-consent-cat="ads"]') as HTMLInputElement;
+
+    let lastFocus: HTMLElement | null = null;
+
+    function show() {
+      lastFocus = document.activeElement as HTMLElement;
+      dialog.hidden = false;
+      // focus the least-destructive primary affordance
+      requestAnimationFrame(() => btnAccept && btnAccept.focus());
+    }
+    function hide() {
+      dialog.hidden = true;
+      if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
+    }
+    function showPrefs() {
+      mainActions.hidden = true;
+      prefsPanel.hidden = false;
+      requestAnimationFrame(() => catAnalytics && catAnalytics.focus());
+    }
+    function hidePrefs() {
+      prefsPanel.hidden = true;
+      mainActions.hidden = false;
+      requestAnimationFrame(() => btnPrefs && btnPrefs.focus());
+    }
+
+    btnAccept.addEventListener("click", () => {
+      AVN.acceptAll();
+      hide();
+    });
+    btnReject.addEventListener("click", () => {
+      AVN.rejectAll();
+      hide();
+    });
+    btnPrefs.addEventListener("click", showPrefs);
+    btnBack.addEventListener("click", hidePrefs);
+
+    prefsPanel.addEventListener("submit", (e) => {
+      e.preventDefault();
+      AVN.savePreferences({
+        analytics: catAnalytics.checked,
+        ads: catAds.checked,
+      });
+      hide();
+    });
+
+    // Focus trap while the banner is open (Tab cycles within the dialog).
+    dialog.addEventListener("keydown", (e) => {
+      if (e.key !== "Tab") return;
+      const focusable = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'button:not([hidden]):not(:disabled), a[href], input:not([disabled])'
+        )
+      ).filter((el) => el.offsetParent !== null);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+
+    // A "Cookie settings" link anywhere can re-open the dialog.
+    document.addEventListener("avn:consent-reset", () => {
+      hidePrefs();
+      show();
+    });
+    document.querySelectorAll("[data-consent-open]").forEach((el) => {
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        AVN.reset(); // clears stored choice → dispatches avn:consent-reset → show()
+      });
+    });
+
+    // Show only if no choice stored yet.
+    if (!AVN.hasChoice()) show();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initConsentBanner);
+  } else {
+    initConsentBanner();
+  }
+</script>
+
+<style>
+  .consent {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 1000;
+    padding: var(--space-md);
+    display: flex;
+    justify-content: center;
+  }
+  .consent[hidden] {
+    display: none;
+  }
+  .consent__panel {
+    width: 100%;
+    max-width: var(--container-max);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    border: var(--border-hairline) solid var(--color-gray-bright);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 32px rgba(17, 17, 21, 0.18);
+    padding: var(--space-lg);
+    display: grid;
+    gap: var(--space-md);
+  }
+  @media (min-width: 880px) {
+    .consent__panel {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: var(--space-xl);
+    }
+    /* When prefs are open the form spans full width below the copy. */
+    .consent__prefs {
+      grid-column: 1 / -1;
+    }
+  }
+  .consent__title {
+    font-size: var(--text-h4);
+    margin: 0 0 var(--space-xs);
+  }
+  .consent__desc {
+    font-size: var(--text-small);
+    line-height: var(--leading-body);
+    margin: 0;
+    color: var(--color-ink);
+    max-width: 64ch;
+  }
+  .consent__desc a {
+    color: var(--color-accent);
+  }
+  .consent__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    justify-content: flex-end;
+  }
+  .consent__actions--prefs {
+    margin-top: var(--space-md);
+  }
+  /* Compact the pill buttons to banner scale (the .btn base is sized for hero CTAs). */
+  .consent__btn {
+    font-size: var(--text-small);
+    padding: var(--space-sm) var(--space-lg);
+  }
+  .consent__prefs {
+    border-top: var(--border-hairline) solid var(--color-gray-bright);
+    padding-top: var(--space-md);
+  }
+  .consent__fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-sm);
+  }
+  .consent__pref-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding-block: var(--space-xs);
+  }
+  .consent__pref-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    cursor: pointer;
+  }
+  .consent__pref-name {
+    font-weight: 700;
+    font-size: var(--text-body);
+  }
+  .consent__pref-note {
+    font-size: var(--text-small);
+    color: var(--color-gray);
+  }
+  .consent__pref-row input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--color-accent);
+    margin-top: 2px;
+    flex: none;
+  }
+  .consent__pref-row input[type="checkbox"]:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+</style>

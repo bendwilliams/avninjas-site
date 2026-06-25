@@ -13,6 +13,8 @@
  */
 import "../styles/tokens.css";
 import "../styles/global.css";
+import ConsentBanner from "../components/ConsentBanner.astro";
+import { GTM_CONTAINER_ID, GTM_ENABLED } from "../lib/tracking-config";
 
 interface Props {
   /** Document title (head only — not rendered page copy). */
@@ -87,6 +89,53 @@ const localBusinessSchema = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- =====================================================================
+         MEASUREMENT — Google Consent Mode v2 + Google Tag Manager.
+         Felix, foundations-tracking-privacy branch (2026-06-25).
+
+         ORDER IS LOAD-BEARING:
+           1. dataLayer + gtag() defined.
+           2. Consent Mode DEFAULTS = DENIED for analytics_storage + ad_storage
+              (+ ad_user_data, ad_personalization) — set BEFORE GTM loads so the
+              very first hit respects "no consent yet". This runs on EVERY page,
+              even while GTM_CONTAINER_ID is the placeholder, so dataLayer +
+              default-denied Consent Mode are verifiable now.
+           3. consent.js (after-choice updates + rehydration of a prior choice).
+           4. GTM container snippet — ONLY when a real container id is set
+              (GTM_ENABLED), so the GTM-XXXXXXX placeholder never loads a bogus
+              container. GA4 / Meta / LinkedIn tags live INSIDE GTM (Mack), gated
+              on these consent signals — they are NOT hardcoded here.
+         ===================================================================== -->
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        window.dataLayer.push(arguments);
+      }
+      // Consent Mode v2 defaults — DENIED until the visitor consents.
+      gtag("consent", "default", {
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        analytics_storage: "denied",
+        functionality_storage: "granted",
+        security_storage: "granted",
+        wait_for_update: 500,
+      });
+      gtag("set", "ads_data_redaction", true);
+      gtag("set", "url_passthrough", true);
+    </script>
+    <script src={`${import.meta.env.BASE_URL}scripts/consent.js`} is:inline></script>
+    {
+      GTM_ENABLED && (
+        <script
+          is:inline
+          set:html={`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_CONTAINER_ID}');`}
+        />
+      )
+    }
+    <!-- END MEASUREMENT (head) -->
+
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     <link rel="canonical" href={canonicalURL} />
@@ -115,6 +164,20 @@ const localBusinessSchema = {
     <script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} is:inline />
   </head>
   <body>
+    {
+      GTM_ENABLED && (
+        <noscript
+          set:html={`<iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_CONTAINER_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`}
+        />
+      )
+    }
     <slot />
+
+    <!-- Cookie/consent banner — shows only when no choice is stored. -->
+    <ConsentBanner />
+
+    <!-- Ad-attribution link tagging: captures utm_* + gclid/fbclid/li_fat_id into
+         a first-party cookie and injects them as hidden fields into every form. -->
+    <script src={`${import.meta.env.BASE_URL}scripts/attribution.js`} is:inline></script>
   </body>
 </html>
