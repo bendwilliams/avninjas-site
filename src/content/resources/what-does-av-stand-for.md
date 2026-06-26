@@ -60,4 +60,4 @@ Understand those three and you've covered most of what separates a quote that ho
 
 ## Still feels like a foreign language?
 
-That's literally our job — and you don't have to commit to anything to get help with it. Tell us what your event needs to *do*, not how to do it, and we'll translate. If you've just got questions, we're happy to answer those too. [Let's talk.](https://calendly.com/ben-avninjas/30min)
+That's literally our job — and you don't have to commit to anything to get help with it. Tell us what your event needs to *do*, not how to do it, and we'll translate. If you've just got questions, we're happy to answer those too. [Let's talk.](https://calendly.com/ben-avninjas/free-planning-call)

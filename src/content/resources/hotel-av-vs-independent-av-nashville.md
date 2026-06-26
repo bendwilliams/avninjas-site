@@ -16,7 +16,7 @@ Here's the short version, then we'll show our work.
 
 For the same show, independent often costs less — sometimes a lot less. But the sticker price isn't even the most important part. With a venue's preferred setup, a chunk of what you pay is margin, so the budget that actually reaches the crew can run thin. And your single point of contact is usually a venue rep — a perfectly nice person who just isn't an AV expert, which means the crew tends to show up prepared for *anything* instead of prepared for *your* event. Go independent and you get the opposite: a single point of contact who actually knows AV, asks the right questions, and gets the whole thing solved in one conversation.
 
-Even if you're nowhere near ready to decide — or you just want to understand your options — send us the venue and the date and we'll talk it through. There's stuff we can get into on a quick call that we can't really put on a page. No commitment, just a straight answer. [Let's talk.](https://calendly.com/ben-avninjas/30min)
+Even if you're nowhere near ready to decide — or you just want to understand your options — send us the venue and the date and we'll talk it through. There's stuff we can get into on a quick call that we can't really put on a page. No commitment, just a straight answer. [Let's talk.](https://calendly.com/ben-avninjas/free-planning-call)
 
 Now the longer version, because "the hotel costs more" is too easy to say and too lazy to be useful.
 
@@ -70,4 +70,4 @@ The move is to read the AV section *before* you sign, and to ask whether you can
 
 For the same show, independent often costs less — sometimes a lot less. But the bigger win isn't just the number: it's that you get one transparent price, a paper trail for every change, and a crew that treats your event like it matters instead of like a transaction.
 
-**Send us the venue and the date whenever you want a second opinion.** We'll tell you straight whether the in-house team's worth it and what we'd do instead — and if the hotel's the better call, we'll say so. No commitment, no pitch. [Let's talk.](https://calendly.com/ben-avninjas/30min)
+**Send us the venue and the date whenever you want a second opinion.** We'll tell you straight whether the in-house team's worth it and what we'd do instead — and if the hotel's the better call, we'll say so. No commitment, no pitch. [Let's talk.](https://calendly.com/ben-avninjas/free-planning-call)

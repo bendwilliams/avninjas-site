@@ -30,7 +30,7 @@ Here's the honest answer up front: AV pricing works in tiers, and every tier is 
 
 These are "starting at" floors, not fixed prices — a starting point you can plan around, which is more than most of the industry will give you.
 
-Even if you're just budgeting and not ready to commit, we're happy to turn that range into a real number for your event. It's a quick conversation, not a sales gauntlet — and you'll learn things a website can't tell you. [Let's talk.](https://calendly.com/ben-avninjas/30min)
+Even if you're just budgeting and not ready to commit, we're happy to turn that range into a real number for your event. It's a quick conversation, not a sales gauntlet — and you'll learn things a website can't tell you. [Let's talk.](https://calendly.com/ben-avninjas/free-planning-call)
 
 ## Why "it depends" is the honest answer
 
@@ -77,4 +77,4 @@ Numbers are only half the question. Here's what the spend buys at each level —
 
 You can plan around a real number, and now you have one. Where your event lands depends on what you need AV to *do* — disappear or dazzle — and whether you're paying a venue's commission on top.
 
-**When you want a real number instead of a range, just tell us the event.** We'll give you one that won't move on you between the quote and the invoice — and if you've got questions first, we're happy to answer them. No commitment. [Let's talk.](https://calendly.com/ben-avninjas/30min)
+**When you want a real number instead of a range, just tell us the event.** We'll give you one that won't move on you between the quote and the invoice — and if you've got questions first, we're happy to answer them. No commitment. [Let's talk.](https://calendly.com/ben-avninjas/free-planning-call)

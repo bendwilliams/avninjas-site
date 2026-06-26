@@ -500,9 +500,13 @@ const faqSchema = {
           </p>
           <p class="hero-kicker">Skip the headaches. Go Direct!</p>
           <div class="btn-row">
-            <!-- [PENDING BEN: CTA destination — Calendly/contact not wired (Mack's layer)] -->
-            <!-- Primary "Let's Talk" = the gradient POP moment (GL-003 §2 use #1) -->
-            <a href="https://calendly.com/ben-avninjas/30min" class="btn btn--gradient" target="_blank" rel="noopener noreferrer">Let's Talk!</a>
+            <!-- Primary "Let's Talk" = the gradient POP moment (GL-003 §2 use #1).
+                 Destination = Free Planning Call (Calendly). Ben ruling 2026-06-26:
+                 the general site's universal "book a call" door is the planning call;
+                 the Free AV Audit link is reserved EXCLUSIVELY for the dedicated audit
+                 lander (the audit ads' destination) and must not be scattered on the
+                 general site. -->
+            <a href="https://calendly.com/ben-avninjas/free-planning-call" class="btn btn--gradient" target="_blank" rel="noopener noreferrer">Let's Talk!</a>
             <!-- Revision 6 (Ben): the hero "Learn More" loses its outline/border and
                  gains a small DOWN-ARROW to its right — it points to the content
                  below and reads as a "scroll down" affordance, not a bordered button.
@@ -852,8 +856,10 @@ const faqSchema = {
                dividers. -->
           <p class="pillars nfb-triggers nfb-sweep"><span class="nfb-seg nfb-seg--1">Transparent Pricing</span><span class="nfb-divider" aria-hidden="true"> | </span><span class="nfb-seg nfb-seg--2">Painstaking Attention to Detail</span><span class="nfb-divider" aria-hidden="true"> | </span><span class="nfb-seg nfb-seg--3">No Surprises</span></p>
         </div>
-        <!-- [PENDING BEN: CTA destination] — primary gradient pop CTA (Let's-Talk class) -->
-        <a href="https://calendly.com/ben-avninjas/30min" class="btn btn--gradient btn--big" target="_blank" rel="noopener noreferrer">
+        <!-- Primary gradient pop CTA (Let's-Talk class). Destination = Free Planning
+             Call (general-site universal door per Ben's 2026-06-26 ruling; audit URL is
+             lander-only). -->
+        <a href="https://calendly.com/ben-avninjas/free-planning-call" class="btn btn--gradient btn--big" target="_blank" rel="noopener noreferrer">
           No Funny Business Sounds Absolutely AWESOME! Heck yes I want to talk!!
         </a>
       </div>
@@ -1213,8 +1219,10 @@ const faqSchema = {
           <h2>Let's get this nailed down!</h2>
           <p class="lead">The ninjas are standing by to transform your vision into reality.</p>
         </div>
-        <!-- [PENDING BEN: CTA destination] primary Let's-Talk-class action → gradient -->
-        <a href="https://calendly.com/ben-avninjas/30min" class="btn btn--gradient" target="_blank" rel="noopener noreferrer">Let's Talk</a>
+        <!-- Primary Let's-Talk-class action → gradient. Destination = Free Planning
+             Call (general-site universal door per Ben's 2026-06-26 ruling; audit URL is
+             lander-only). -->
+        <a href="https://calendly.com/ben-avninjas/free-planning-call" class="btn btn--gradient" target="_blank" rel="noopener noreferrer">Let's Talk</a>
       </div>
     </section>
 
@@ -1401,8 +1409,10 @@ const faqSchema = {
               </p>
             </div>
             <div class="btn-row center-row">
-              <!-- [PENDING BEN: CTA destination] primary Let's-Talk-class action → gradient -->
-              <a href="https://calendly.com/ben-avninjas/30min" class="btn btn--gradient on-dark" target="_blank" rel="noopener noreferrer">Book a Call!</a>
+              <!-- Primary Let's-Talk-class action → gradient. Destination = Free Planning
+                   Call (general-site universal door per Ben's 2026-06-26 ruling; audit URL
+                   is lander-only). -->
+              <a href="https://calendly.com/ben-avninjas/free-planning-call" class="btn btn--gradient on-dark" target="_blank" rel="noopener noreferrer">Book a Call!</a>
               <!-- Ben: "remove the learn more button" at the final CTA. The canonical
                    copy SSOT still lists a "Learn" button here and check:copy must stay
                    143/143 — so the word stays in the DOM (sr-only) to satisfy the gate
@@ -1414,6 +1424,45 @@ const faqSchema = {
         </div>
       </figure>
     </section>
+
+    <!-- ============ 20. SECONDARY OFFERS (bottom zone — cream, below the fold) ============
+         Ben placement rule (2026-06-26, critical): the homepage is the landing page for
+         HOT Google-Ads traffic, so the primary Book-a-Call (planning-call) stays the
+         DOMINANT, repeated action up top + throughout (hero / No-Funny-Business / Nail-
+         down / final CTA / header). These TWO secondary doors live at the BOTTOM, visually
+         subordinate (smaller heads --text-h3, secondary buttons, neutral cream ground) so
+         a ready-to-buy lead is never slowed by them. Module A = the HVCO download (→ the
+         existing /hvco/ opt-in). Module B = the self-qualifying audit teaser (→ the new
+         /free-audit PAGE, NOT the Calendly directly — the audit Calendly is lander-only). -->
+    <section class="section section--cream secondary-offers" aria-label="More ways to start">
+      <div class="container">
+        <div class="secondary-offers__grid">
+          <!-- A — HVCO download -->
+          <article class="offer-card">
+            <h2 class="offer-card__head">Not ready to talk yet? Steal our playbook.</h2>
+            <p class="offer-card__copy">
+              Get the free guide event planners use to get the AV piece sorted in minutes
+              instead of months — how to vet an AV company, where venues hide the fees, and
+              how to pull off real production value for less than the cost of the mediocre
+              option. Plus the venue-fees cheatsheet: the exact questions to ask before you
+              sign anything.
+            </p>
+            <a href={`${import.meta.env.BASE_URL}hvco/`} class="btn btn--secondary">Get the free guide</a>
+          </article>
+
+          <!-- B — self-qualifying audit teaser → the /free-audit PAGE (not Calendly) -->
+          <article class="offer-card">
+            <h2 class="offer-card__head">Already worked with an AV vendor — and suspect you overpaid?</h2>
+            <p class="offer-card__copy">
+              Send us your last event's AV invoice and we'll show you, line by line, where
+              the markup was hiding and what it should have cost. Free, no pitch.
+              (Nashville-area events.)
+            </p>
+            <a href={`${import.meta.env.BASE_URL}free-audit/`} class="btn btn--secondary">See the free AV audit</a>
+          </article>
+        </div>
+      </div>
+    </section>
   </main>
 
   <SiteFooter />
@@ -1423,6 +1472,39 @@ const faqSchema = {
   .center { text-align: center; }
   .center .btn-row,
   .center-row { justify-content: center; }
+
+  /* ============ 20. SECONDARY OFFERS (bottom zone) ============
+     Deliberately subordinate to the primary planning-call CTAs above (Ben placement
+     rule): neutral cream ground, no gradient, card heads at --text-h3 (NOT the --text-h1
+     section-head role), secondary outline buttons. Two cards side-by-side on desktop,
+     stacked on mobile. */
+  .secondary-offers__grid {
+    display: grid;
+    gap: var(--space-xl);
+  }
+  @media (min-width: 768px) {
+    .secondary-offers__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2xl);
+    }
+  }
+  .offer-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .offer-card__head {
+    /* Subordinate to major section heads: card-title role (--text-h3), not --text-h1. */
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+    margin-bottom: var(--space-md);
+  }
+  .offer-card__copy {
+    line-height: var(--leading-body);
+    margin-bottom: var(--space-lg);
+  }
+  /* Push the button to the card's bottom so the two cards' CTAs align across the row. */
+  .offer-card .btn { margin-top: auto; }
 
   /* ============ HERO — full viewport on load (§9) ============ */
   /* The white hero fills the ENTIRE viewport on first paint, every device.

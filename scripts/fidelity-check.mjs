@@ -131,6 +131,13 @@ const mustHome = [
   // Updates / Join) and the email-capture (privacy line + "Your email here") were
   // removed by his explicit decision, so they're no longer expected on the page.
   "© 2026 AV Ninjas. All rights reserved.",
+  // §12 secondary-offer bottom modules (Hook copy, 2026-06-26 — added below the final
+  // CTA, visually secondary). Module A = HVCO download (→ /hvco/); Module B = self-
+  // qualifying audit teaser (→ /free-audit page, NOT the Calendly). Asserted verbatim.
+  "Not ready to talk yet? Steal our playbook.",
+  "Get the free guide",
+  "Already worked with an AV vendor — and suspect you overpaid?",
+  "See the free AV audit",
 ];
 
 const mustNotHome = [

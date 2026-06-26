@@ -7,8 +7,12 @@
  *   • Self-referencing rel="canonical" (audit §3.2) — consolidates signals and
  *     kills any GH-Pages-preview-domain duplicate.
  *   • Sitewide LocalBusiness JSON-LD (audit §5.1) — the entity-disambiguation
- *     play vs the San Diego "AV Ninjas". Service-area-only by Ben's ratification:
- *     NO telephone, NO streetAddress, NO sameAs until Ben confirms them.
+ *     play vs the San Diego "AV Ninjas". Service-area-only: streetAddress and
+ *     sameAs stay omitted. The canonical phone (615) 241-5635 is emitted as
+ *     `telephone` for NAP / SEO / the future Google Business Profile — STRUCTURED
+ *     DATA ONLY. It is intentionally NOT shown anywhere visible on the site (Ben,
+ *     2026-06-26: a prominent number attracts the wrong calls); invisible schema
+ *     attracts no calls.
  *   • Optional noindex (for the /hvco/ paid-funnel LP).
  */
 import "../styles/tokens.css";
@@ -34,8 +38,11 @@ const canonicalPath = Astro.url.pathname.replace(/\/+$/, "") || "/";
 const canonicalURL = new URL(canonicalPath, Astro.site).href;
 
 // Sitewide LocalBusiness / Organization JSON-LD — Crawford spec §5.1, verbatim.
-// SERVICE-AREA-ONLY: telephone, streetAddress, geo, and sameAs are intentionally
-// omitted — they ship only after Ben ratifies the NAP (audit §5.1 notes, §10).
+// SERVICE-AREA: streetAddress, geo, and sameAs are intentionally omitted (service-
+// area business). `telephone` is the canonical AV Ninjas line (NAP SSOT), E.164
+// form — STRUCTURED DATA ONLY. It is deliberately NOT rendered as visible text or a
+// click-to-call anywhere (Ben, 2026-06-26: a prominent number attracts the wrong
+// calls). Invisible schema serves NAP/GBP/SEO without surfacing a call affordance.
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
@@ -43,6 +50,7 @@ const localBusinessSchema = {
   name: "AV Ninjas",
   alternateName: "AV Ninjas Nashville",
   url: "https://avninjas.co/",
+  telephone: "+16152415635",
   logo: "https://avninjas.co/apple-touch-icon.png",
   image: "https://avninjas.co/apple-touch-icon.png",
   description:

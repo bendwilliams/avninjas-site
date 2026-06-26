@@ -1,0 +1,154 @@
+---
+/**
+ * /free-audit/ — the Free AV Audit landing page (Lane A). The ONLY on-site home of
+ * the audit Calendly link (https://calendly.com/ben-avninjas/free-av-audit). Ben
+ * ruling 2026-06-26: the audit offer lives here and NOWHERE else on the general
+ * site — the general-site CTAs all go to the Free Planning Call. This page is the
+ * destination the audit ADS point to.
+ *
+ * Voice: Lane A — solution-aware, frustrated buyer (EAs / corporate event planners
+ * burned by venue-affiliated AV vendors). Hook = confrontation with the source of
+ * frustration ("Had enough of fishy AV contracts?"); offer = the Free Audit, which
+ * assumes prior AV-vendor experience worth auditing (buyer-strategy Lane A).
+ *
+ * Copy is VERBATIM from Hook's draft (through the read-aloud gate). The geo line is
+ * load-bearing: the audit is geo-bound by Ben's market knowledge (~200mi of
+ * Nashville) per buyer-strategy §"Geo-Bound Offer Constraint".
+ *
+ * CTA mechanism mirrors the existing planning-call CTAs exactly:
+ * <a class="btn btn--gradient" target="_blank" rel="noopener noreferrer"> (GL-003 §2
+ * use #1 — the single promoted action; gradient pop is sanctioned for it).
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+
+const AUDIT_CALENDLY = "https://calendly.com/ben-avninjas/free-av-audit";
+
+const auditTakeaways = [
+  "Where the markup was hiding — the fees that quietly pad almost every venue AV invoice",
+  "What you got over- or under-served on for the price you paid",
+  "A straight number for what that event should have run",
+  "The exact questions to ask your venue before you sign the next one",
+] as const;
+---
+
+<BaseLayout
+  title="Free AV Audit — AV Ninjas | Nashville Event Planners & EAs"
+  description="Send us the AV invoice from your last event. We'll show you, line by line, where the venue marked you up, what you got nickel-and-dimed on, and what that event should have cost. Free. No pitch. Nashville-area events."
+>
+  <a href="#main" class="skip-link">Skip to content</a>
+  <SiteHeader />
+  <main id="main">
+    <!-- ============ HERO — confrontation hook (canvas, CENTERED) ============ -->
+    <section class="section section--roomy center" aria-label="Free AV Audit">
+      <div class="container">
+        <div class="sec-head sec-head--wide">
+          <p class="eyebrow">Free AV Audit · For event planners &amp; EAs in and around Nashville</p>
+          <h1 class="display">Had enough of fishy AV contracts?</h1>
+          <p class="lead">
+            Send us the AV invoice from your last event. We'll show you — line by line —
+            exactly where the venue marked you up, what you got nickel-and-dimed on, and
+            what that same event should have cost. Free. No pitch.
+          </p>
+        </div>
+        <div class="btn-row center-row">
+          <a href={AUDIT_CALENDLY} class="btn btn--gradient" target="_blank" rel="noopener noreferrer">
+            Book your free AV audit →
+          </a>
+        </div>
+        <p class="small muted audit-microcopy">30 minutes, by phone. Bring your last AV invoice.</p>
+      </div>
+    </section>
+
+    <!-- ============ AGITATION + offer (cream band) ============ -->
+    <section class="section section--cream" aria-label="What the audit shows you">
+      <div class="container audit-narrow">
+        <p>
+          You've been here before. The bid looks clean. Then the final invoice shows up
+          with a power fee, a "supervisor" fee, an outside-vendor fee, and a few charges
+          nobody mentioned out loud. By the time you spot them, the event's over and
+          you're the one explaining the overage.
+        </p>
+        <p>
+          It's not you. The whole game is built so you can't tell what's fair. We can —
+          because pricing Nashville-area AV is what we do all day.
+        </p>
+
+        <p class="audit-offer-lead">
+          On a 30-minute call, we'll go through your last event's AV bill together and
+          you'll walk away with:
+        </p>
+        <ul class="audit-takeaways">
+          {auditTakeaways.map((item) => <li>{item}</li>)}
+        </ul>
+        <p class="audit-keep"><em>You keep all of it whether or not we ever work together.</em></p>
+      </div>
+    </section>
+
+    <!-- ============ RISK REVERSAL + geo (canvas) ============ -->
+    <section class="section" aria-label="Why we give this away">
+      <div class="container audit-narrow">
+        <p>
+          Why give this away? Because once you see how the markup works, you don't go
+          back to not seeing it. Most planners we audit come back when they've got a real
+          event to run. That's the whole bet. No obligation, no hard sell — if it's not a
+          fit, we'll tell you and point you somewhere better.
+        </p>
+        <p class="audit-geo">
+          One note: we audit AV pricing for events in and around Nashville (roughly a
+          200-mile radius), because that's the market we know cold. Planning a
+          Nashville-area event from out of town? Still a yes — book the call.
+        </p>
+        <div class="btn-row center-row audit-final-cta">
+          <a href={AUDIT_CALENDLY} class="btn btn--gradient" target="_blank" rel="noopener noreferrer">
+            Book your free AV audit →
+          </a>
+        </div>
+        <p class="small muted audit-microcopy">30 minutes, by phone. Bring your last AV invoice.</p>
+      </div>
+    </section>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  /* .center / .center-row are scoped to index.astro (Astro component-scoped styles);
+     redeclare the two we use here so the hero head + button rows center on this page. */
+  .center { text-align: center; }
+  .center .btn-row,
+  .center-row { justify-content: center; }
+
+  .audit-narrow {
+    max-width: 720px;
+  }
+  .audit-narrow p {
+    line-height: var(--leading-body);
+    margin-bottom: var(--space-md);
+  }
+  .audit-microcopy {
+    text-align: center;
+    margin-top: var(--space-md);
+    margin-bottom: 0;
+  }
+  .audit-offer-lead {
+    font-weight: 600;
+    margin-top: var(--space-xl);
+  }
+  .audit-takeaways {
+    margin-bottom: var(--space-lg);
+  }
+  .audit-takeaways li {
+    padding-block: var(--space-xs);
+    line-height: var(--leading-body);
+  }
+  .audit-keep {
+    margin-bottom: 0;
+  }
+  .audit-geo {
+    margin-top: var(--space-lg);
+  }
+  .audit-final-cta {
+    margin-top: var(--space-2xl);
+  }
+</style>

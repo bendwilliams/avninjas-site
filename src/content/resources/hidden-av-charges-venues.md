@@ -14,7 +14,7 @@ Here's the part worth understanding, because it's the whole ballgame. A margin i
 
 So here's a plain-English tour of where a venue AV budget actually goes — not to scare you, but so you can read your own quote like someone who's seen a hundred of them.
 
-Even if you're just gathering information, we're happy to help you read it. Send over a quote — or tell us what you're planning — and we'll walk through it with you. There are things we can get into on a quick call that don't fit on a website. No commitment required. [Let's talk.](https://calendly.com/ben-avninjas/30min)
+Even if you're just gathering information, we're happy to help you read it. Send over a quote — or tell us what you're planning — and we'll walk through it with you. There are things we can get into on a quick call that don't fit on a website. No commitment required. [Let's talk.](https://calendly.com/ben-avninjas/free-planning-call)
 
 ## Where the money goes
 
@@ -68,7 +68,7 @@ You don't need to be an AV expert to read a quote well. You need to look for fiv
 
 That's it. Five things. Most of the budget surprises hide in those five — and once you know to ask, they stop being surprises.
 
-That checklist is yours to keep, whether we ever talk or not. But if you'd rather have someone who reads these all day look it over with you, that's a quick call — no commitment, and you'll come away knowing more than the article can tell you. [Let's talk.](https://calendly.com/ben-avninjas/30min)
+That checklist is yours to keep, whether we ever talk or not. But if you'd rather have someone who reads these all day look it over with you, that's a quick call — no commitment, and you'll come away knowing more than the article can tell you. [Let's talk.](https://calendly.com/ben-avninjas/free-planning-call)
 
 ## How we do it
 
@@ -78,4 +78,4 @@ One transparent price. A paper trail for every change, so nothing lands on the f
 
 And one point of contact who actually knows AV — so the whole thing gets planned in conversations, not lost in translation. That's the whole difference we're going for. Not "we're cheap" — *one transparent price, one point of contact who actually knows AV, and a crew that's planning for your next event, not just billing for this one.* We'd rather earn the relationship than win the invoice.
 
-**Got more questions than the article answered?** That's normal — and there's plenty we can get into on a call that we can't put in writing. Tell us what you're planning and we'll give you one clear number and explain exactly what's in it. No commitment. [Let's talk.](https://calendly.com/ben-avninjas/30min)
+**Got more questions than the article answered?** That's normal — and there's plenty we can get into on a call that we can't put in writing. Tell us what you're planning and we'll give you one clear number and explain exactly what's in it. No commitment. [Let's talk.](https://calendly.com/ben-avninjas/free-planning-call)
