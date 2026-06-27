@@ -385,6 +385,12 @@ interface Faq {
   direct: string;
   /** Supporting human detail paragraph. Verbatim. */
   supporting: string;
+  /**
+   * Optional visible CTA prompt rendered BELOW the answer (NOT in the JSON-LD
+   * acceptedAnswer.text — schema stays clean per Crawford §5.2). When set, a
+   * Free-Planning-Call button is rendered after the prompt. Ben copy 2026-06-26.
+   */
+  ctaPrompt?: string;
 }
 // v3 TONE REVISION (Hook copy-pack-v2/v3, 2026-06-22): the FAQ answers are now
 // tight, single 2-sentence direct answers (v3.1 for A3/A2; v2 §1 for A6 with Ben's
@@ -404,15 +410,20 @@ const faqs: Faq[] = [
   },
   {
     question: "Why is hotel and venue AV so expensive?",
+    // Ben-authored verbatim (2026-06-26). Multi-paragraph; \n\n splits paragraphs
+    // in the render + the schema text.
     direct:
-      "Part of what you're paying for is the venue's margin on top of the actual gear and crew — which is normal, but when that margin's big and the budget reaching the crew gets thin, you can pay a premium and still get stretched-thin service. The fix isn't avoiding venues — it's making sure the people running your AV are the ones who actually planned for your event, not whoever was handed the job.",
+      "Most businesses (ours included) spend money to acquire customers. Some AV companies partner with venues, which is a perfectly sensible thing to do. It CAN be a win for all parties — and some people absolutely DO handle it in a way that's totally above board.\n\nWhere this model often breaks is when the money gets divvied out such that YOU (the client) are paying a (sometimes HUGE) premium for AV, but the crew has to make it happen on a shoestring budget and with spotty information. Much could be said about this but it boils down to a business model that treats the relationship with YOU as transactional. Not really the play if the goal is repeat business.\n\nPaying a premium for sub-par / hot mess service = no bueno.\nFeeling 'hamstrung' because things have been in limbo for months and the event is right around the corner = even less bueno.",
     supporting: "",
   },
   {
     question: "How much does AV cost for a corporate conference?",
+    // Ben-authored verbatim (2026-06-26). The "Ready to do the thing?..." line is the
+    // ctaPrompt (rendered as a CTA → Free Planning Call), NOT part of the schema text.
     direct:
-      "AV pricing works in tiers, and each number is a starting floor that climbs from there — a smaller meeting starts under $5,000, a fully-crewed corporate conference starts around $20,000, and a large, high-production event starts at $50,000 and up. Where you land inside a tier comes down to how much gear and crew it takes and how much time it runs — setup windows, labor hours, and day rates are a real part of the bill.",
+      "Most people will tell you \"it depends,\" which is absolutely true. But so you have a point of reference, true pro-level AV support starts at around $5K for a meeting, $20K for a conference, and $50K for higher-end production events.",
     supporting: "",
+    ctaPrompt: "Ready to do the thing? Or just want to chat about your options?",
   },
 ];
 
@@ -1376,8 +1387,28 @@ const faqSchema = {
                 </svg>
               </summary>
               <div class="accordion__body faq-a">
-                <p class="lead faq-a__direct">{faq.direct}</p>
+                {/* Multi-paragraph answers (Ben Q1) split on blank lines into <p>;
+                    a single \n inside a paragraph (the two "bueno" lines) is preserved
+                    as a <br> so the verbatim line structure survives. */}
+                {faq.direct.split("\n\n").map((para) => (
+                  <p class="lead faq-a__direct">
+                    {para.split("\n").map((line, i) => (
+                      <>{i > 0 && <br />}{line}</>
+                    ))}
+                  </p>
+                ))}
                 {faq.supporting && <p class="faq-a__support">{faq.supporting}</p>}
+                {faq.ctaPrompt && (
+                  <div class="faq-a__cta">
+                    <p class="faq-a__cta-prompt">{faq.ctaPrompt}</p>
+                    <a
+                      href="https://calendly.com/ben-avninjas/free-planning-call"
+                      class="btn btn--gradient"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >Book a Call!</a>
+                  </div>
+                )}
               </div>
             </details>
           ))}
@@ -1450,14 +1481,28 @@ const faqSchema = {
           </article>
 
           <!-- B — self-qualifying audit teaser (past event OR upcoming) → the /free-audit
-               PAGE (not Calendly). Soft-pedaled: friendly sanity-check, competing-quote
-               angle removed (Hook tighten, 2026-06-26). -->
+               PAGE (not Calendly). Ben-authored verbatim copy (2026-06-26); the "breath"
+               typo was corrected to "breathe" per Ben's note. -->
           <article class="offer-card">
             <h2 class="offer-card__head">Need a sanity check on an AV number?</h2>
             <p class="offer-card__copy">
-              For a past event or one coming up — send it over and we'll take an honest look.
-              No pitch, just a friendly gut-check. (Nashville-area events.)
+              Past or Future events — we'll be your second set of eyes and we'll shoot you
+              straight.
             </p>
+            <p class="offer-card__copy">
+              There are plenty of honest operators throughout our region. If you're getting a
+              fair deal we'll say so and you can rest easier.
+            </p>
+            <p class="offer-card__copy">
+              That said, we've seen some pretty outlandish stuff. Want to breathe the air
+              during the event? There's a fee for that, obviously! Ok we've never actually
+              seen an oxygen surcharge, but we've seen some things that come close!
+            </p>
+            <p class="offer-card__copy offer-card__make-sure">Make sure:</p>
+            <ol class="offer-card__list">
+              <li>You're getting the right stuff</li>
+              <li>You're paying the right amount for what you're getting</li>
+            </ol>
             <a href={`${import.meta.env.BASE_URL}free-audit/`} class="btn btn--secondary">Get a free AV audit</a>
           </article>
         </div>
@@ -1501,8 +1546,19 @@ const faqSchema = {
   }
   .offer-card__copy {
     line-height: var(--leading-body);
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--space-md);
   }
+  /* "Make sure:" lead-in sits tight to its list. */
+  .offer-card__make-sure {
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+  }
+  .offer-card__list {
+    line-height: var(--leading-body);
+    margin-bottom: var(--space-lg);
+    padding-inline-start: var(--space-lg);
+  }
+  .offer-card__list li { padding-block: var(--space-2xs, 4px); }
   /* Push the button to the card's bottom so the two cards' CTAs align across the row. */
   .offer-card .btn { margin-top: auto; }
 
@@ -2585,7 +2641,16 @@ const faqSchema = {
      supporting paragraph is default body with a small top gap. */
   .faq-a { color: var(--color-ink); }
   .faq-a__direct { margin-bottom: var(--space-md); }
+  .faq-a__direct:last-of-type { margin-bottom: 0; }
   .faq-a__support:last-child { margin-bottom: 0; }
+  /* In-answer CTA (Ben Q2): a "Ready to do the thing?" prompt + a Free-Planning-Call
+     button, rendered below the answer. */
+  .faq-a__cta { margin-top: var(--space-lg); }
+  .faq-a__cta-prompt {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    margin-bottom: var(--space-md);
+  }
   .faq-section .sec-head { margin-bottom: var(--space-2xl); }
 </style>
 

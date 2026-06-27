@@ -131,15 +131,23 @@ const mustHome = [
   // Updates / Join) and the email-capture (privacy line + "Your email here") were
   // removed by his explicit decision, so they're no longer expected on the page.
   "© 2026 AV Ninjas. All rights reserved.",
-  // §12 secondary-offer bottom modules (Hook copy, 2026-06-26 — added below the final
-  // CTA, visually secondary; soft-pedaled "sanity check" tighten same day). Module A =
-  // HVCO download (→ /hvco/; head + button unchanged, subcopy tightened); Module B =
-  // self-qualifying audit teaser (past event OR upcoming → /free-audit page, NOT the
-  // Calendly). Asserted verbatim.
+  // §12 secondary-offer bottom modules. Module A = HVCO download (→ /hvco/; head +
+  // button unchanged); Module B = audit teaser (→ /free-audit page). Module B body is
+  // now Ben-authored verbatim (2026-06-26); "breathe" carries the corrected spelling
+  // (the "breath" typo is in mustNotHome below). Asserted verbatim.
   "Not ready to talk yet? Steal our playbook.",
   "Get the free guide",
   "Need a sanity check on an AV number?",
+  "we'll be your second set of eyes and we'll shoot you straight",
+  "Want to breathe the air during the event?",
+  "You're paying the right amount for what you're getting",
   "Get a free AV audit",
+  // §13 FAQ — Ben-authored verbatim answers (2026-06-26). A2 (venue AV expensive) +
+  // A6 (conference cost) replaced; A6 carries the Free-Planning-Call CTA prompt.
+  "Some AV companies partner with venues, which is a perfectly sensible thing to do.",
+  "Feeling 'hamstrung' because things have been in limbo for months",
+  "true pro-level AV support starts at around $5K for a meeting, $20K for a conference, and $50K for higher-end production events.",
+  "Ready to do the thing? Or just want to chat about your options?",
 ];
 
 const mustNotHome = [
@@ -168,6 +176,9 @@ const mustNotHome = [
   "cutting-edge",
   "elevate your event experience",
   "we've got you covered",
+  // §13 typo guard — the audit-teaser line must read "breathe the air" (Ben's note
+  // corrected the original "breath"). Catch a regression to the misspelling.
+  "breath the air",
 ];
 
 const mustHvco = [

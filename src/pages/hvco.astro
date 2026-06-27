@@ -44,7 +44,11 @@ const offerBullets = [
     <!-- 1. Headline / Hook -->
     <section class="section section--roomy" aria-label="Hook">
       <div class="container hvco-narrow">
-        <p class="lead">Planning a meeting or event can be a bit like a juggling act:</p>
+        <!-- Ben 2026-06-26: promote the opening hook to a HEADING. Rendered at the h2
+             level (not the top level) so the page keeps exactly one top-level heading
+             (the offer title below) — a second one would be an a11y/SEO defect. Styled
+             via the GL-003 h2 role. -->
+        <h2 class="hvco-hook-head">Planning a meeting or event can be a bit like a juggling act:</h2>
         <ul>
           {juggling.map((item) => <li>{item}</li>)}
         </ul>
@@ -117,24 +121,38 @@ const offerBullets = [
           {offerBullets.map((item) => <li>{item}</li>)}
         </ul>
 
-        <!-- Opt-in mechanics: NO canonical strings exist (hvco-copy.md Flag #1).
-             Visibly-marked placeholders below; form is NOT wired (Mack's layer). -->
+        <!-- Opt-in mechanics (Ben 2026-06-26): real email label + CTA text wired in.
+             Form is still NOT submitted anywhere (Mack's layer wires the action);
+             the privacy line remains a [PENDING BEN] placeholder. -->
         <form class="hvco-form" method="post" action="#">
           <div class="field">
-            <label for="hvco-email">[PENDING BEN: email-field-label]</label>
+            <label for="hvco-email">Email address</label>
             <input type="email" id="hvco-email" name="email" autocomplete="email" required />
           </div>
-          <button type="submit" class="btn btn--primary">[PENDING BEN: cta-label]</button>
+          <button type="submit" class="btn btn--primary">Download our Free Resource</button>
           <p class="small hvco-privacy">[PENDING BEN: privacy-line]</p>
         </form>
       </div>
     </section>
+
+    <!-- Ben 2026-06-26: a small link back to the home page (the HVCO LP is otherwise
+         a standalone funnel entry with no nav). -->
+    <footer class="hvco-footer" aria-label="Footer">
+      <div class="container hvco-narrow">
+        <a href={import.meta.env.BASE_URL} class="hvco-back">← Back to home</a>
+      </div>
+    </footer>
   </main>
 </BaseLayout>
 
 <style>
   .hvco-narrow {
     max-width: 720px;
+  }
+  /* Opening hook promoted to a heading (Ben 2026-06-26). h2 role per GL-003 §3
+     (--text-h1 step via the global h2 rule); add bottom space before the list. */
+  .hvco-hook-head {
+    margin-bottom: var(--space-lg);
   }
   .hvco-offer-list li {
     padding-block: var(--space-xs);
@@ -146,6 +164,16 @@ const offerBullets = [
   .hvco-form .field {
     margin-bottom: var(--space-md);
   }
+  /* Visible email-address label (Ben 2026-06-26). On the dark Offer section, so it
+     uses the light canvas color; heading font + small step, sat above the input. */
+  .hvco-form :global(label) {
+    display: block;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: var(--text-small);
+    color: var(--color-canvas);
+    margin-bottom: var(--space-xs);
+  }
   .hvco-form :global(input) {
     border-color: var(--color-gray-bright);
   }
@@ -154,4 +182,16 @@ const offerBullets = [
     margin-top: var(--space-sm);
     margin-bottom: 0;
   }
+  /* Back-to-home footer link (Ben 2026-06-26). Canvas ground, accent link. */
+  .hvco-footer {
+    padding-block: var(--space-2xl);
+    text-align: center;
+  }
+  .hvco-back {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+  .hvco-back:hover { text-decoration: underline; }
 </style>
