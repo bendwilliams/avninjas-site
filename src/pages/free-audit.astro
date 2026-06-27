@@ -6,14 +6,18 @@
  * site — the general-site CTAs all go to the Free Planning Call. This page is the
  * destination the audit ADS point to.
  *
- * Voice: Lane A — solution-aware, frustrated buyer (EAs / corporate event planners
- * burned by venue-affiliated AV vendors). Hook = confrontation with the source of
- * frustration ("Had enough of fishy AV contracts?"); offer = the Free Audit, which
- * assumes prior AV-vendor experience worth auditing (buyer-strategy Lane A).
+ * Voice: Lane A — solution-aware buyer (EAs / corporate event planners with prior
+ * AV-vendor experience). The page is plainly the "Free AV Audit" (offer name matches
+ * the Calendly event + dashboard). De-villained per Hook's tone revision AND Ben's
+ * 2026-06-26 directive: NO "fishy" / villain framing anywhere on this page — title,
+ * H1, meta, or body. "Fishy" is an AD hook only (the ad does the confrontation + the
+ * click-through); the landing page is a low-threat "honest second opinion" on a past
+ * AV invoice. H1 = the plain offer name; Hook's warm line "Want a second opinion…"
+ * sits in the subhead. Offer assumes a past AV invoice worth reviewing (Lane A).
  *
- * Copy is VERBATIM from Hook's draft (through the read-aloud gate). The geo line is
- * load-bearing: the audit is geo-bound by Ben's market knowledge (~200mi of
- * Nashville) per buyer-strategy §"Geo-Bound Offer Constraint".
+ * Copy is VERBATIM from Hook's draft (tone-revised, through the read-aloud gate). The
+ * geo line is load-bearing: the review is geo-bound by Ben's market knowledge (~200mi
+ * of Nashville) per buyer-strategy §"Geo-Bound Offer Constraint".
  *
  * CTA mechanism mirrors the existing planning-call CTAs exactly:
  * <a class="btn btn--gradient" target="_blank" rel="noopener noreferrer"> (GL-003 §2
@@ -26,30 +30,37 @@ import SiteFooter from "../components/SiteFooter.astro";
 const AUDIT_CALENDLY = "https://calendly.com/ben-avninjas/free-av-audit";
 
 const auditTakeaways = [
-  "Where the markup was hiding — the fees that quietly pad almost every venue AV invoice",
-  "What you got over- or under-served on for the price you paid",
-  "A straight number for what that event should have run",
-  "The exact questions to ask your venue before you sign the next one",
+  "A straight read on whether what you paid lines up with what the event called for",
+  "Where the budget actually went, and what you were really paying for",
+  "The handful of questions worth asking your venue before you sign the next one",
+  "A real number for what we'd do that same event for — so you've got something to compare against",
 ] as const;
 ---
 
 <BaseLayout
-  title="Free AV Audit — AV Ninjas | Nashville Event Planners & EAs"
-  description="Send us the AV invoice from your last event. We'll show you, line by line, where the venue marked you up, what you got nickel-and-dimed on, and what that event should have cost. Free. No pitch. Nashville-area events."
+  title="Free AV Audit | AV Ninjas"
+  description="Send us the AV invoice from your last event and we'll take an honest look. Sometimes it's right in line; sometimes there's real money left on the table. Either way, you'll know. Free, no pitch. Nashville-area events."
 >
   <a href="#main" class="skip-link">Skip to content</a>
   <SiteHeader />
   <main id="main">
-    <!-- ============ HERO — confrontation hook (canvas, CENTERED) ============ -->
+    <!-- ============ HERO — plain offer name + warm subhead (canvas, CENTERED) ============
+         Ben directive 2026-06-26: the LANDING PAGE is plainly the "Free AV Audit". The
+         confrontation hook is an AD-only device and must not appear here (title, H1,
+         meta, or body). H1 = the plain offer name; Hook's warm line demoted to the
+         subhead. Offer name kept "Free AV Audit" (matches the Calendly event + dashboard);
+         body still describes the honest invoice look, which is fine — only the NAME is
+         fixed. (See the frontmatter doc-comment above for the full rationale.) -->
     <section class="section section--roomy center" aria-label="Free AV Audit">
       <div class="container">
         <div class="sec-head sec-head--wide">
           <p class="eyebrow">Free AV Audit · For event planners &amp; EAs in and around Nashville</p>
-          <h1 class="display">Had enough of fishy AV contracts?</h1>
+          <h1 class="display">Free AV Audit</h1>
+          <p class="lead audit-subhead">Want a second opinion on what you paid for AV?</p>
           <p class="lead">
-            Send us the AV invoice from your last event. We'll show you — line by line —
-            exactly where the venue marked you up, what you got nickel-and-dimed on, and
-            what that same event should have cost. Free. No pitch.
+            Send us the AV invoice from your last event and we'll take an honest look.
+            Sometimes everything's right in line — and if it is, we'll tell you. Sometimes
+            there's real money left on the table. Either way, you'll know. Free, and no pitch.
           </p>
         </div>
         <div class="btn-row center-row">
@@ -61,23 +72,22 @@ const auditTakeaways = [
       </div>
     </section>
 
-    <!-- ============ AGITATION + offer (cream band) ============ -->
-    <section class="section section--cream" aria-label="What the audit shows you">
+    <!-- ============ CONTEXT + offer (cream band) ============ -->
+    <section class="section section--cream" aria-label="What the review covers">
       <div class="container audit-narrow">
         <p>
-          You've been here before. The bid looks clean. Then the final invoice shows up
-          with a power fee, a "supervisor" fee, an outside-vendor fee, and a few charges
-          nobody mentioned out loud. By the time you spot them, the event's over and
-          you're the one explaining the overage.
+          If you've planned a few events, you've signed a few AV invoices — and you've
+          probably wondered once or twice whether the number was fair. Not because anyone
+          did anything wrong. AV pricing just has a lot of moving parts, and it's hard to
+          know what's normal when it's not the thing you do all day.
         </p>
         <p>
-          It's not you. The whole game is built so you can't tell what's fair. We can —
-          because pricing Nashville-area AV is what we do all day.
+          It's the thing we do all day. So we're happy to be your gut-check.
         </p>
 
         <p class="audit-offer-lead">
-          On a 30-minute call, we'll go through your last event's AV bill together and
-          you'll walk away with:
+          On a 30-minute call, we'll walk through your last event's AV invoice together,
+          and you'll come away with:
         </p>
         <ul class="audit-takeaways">
           {auditTakeaways.map((item) => <li>{item}</li>)}
@@ -86,18 +96,23 @@ const auditTakeaways = [
       </div>
     </section>
 
-    <!-- ============ RISK REVERSAL + geo (canvas) ============ -->
-    <section class="section" aria-label="Why we give this away">
+    <!-- ============ WHY IT'S FREE + geo (canvas) ============ -->
+    <section class="section" aria-label="Why it's free">
       <div class="container audit-narrow">
         <p>
-          Why give this away? Because once you see how the markup works, you don't go
-          back to not seeing it. Most planners we audit come back when they've got a real
-          event to run. That's the whole bet. No obligation, no hard sell — if it's not a
-          fit, we'll tell you and point you somewhere better.
+          Why give this away? Honestly, because it's the best way we know to show you how
+          we think. Sometimes the review turns up nothing and your last crew did right by
+          you — we'll happily say so. Sometimes it turns up real savings. We don't know
+          which until we look, and we'll tell you the truth either way. If we're not the
+          right fit, we'll say that too, and point you somewhere better.
+        </p>
+        <p>
+          No obligation. No hard sell. Just a second set of eyes from someone who reads
+          these all day.
         </p>
         <p class="audit-geo">
-          One note: we audit AV pricing for events in and around Nashville (roughly a
-          200-mile radius), because that's the market we know cold. Planning a
+          One note: we review AV pricing for events in and around Nashville (roughly a
+          200-mile radius), because that's the market we actually know. Planning a
           Nashville-area event from out of town? Still a yes — book the call.
         </p>
         <div class="btn-row center-row audit-final-cta">
@@ -118,6 +133,13 @@ const auditTakeaways = [
   .center { text-align: center; }
   .center .btn-row,
   .center-row { justify-content: center; }
+
+  /* Warm sub-headline under the plain "Free AV Audit" H1: a touch heavier than the
+     body lead so it reads as the supporting hook, with breathing room from both. */
+  .audit-subhead {
+    font-weight: 500;
+    margin-bottom: var(--space-lg);
+  }
 
   .audit-narrow {
     max-width: 720px;
