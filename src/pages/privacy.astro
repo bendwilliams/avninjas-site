@@ -10,7 +10,7 @@
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const lastUpdated = "June 25, 2026";
+const lastUpdated = "June 27, 2026";
 const effectiveDate = "June 25, 2026";
 // Confirmed by Ben 2026-06-25: hello@ is the inbox for all website matters.
 const contactEmail = "hello@avninjas.co";
@@ -59,6 +59,15 @@ const contactEmail = "hello@avninjas.co";
           submit, so we can tell which ad or campaign brought you here and measure
           what's working. This is essential to operating our advertising and runs
           regardless of your cookie choice; it does not by itself identify you.
+        </li>
+        <li>
+          <strong>Information from our ads on other platforms.</strong> If you
+          submit one of our lead forms on LinkedIn (or a similar in-platform ad
+          form), we receive the contact details you choose to share through that
+          form — typically your name, work email, job title, company, and, if you
+          provide it, your phone number. That information is collected by the
+          platform under its own privacy terms and shared with us so we can follow
+          up.
         </li>
         <li>
           <strong>Cookies and similar technologies.</strong> We use a small number
@@ -128,6 +137,15 @@ const contactEmail = "hello@avninjas.co";
         after you consent. Some of these providers are based in, or transfer data
         to, the United States and other countries.
       </p>
+      <p>
+        <strong>Conversion and lead matching.</strong> To measure which ads
+        produce genuine inquiries, we may send a limited set of identifiers back to
+        the advertising platforms above — a campaign click identifier and/or a
+        securely hashed (irreversibly scrambled) version of your email or phone
+        number. This lets the platform confirm an ad led to a real lead. We send
+        this only for inquiries we have confirmed are genuine, never your raw
+        contact details, and never for sale.
+      </p>
 
       <h2>Your choices and rights</h2>
       <p>
@@ -173,6 +191,10 @@ const contactEmail = "hello@avninjas.co";
       <p>
         Questions about this policy? Email <a href={`mailto:${contactEmail}`}
         >{contactEmail}</a>.
+      </p>
+      <p>
+        AV Ninjas is a trade name of Essential Audio, Inc., 4235 Hillsboro Pike Ste
+        300-675, Nashville, TN 37215.
       </p>
 
       <a href={import.meta.env.BASE_URL} class="legal__back legal__back--bottom">← Back to home</a>
