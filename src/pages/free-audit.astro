@@ -30,37 +30,37 @@ import SiteFooter from "../components/SiteFooter.astro";
 const AUDIT_CALENDLY = "https://calendly.com/ben-avninjas/free-av-audit";
 
 const auditTakeaways = [
-  "A straight read on whether what you paid lines up with what the event called for",
-  "Where the budget actually went, and what you were really paying for",
-  "The handful of questions worth asking your venue before you sign the next one",
-  "A real number for what we'd do that same event for — so you've got something to compare against",
+  "A straight read on whether the number lines up with what the event calls for",
+  "Where the budget actually goes, and what you're really paying for",
+  "The handful of questions worth asking your venue before you sign",
+  "If you've got an event coming up: our own quote for that same event, right next to theirs — so you've got a real number to compare, not a guess",
 ] as const;
 ---
 
 <BaseLayout
   title="Free AV Audit | AV Ninjas"
-  description="Send us the AV invoice from your last event and we'll take an honest look. Sometimes it's right in line; sometimes there's real money left on the table. Either way, you'll know. Free, no pitch. Nashville-area events."
+  description="Send us the AV invoice from your last event, or a quote for an event coming up, and we'll take an honest look. Sometimes it's right in line; sometimes there's real money left on the table. Either way, you'll know. Free, no pitch. Nashville-area events."
 >
   <a href="#main" class="skip-link">Skip to content</a>
   <SiteHeader />
   <main id="main">
-    <!-- ============ HERO — plain offer name + warm subhead (canvas, CENTERED) ============
+    <!-- ============ HERO — plain offer name + second-opinion line (canvas, CENTERED) ============
          Ben directive 2026-06-26: the LANDING PAGE is plainly the "Free AV Audit". The
          confrontation hook is an AD-only device and must not appear here (title, H1,
-         meta, or body). H1 = the plain offer name; Hook's warm line demoted to the
-         subhead. Offer name kept "Free AV Audit" (matches the Calendly event + dashboard);
-         body still describes the honest invoice look, which is fine — only the NAME is
-         fixed. (See the frontmatter doc-comment above for the full rationale.) -->
+         meta, or body). H1 = the plain offer name + the warm "second opinion" clause.
+         The audit now accepts BOTH inputs (Hook revision): a PAST invoice OR an UPCOMING
+         quote — for the quote case we put our own number beside theirs. Offer name kept
+         "Free AV Audit" (matches the Calendly event + dashboard). -->
     <section class="section section--roomy center" aria-label="Free AV Audit">
       <div class="container">
         <div class="sec-head sec-head--wide">
           <p class="eyebrow">Free AV Audit · For event planners &amp; EAs in and around Nashville</p>
-          <h1 class="display">Free AV Audit</h1>
-          <p class="lead audit-subhead">Want a second opinion on what you paid for AV?</p>
+          <h1 class="display">Free AV Audit — a second opinion on what you're paying for AV</h1>
           <p class="lead">
-            Send us the AV invoice from your last event and we'll take an honest look.
-            Sometimes everything's right in line — and if it is, we'll tell you. Sometimes
-            there's real money left on the table. Either way, you'll know. Free, and no pitch.
+            Send us the AV invoice from your last event, or a quote for an event coming up,
+            and we'll take an honest look. Sometimes everything's right in line — and if it
+            is, we'll tell you. Sometimes there's real money left on the table. Either way,
+            you'll know. Free, and no pitch.
           </p>
         </div>
         <div class="btn-row center-row">
@@ -68,7 +68,9 @@ const auditTakeaways = [
             Book your free AV audit →
           </a>
         </div>
-        <p class="small muted audit-microcopy">30 minutes, by phone. Bring your last AV invoice.</p>
+        <p class="small muted audit-microcopy">
+          30 minutes, by phone. Bring your last AV invoice — or a quote for an event coming up.
+        </p>
       </div>
     </section>
 
@@ -82,12 +84,14 @@ const auditTakeaways = [
           know what's normal when it's not the thing you do all day.
         </p>
         <p>
-          It's the thing we do all day. So we're happy to be your gut-check.
+          It's the thing we do all day. So we're happy to be your gut-check — whether
+          you're looking back at an event that's done, or sizing up a quote for one that's
+          coming.
         </p>
 
         <p class="audit-offer-lead">
-          On a 30-minute call, we'll walk through your last event's AV invoice together,
-          and you'll come away with:
+          On a 30-minute call, we'll walk through your invoice or quote together, and
+          you'll come away with:
         </p>
         <ul class="audit-takeaways">
           {auditTakeaways.map((item) => <li>{item}</li>)}
@@ -101,10 +105,12 @@ const auditTakeaways = [
       <div class="container audit-narrow">
         <p>
           Why give this away? Honestly, because it's the best way we know to show you how
-          we think. Sometimes the review turns up nothing and your last crew did right by
-          you — we'll happily say so. Sometimes it turns up real savings. We don't know
-          which until we look, and we'll tell you the truth either way. If we're not the
-          right fit, we'll say that too, and point you somewhere better.
+          we think. Sometimes the review turns up nothing and the number's perfectly fair —
+          we'll happily say so. Sometimes it turns up real savings. We don't know which
+          until we look, and we'll tell you the truth either way. And if you're shopping a
+          quote right now, we'd genuinely love the chance to put ours beside it — no
+          pressure, just an honest second number. If we're not the right fit, we'll say
+          that too, and point you somewhere better.
         </p>
         <p>
           No obligation. No hard sell. Just a second set of eyes from someone who reads
@@ -120,7 +126,9 @@ const auditTakeaways = [
             Book your free AV audit →
           </a>
         </div>
-        <p class="small muted audit-microcopy">30 minutes, by phone. Bring your last AV invoice.</p>
+        <p class="small muted audit-microcopy">
+          30 minutes, by phone. Bring your last AV invoice — or a quote for an event coming up.
+        </p>
       </div>
     </section>
   </main>
@@ -133,13 +141,6 @@ const auditTakeaways = [
   .center { text-align: center; }
   .center .btn-row,
   .center-row { justify-content: center; }
-
-  /* Warm sub-headline under the plain "Free AV Audit" H1: a touch heavier than the
-     body lead so it reads as the supporting hook, with breathing room from both. */
-  .audit-subhead {
-    font-weight: 500;
-    margin-bottom: var(--space-lg);
-  }
 
   .audit-narrow {
     max-width: 720px;

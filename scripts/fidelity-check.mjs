@@ -132,13 +132,14 @@ const mustHome = [
   // removed by his explicit decision, so they're no longer expected on the page.
   "© 2026 AV Ninjas. All rights reserved.",
   // §12 secondary-offer bottom modules (Hook copy, 2026-06-26 — added below the final
-  // CTA, visually secondary; tone-revised "de-villained" pass same day). Module A =
-  // HVCO download (→ /hvco/); Module B = self-qualifying invoice-review teaser (→
-  // /free-audit page, NOT the Calendly). Asserted verbatim.
+  // CTA, visually secondary; de-villained + dual-input "invoice OR quote" revision same
+  // day). Module A = HVCO download (→ /hvco/, UNCHANGED); Module B = self-qualifying
+  // audit teaser (past invoice OR upcoming quote → /free-audit page, NOT the Calendly).
+  // Asserted verbatim.
   "Not ready to talk yet? Steal our playbook.",
   "Get the free guide",
-  "Already worked with an AV vendor? Get a free second opinion.",
-  "Get a free invoice review",
+  "Got an AV invoice or a quote? Get a free second opinion.",
+  "Get a free AV audit",
 ];
 
 const mustNotHome = [
