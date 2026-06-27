@@ -386,9 +386,9 @@ interface Faq {
   /** Supporting human detail paragraph. Verbatim. */
   supporting: string;
   /**
-   * Optional visible CTA prompt rendered BELOW the answer (NOT in the JSON-LD
-   * acceptedAnswer.text — schema stays clean per Crawford §5.2). When set, a
-   * Free-Planning-Call button is rendered after the prompt. Ben copy 2026-06-26.
+   * Optional plain-text rhetorical prompt rendered BELOW the answer (NOT in the
+   * JSON-LD acceptedAnswer.text — schema stays clean per Crawford §5.2). Visible
+   * text only — NO button, no link (Ben 2026-06-26). Ben copy.
    */
   ctaPrompt?: string;
 }
@@ -418,12 +418,13 @@ const faqs: Faq[] = [
   },
   {
     question: "How much does AV cost for a corporate conference?",
-    // Ben-authored verbatim (2026-06-26). The "Ready to do the thing?..." line is the
-    // ctaPrompt (rendered as a CTA → Free Planning Call), NOT part of the schema text.
+    // Ben-authored verbatim (2026-06-26). The "Ready to Do The Thing?..." line is a
+    // plain-text rhetorical prompt (ctaPrompt) rendered below the answer — NO button,
+    // no link (Ben 2026-06-26) — and kept OUT of the schema text.
     direct:
       "Most people will tell you \"it depends,\" which is absolutely true. But so you have a point of reference, true pro-level AV support starts at around $5K for a meeting, $20K for a conference, and $50K for higher-end production events.",
     supporting: "",
-    ctaPrompt: "Ready to do the thing? Or just want to chat about your options?",
+    ctaPrompt: "Ready to Do The Thing? Or just want to Talk Through Your Options?",
   },
 ];
 
@@ -1399,15 +1400,7 @@ const faqSchema = {
                 ))}
                 {faq.supporting && <p class="faq-a__support">{faq.supporting}</p>}
                 {faq.ctaPrompt && (
-                  <div class="faq-a__cta">
-                    <p class="faq-a__cta-prompt">{faq.ctaPrompt}</p>
-                    <a
-                      href="https://calendly.com/ben-avninjas/free-planning-call"
-                      class="btn btn--gradient"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >Book a Call!</a>
-                  </div>
+                  <p class="faq-a__cta-prompt">{faq.ctaPrompt}</p>
                 )}
               </div>
             </details>
@@ -1495,8 +1488,8 @@ const faqSchema = {
             </p>
             <p class="offer-card__copy">
               That said, we've seen some pretty outlandish stuff. Want to breathe the air
-              during the event? There's a fee for that, obviously! Ok we've never actually
-              seen an oxygen surcharge, but we've seen some things that come close!
+              during the event? There's a fee for that, <em>obviously</em>! Ok we've never
+              actually seen an oxygen surcharge, but we've seen some things that come close!
             </p>
             <p class="offer-card__copy offer-card__make-sure">Make sure:</p>
             <ol class="offer-card__list">
@@ -2643,13 +2636,13 @@ const faqSchema = {
   .faq-a__direct { margin-bottom: var(--space-md); }
   .faq-a__direct:last-of-type { margin-bottom: 0; }
   .faq-a__support:last-child { margin-bottom: 0; }
-  /* In-answer CTA (Ben Q2): a "Ready to do the thing?" prompt + a Free-Planning-Call
-     button, rendered below the answer. */
-  .faq-a__cta { margin-top: var(--space-lg); }
+  /* In-answer rhetorical prompt (Ben A6): plain visible text below the answer — no
+     button (Ben 2026-06-26). Heading font for emphasis; sits a step below the answer. */
   .faq-a__cta-prompt {
     font-family: var(--font-heading);
     font-weight: 600;
-    margin-bottom: var(--space-md);
+    margin-top: var(--space-lg);
+    margin-bottom: 0;
   }
   .faq-section .sec-head { margin-bottom: var(--space-2xl); }
 </style>
