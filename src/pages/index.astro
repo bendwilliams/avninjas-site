@@ -385,12 +385,6 @@ interface Faq {
   direct: string;
   /** Supporting human detail paragraph. Verbatim. */
   supporting: string;
-  /**
-   * Optional plain-text rhetorical prompt rendered BELOW the answer (NOT in the
-   * JSON-LD acceptedAnswer.text — schema stays clean per Crawford §5.2). Visible
-   * text only — NO button, no link (Ben 2026-06-26). Ben copy.
-   */
-  ctaPrompt?: string;
 }
 // v3 TONE REVISION (Hook copy-pack-v2/v3, 2026-06-22): the FAQ answers are now
 // tight, single 2-sentence direct answers (v3.1 for A3/A2; v2 §1 for A6 with Ben's
@@ -418,13 +412,11 @@ const faqs: Faq[] = [
   },
   {
     question: "How much does AV cost for a corporate conference?",
-    // Ben-authored verbatim (2026-06-26). The "Ready to Do The Thing?..." line is a
-    // plain-text rhetorical prompt (ctaPrompt) rendered below the answer — NO button,
-    // no link (Ben 2026-06-26) — and kept OUT of the schema text.
+    // Ben-authored verbatim (2026-06-26). Answer ENDS at the pricing reference — no
+    // prompt/CTA after it (Ben moved the rhetorical line to the final-CTA heading).
     direct:
       "Most people will tell you \"it depends,\" which is absolutely true. But so you have a point of reference, true pro-level AV support starts at around $5K for a meeting, $20K for a conference, and $50K for higher-end production events.",
     supporting: "",
-    ctaPrompt: "Ready to Do The Thing? Or just want to Talk Through Your Options?",
   },
 ];
 
@@ -1399,9 +1391,6 @@ const faqSchema = {
                   </p>
                 ))}
                 {faq.supporting && <p class="faq-a__support">{faq.supporting}</p>}
-                {faq.ctaPrompt && (
-                  <p class="faq-a__cta-prompt">{faq.ctaPrompt}</p>
-                )}
               </div>
             </details>
           ))}
@@ -1426,7 +1415,9 @@ const faqSchema = {
         <div class="fullbleed__inner">
           <div class="container">
             <div class="sec-head sec-head--wide sec-head--onbleed">
-              <h2 class="display">Ready to do the thing?</h2>
+              <!-- Final-CTA heading. Ben 2026-06-26: extended the original short heading
+                   with the second rhetorical clause, which moved here out of the cost FAQ. -->
+              <h2 class="display">Ready to Do The Thing? Or just want to Talk Through Your Options?</h2>
               <p class="lead">
                 The ninjas are here to handle the heavy lifting so you can focus on what
                 matters. Let's talk about making your event unforgettable.
@@ -2636,14 +2627,6 @@ const faqSchema = {
   .faq-a__direct { margin-bottom: var(--space-md); }
   .faq-a__direct:last-of-type { margin-bottom: 0; }
   .faq-a__support:last-child { margin-bottom: 0; }
-  /* In-answer rhetorical prompt (Ben A6): plain visible text below the answer — no
-     button (Ben 2026-06-26). Heading font for emphasis; sits a step below the answer. */
-  .faq-a__cta-prompt {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    margin-top: var(--space-lg);
-    margin-bottom: 0;
-  }
   .faq-section .sec-head { margin-bottom: var(--space-2xl); }
 </style>
 

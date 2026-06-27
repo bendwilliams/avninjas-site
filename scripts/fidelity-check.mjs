@@ -56,7 +56,9 @@ const mustHome = [
   "Let's get this nailed down!",
   "Trusted Manufacturers",
   "Full Breakdown of our Capabilities",
-  "Ready to do the thing?",
+  // Final-CTA heading — extended 2026-06-26 (Ben) from the old "Ready to do the thing?"
+  // to add the "or just want to Talk Through Your Options?" beat.
+  "Ready to Do The Thing? Or just want to Talk Through Your Options?",
   // §4 marquee
   "Sales Meetings",
   "Galas",
@@ -143,12 +145,11 @@ const mustHome = [
   "You're paying the right amount for what you're getting",
   "Get a free AV audit",
   // §13 FAQ — Ben-authored verbatim answers (2026-06-26). A2 (venue AV expensive) +
-  // A6 (conference cost) replaced; A6 carries a PLAIN-TEXT rhetorical prompt below the
-  // answer — no button (Ben removed it 2026-06-26) — kept out of the JSON-LD schema.
+  // A6 (conference cost) replaced. A6 ENDS at the pricing reference — no prompt/CTA
+  // after it (the rhetorical line moved to the final-CTA heading, asserted in §1 above).
   "Some AV companies partner with venues, which is a perfectly sensible thing to do.",
   "Feeling 'hamstrung' because things have been in limbo for months",
   "true pro-level AV support starts at around $5K for a meeting, $20K for a conference, and $50K for higher-end production events.",
-  "Ready to Do The Thing? Or just want to Talk Through Your Options?",
 ];
 
 const mustNotHome = [
