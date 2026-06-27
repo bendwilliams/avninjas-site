@@ -28,13 +28,6 @@ import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 
 const AUDIT_CALENDLY = "https://calendly.com/ben-avninjas/free-av-audit";
-
-const auditTakeaways = [
-  "A straight read on whether the number lines up with what the event calls for",
-  "Where the budget actually goes, and what you're really paying for",
-  "The handful of questions worth asking your venue before you sign",
-  "If you've got an event coming up: our own quote for that same event, right next to theirs — so you've got a real number to compare, not a guess",
-] as const;
 ---
 
 <BaseLayout
@@ -57,10 +50,10 @@ const auditTakeaways = [
           <p class="eyebrow">Free AV Audit · For event planners &amp; EAs in and around Nashville</p>
           <h1 class="display">Free AV Audit — a second opinion on what you're paying for AV</h1>
           <p class="lead">
-            Send us the AV invoice from your last event, or a quote for an event coming up,
-            and we'll take an honest look. Sometimes everything's right in line — and if it
-            is, we'll tell you. Sometimes there's real money left on the table. Either way,
-            you'll know. Free, and no pitch.
+            Send us the AV invoice from your last event, or a quote for one coming up, and
+            we'll take an honest look. Sometimes the number's right in line and we'll tell
+            you so; sometimes there's real money on the table. Either way, you'll know.
+            Free, no pitch.
           </p>
         </div>
         <div class="btn-row center-row">
@@ -74,52 +67,38 @@ const auditTakeaways = [
       </div>
     </section>
 
-    <!-- ============ CONTEXT + offer (cream band) ============ -->
+    <!-- ============ CONTEXT + offer (cream band) ============
+         "What you get" is now a FLOWING SENTENCE, not a bulleted <ul> (Hook tighten,
+         2026-06-26). Body + why-free compressed. -->
     <section class="section section--cream" aria-label="What the review covers">
       <div class="container audit-narrow">
         <p>
-          If you've planned a few events, you've signed a few AV invoices — and you've
-          probably wondered once or twice whether the number was fair. Not because anyone
-          did anything wrong. AV pricing just has a lot of moving parts, and it's hard to
-          know what's normal when it's not the thing you do all day.
+          You've signed enough AV invoices to wonder, once or twice, whether the number was
+          fair. Not because anyone did anything wrong — AV pricing has a lot of moving
+          parts, and it's hard to know what's normal when it's not the thing you do all day.
+          It's the thing we do all day, so we're happy to be your gut-check.
         </p>
         <p>
-          It's the thing we do all day. So we're happy to be your gut-check — whether
-          you're looking back at an event that's done, or sizing up a quote for one that's
-          coming.
+          On a 30-minute call, we'll go through your invoice or quote together and you'll
+          come away with a straight read on whether the number fits the event, where the
+          budget actually goes, and the questions worth asking your venue before you sign.
+          If your event's still coming up, we're glad to share what we'd do it for — no
+          pressure, just a real number to compare against.
         </p>
-
-        <p class="audit-offer-lead">
-          On a 30-minute call, we'll walk through your invoice or quote together, and
-          you'll come away with:
+        <p class="audit-keep">
+          You keep all of it whether or not we ever work together. Why free? Because it's
+          the best way we know to show you how we think.
         </p>
-        <ul class="audit-takeaways">
-          {auditTakeaways.map((item) => <li>{item}</li>)}
-        </ul>
-        <p class="audit-keep"><em>You keep all of it whether or not we ever work together.</em></p>
       </div>
     </section>
 
-    <!-- ============ WHY IT'S FREE + geo (canvas) ============ -->
-    <section class="section" aria-label="Why it's free">
+    <!-- ============ GEO + closing CTA (canvas) ============ -->
+    <section class="section center" aria-label="Service area">
       <div class="container audit-narrow">
-        <p>
-          Why give this away? Honestly, because it's the best way we know to show you how
-          we think. Sometimes the review turns up nothing and the number's perfectly fair —
-          we'll happily say so. Sometimes it turns up real savings. We don't know which
-          until we look, and we'll tell you the truth either way. And if you're shopping a
-          quote right now, we'd genuinely love the chance to put ours beside it — no
-          pressure, just an honest second number. If we're not the right fit, we'll say
-          that too, and point you somewhere better.
-        </p>
-        <p>
-          No obligation. No hard sell. Just a second set of eyes from someone who reads
-          these all day.
-        </p>
         <p class="audit-geo">
           One note: we review AV pricing for events in and around Nashville (roughly a
-          200-mile radius), because that's the market we actually know. Planning a
-          Nashville-area event from out of town? Still a yes — book the call.
+          200-mile radius) — that's the market we actually know. Planning a Nashville-area
+          event from out of town? Still a yes.
         </p>
         <div class="btn-row center-row audit-final-cta">
           <a href={AUDIT_CALENDLY} class="btn btn--gradient" target="_blank" rel="noopener noreferrer">
@@ -154,22 +133,11 @@ const auditTakeaways = [
     margin-top: var(--space-md);
     margin-bottom: 0;
   }
-  .audit-offer-lead {
-    font-weight: 600;
-    margin-top: var(--space-xl);
-  }
-  .audit-takeaways {
-    margin-bottom: var(--space-lg);
-  }
-  .audit-takeaways li {
-    padding-block: var(--space-xs);
-    line-height: var(--leading-body);
-  }
   .audit-keep {
     margin-bottom: 0;
   }
   .audit-geo {
-    margin-top: var(--space-lg);
+    margin-bottom: 0;
   }
   .audit-final-cta {
     margin-top: var(--space-2xl);
