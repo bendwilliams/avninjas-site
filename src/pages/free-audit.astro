@@ -9,15 +9,34 @@
  * Voice: Lane A — solution-aware buyer (EAs / corporate event planners with prior
  * AV-vendor experience). The page is plainly the "Free AV Audit" (offer name matches
  * the Calendly event + dashboard). De-villained per Hook's tone revision AND Ben's
- * 2026-06-26 directive: NO "fishy" / villain framing anywhere on this page — title,
- * H1, meta, or body. "Fishy" is an AD hook only (the ad does the confrontation + the
- * click-through); the landing page is a low-threat "honest second opinion" on a past
- * AV invoice. H1 = the plain offer name; Hook's warm line "Want a second opinion…"
- * sits in the subhead. Offer assumes a past AV invoice worth reviewing (Lane A).
+ * 2026-06-26 directive: NO "fishy" / villain framing anywhere on this page.
  *
- * Copy is VERBATIM from Hook's draft (tone-revised, through the read-aloud gate). The
- * geo line is load-bearing: the review is geo-bound by Ben's market knowledge (~200mi
- * of Nashville) per buyer-strategy §"Geo-Bound Offer Constraint".
+ * Copy: 2026-06-27 swap — VERBATIM from Ben's approved file
+ * (Deliverables/2026-06-27-free-audit-lander-copy.md). Content swap, not a redesign.
+ *
+ * FORMATTING ALIGNMENT (Felix, 2026-06-27 second sweep): brought into the homepage's
+ * template language so the audit page reads as the SAME site as index.astro. Deltas:
+ *   - Section heads now use the homepage's .sec-head pattern (<div class="sec-head">
+ *     wrapping a BARE <h2>, which renders at the --text-h1 major-section-head role and
+ *     auto-centers, capped to the 720 measure). Was: <h2 class="subhead"> (the smaller
+ *     --text-h2 role) with bespoke centering. This is the single biggest template tell.
+ *   - Band rhythm matches home: alternating .section / .section--cream, .band-tight to
+ *     hug band-mates, .section--roomy on the hero + closing-CTA moments, and
+ *     <hr class="band-break-rule"> dividers between bands.
+ *   - Hero + closing CTA mirror the homepage's centered shout/CTA sections (Nail-down /
+ *     Numbers): .section--roomy center + .sec-head sec-head--wide + .btn-row center-row.
+ *   - Body prose sits at the homepage's 720 reading measure (.audit-body == the .sec-head
+ *     measure), left-read like the homepage's .solid-cell / .dramatic-block prose.
+ *   - Scoped styles trimmed to only what the homepage doesn't already provide (the body
+ *     measure, the emphasis-line size, the oxygen-surcharge callout, the takeaways list).
+ *
+ * Locked constraints carried from the 2026-06-27 copy swap:
+ *   - Eyebrow stays DROPPED. The .eyebrow class renders --color-accent (#1d4ed8, cobalt
+ *     blue), which Ben's "NO blue text" directive bans. The H1 leads. Old geo framing +
+ *     "30 minutes, by phone" microcopy stay dropped per Ben's edit (not re-added).
+ *   - Both CTAs wired to AUDIT_CALENDLY, label "Start the Free Audit →", target/rel intact.
+ *   - Bold inline lines render as <strong> (inherit ink — no blue). Oxygen-surcharge joke
+ *     kept verbatim including the parenthetical.
  *
  * CTA mechanism mirrors the existing planning-call CTAs exactly:
  * <a class="btn btn--gradient" target="_blank" rel="noopener noreferrer"> (GL-003 §2
@@ -32,114 +51,242 @@ const AUDIT_CALENDLY = "https://calendly.com/ben-avninjas/free-av-audit";
 
 <BaseLayout
   title="Free AV Audit | AV Ninjas"
-  description="Send us the AV invoice from your last event, or a quote for an event coming up, and we'll take an honest look. Sometimes it's right in line; sometimes there's real money left on the table. Either way, you'll know. Free, no pitch. Nashville-area events."
+  description="Past event or future event — we'll be your second set of eyes on what you're paying for AV, and we'll shoot you straight. Confidence it's the right setup, at the right price. No pressure, no pitch. Free."
 >
   <a href="#main" class="skip-link">Skip to content</a>
   <SiteHeader />
   <main id="main">
-    <!-- ============ HERO — plain offer name + second-opinion line (canvas, CENTERED) ============
-         Ben directive 2026-06-26: the LANDING PAGE is plainly the "Free AV Audit". The
-         confrontation hook is an AD-only device and must not appear here (title, H1,
-         meta, or body). H1 = the plain offer name + the warm "second opinion" clause.
-         The audit now accepts BOTH inputs (Hook revision): a PAST invoice OR an UPCOMING
-         quote — for the quote case we put our own number beside theirs. Offer name kept
-         "Free AV Audit" (matches the Calendly event + dashboard). -->
+    <!-- ============ HERO (canvas, CENTERED — mirrors the homepage's centered
+         shout/CTA archetype: .section--roomy center + .sec-head sec-head--wide) ============ -->
     <section class="section section--roomy center" aria-label="Free AV Audit">
       <div class="container">
         <div class="sec-head sec-head--wide">
-          <p class="eyebrow">Free AV Audit · For event planners &amp; EAs in and around Nashville</p>
-          <h1 class="display">Free AV Audit — a second opinion on what you're paying for AV</h1>
+          <h1 class="display">Free AV Audit</h1>
           <p class="lead">
-            Send us the AV invoice from your last event, or a quote for one coming up, and
-            we'll take an honest look. Sometimes the number's right in line and we'll tell
-            you so; sometimes there's real money on the table. Either way, you'll know.
-            Free, no pitch.
+            Past event or future event — we'll be your second set of eyes, and we'll
+            shoot you straight.
           </p>
         </div>
         <div class="btn-row center-row">
           <a href={AUDIT_CALENDLY} class="btn btn--gradient" target="_blank" rel="noopener noreferrer">
-            Book your free AV audit →
+            Start the Free Audit →
           </a>
         </div>
-        <p class="small muted audit-microcopy">
-          30 minutes, by phone. Bring your last AV invoice — or a quote for an event coming up.
-        </p>
       </div>
     </section>
 
-    <!-- ============ CONTEXT + offer (cream band) ============
-         "What you get" is now a FLOWING SENTENCE, not a bulleted <ul> (Hook tighten,
-         2026-06-26). Body + why-free compressed. -->
-    <section class="section section--cream" aria-label="What the review covers">
-      <div class="container audit-narrow">
-        <p>
-          You've signed enough AV invoices to wonder, once or twice, whether the number was
-          fair. Not because anyone did anything wrong — AV pricing has a lot of moving
-          parts, and it's hard to know what's normal when it's not the thing you do all day.
-          It's the thing we do all day, so we're happy to be your gut-check.
-        </p>
-        <p>
-          On a 30-minute call, we'll go through your invoice or quote together and you'll
-          come away with a straight read on whether the number fits the event, where the
-          budget actually goes, and the questions worth asking your venue before you sign.
-          If your event's still coming up, we're glad to share what we'd do it for — no
-          pressure, just a real number to compare against.
-        </p>
-        <p class="audit-keep">
-          You keep all of it whether or not we ever work together. Why free? Because it's
-          the best way we know to show you how we think.
-        </p>
+    <hr class="band-break-rule" aria-hidden="true" />
+
+    <!-- ============ BAND 1 — "another language" (cream). Ben 2026-06-27 re-flow:
+         the old "A good deal comes down to two things" H2 is REMOVED; its gear/crew
+         content (overkill/underkill, the $10-part line) now lives INSIDE this section.
+         A mid-band turn (the "It doesn't have to be this way." subhead) pivots from the
+         problem to the offer. ============ -->
+    <section class="section section--cream band-tight" aria-label="What's really in the contract">
+      <div class="container">
+        <div class="sec-head">
+          <!-- Ben dropped the trailing period from this head in the 2026-06-27 edit. -->
+          <h2>AV contracts are basically written in another language</h2>
+        </div>
+        <div class="audit-body">
+          <p>Gizmos and Gadgets. More acronyms than the government..</p>
+          <p>Much of it conveys crucial information.  But sometimes, things are vague on purpose.</p>
+          <!-- Typo fix per Ben's note: source md reads "nuancedl" → render "nuanced". -->
+          <p>But say you can read the whole thing. The real question is more nuanced.</p>
+          <p class="audit-emphasis"><strong>Is it the right gear for the job?</strong></p>
+          <p>
+            A contract can be perfectly clear and still be wrong. Too much. Too little.
+            Wrong approach altogether.
+          </p>
+          <p>And then there's the question nobody puts in writing:</p>
+          <p class="audit-emphasis"><strong>What's NOT in the contract — what gets billed later?</strong></p>
+          <p>
+            These questions aren't trivial.  And just like in the world of general
+            contracting, the answers can run into tens of thousands.  "Change orders" cost
+            more - sometimes by orders of magnitude.  And all too often, bids are won with
+            this in mind.
+          </p>
+          <p>Overkill or underkill. Both can cost you bigtime.</p>
+          <!-- Typo fix per Ben's note: source md reads "$10part" → render "$10 part". -->
+          <p>Overlooking a $10 part can cause major disruptions.</p>
+          <!-- Mid-band TURN. Ben wrote this as an h5 (smaller than the section head). The
+               homepage type scale has no h5 role; the closest in-section heading BELOW the
+               56px section head is the h3 role (--text-h3, card-title size). Centered to
+               match the section-head treatment. NOT a .subhead (that's the larger
+               --text-h2 sub-section role). No blue. -->
+          <h3 class="audit-turn">It doesn't have to be this way.</h3>
+          <p>Maybe you've just come to terms with how things are  -or- maybe you've been conditioned..</p>
+          <p class="audit-keep">That's what an audit is for.</p>
+        </div>
       </div>
     </section>
 
-    <!-- ============ GEO + closing CTA (canvas) ============ -->
-    <section class="section center" aria-label="Service area">
-      <div class="container audit-narrow">
-        <p class="audit-geo">
-          One note: we review AV pricing for events in and around Nashville (roughly a
-          200-mile radius) — that's the market we actually know. Planning a Nashville-area
-          event from out of town? Still a yes.
-        </p>
-        <div class="btn-row center-row audit-final-cta">
+    <hr class="band-break-rule" aria-hidden="true" />
+
+    <!-- ============ BAND 2 — second set of eyes + oxygen-surcharge joke (canvas) ============ -->
+    <section class="section band-tight" aria-label="Let us be your second set of eyes">
+      <div class="container">
+        <div class="sec-head">
+          <h2>Let us be your second set of eyes.</h2>
+        </div>
+        <div class="audit-body">
+          <p>
+            Whether we're talking about a past or future event, let's look at it together
+            - through the right set of lenses.
+          </p>
+          <p>
+            There are plenty of honest operators in our region.
+            <strong>If it's a fair deal, we'll say so</strong> — and you can stop
+            second-guessing it.
+          </p>
+          <p>We've also seen some pretty outlandish stuff.</p>
+          <!-- Oxygen-surcharge joke. Ben dropped the blockquote markers in the md, but
+               per the directive the most-recent FORMATTING wins — keep the .audit-quote
+               callout (ink left-border, no blue; --color-surface lift). Italic quote +
+               parenthetical kidding line, verbatim. -->
+          <blockquote class="audit-quote">
+            <p><em>"Want to breathe the air during the event? There's a fee for that, obviously."</em></p>
+            <p class="audit-quote__aside">
+              (We're kidding — we've never actually seen an oxygen surcharge though we've
+              seen things that come close.)
+            </p>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <hr class="band-break-rule" aria-hidden="true" />
+
+    <!-- ============ BAND 3 — the takeaways (cream) ============ -->
+    <section class="section section--cream band-tight" aria-label="What you walk away with">
+      <div class="container">
+        <div class="sec-head">
+          <h2>Here's what you walk away with:</h2>
+        </div>
+        <div class="audit-body">
+          <ol class="audit-takeaways">
+            <li><strong>Confidence it's the right setup</strong> — not too much, not too little.</li>
+            <li><strong>Confidence you're paying the right price</strong> for what you actually get.</li>
+          </ol>
+          <p class="audit-keep">No pressure. No pitch. Just a straight read.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="band-break-rule" aria-hidden="true" />
+
+    <!-- ============ CLOSING CTA (canvas, CENTERED — mirrors the homepage Nail-down CTA) ============ -->
+    <section class="section section--roomy center band-tight" aria-label="Get the free AV audit">
+      <div class="container">
+        <div class="sec-head sec-head--wide">
+          <h2>Get the free AV audit</h2>
+        </div>
+        <div class="btn-row center-row">
           <a href={AUDIT_CALENDLY} class="btn btn--gradient" target="_blank" rel="noopener noreferrer">
-            Book your free AV audit →
+            Start the Free Audit →
           </a>
         </div>
-        <p class="small muted audit-microcopy">
-          30 minutes, by phone. Bring your last AV invoice — or a quote for an event coming up.
-        </p>
       </div>
     </section>
+
+    <!-- Explicit "back to home" affordance (Ben 2026-06-27). Mirrors the HVCO page's
+         .hvco-back pattern (same wording, centered footer-style block near the bottom,
+         BASE_URL href, heading-font/weight). COLOR DEVIATION: HVCO's .hvco-back is
+         --color-accent (cobalt). This page is under Ben's "NO blue text" directive, so
+         this link renders in INK (--color-ink), underline-on-hover only — NO blue. This
+         is an ADDITIONAL affordance; the SiteHeader/SiteFooter chrome is untouched. -->
+    <footer class="audit-footer" aria-label="Back to home">
+      <div class="container">
+        <a href={import.meta.env.BASE_URL} class="audit-back">← Back to home</a>
+      </div>
+    </footer>
   </main>
   <SiteFooter />
 </BaseLayout>
 
 <style>
-  /* .center / .center-row are scoped to index.astro (Astro component-scoped styles);
-     redeclare the two we use here so the hero head + button rows center on this page. */
+  /* .center / .center-row are scoped per-page in index.astro (Astro component-scoped
+     styles); redeclare the two we use here so the hero head + button rows center. */
   .center { text-align: center; }
   .center .btn-row,
   .center-row { justify-content: center; }
 
-  .audit-narrow {
+  /* Body prose measure — the SAME 720 reading measure the homepage's .sec-head uses,
+     centered as a block under the centered head. Body copy reads left (like the
+     homepage's .solid-cell / .dramatic-block prose); only the section HEAD centers. */
+  .audit-body {
     max-width: 720px;
+    margin-inline: auto;
+    text-align: left;
   }
-  .audit-narrow p {
+  .audit-body p {
     line-height: var(--leading-body);
     margin-bottom: var(--space-md);
   }
-  .audit-microcopy {
+  .audit-body > :last-child { margin-bottom: 0; }
+
+  /* Inline-emphasis pullquote lines (the two bold questions). Steps up to the lead
+     size; ink-colored via <strong> inheritance — NO accent/blue. */
+  .audit-emphasis {
+    font-size: var(--text-body-lg);
+    line-height: var(--leading-body-lg);
+  }
+
+  /* Mid-band TURN subhead ("It doesn't have to be this way."). Ben authored it as an
+     h5 — smaller than the 56px section head. The homepage type scale has no h5; the h3
+     role (--text-h3, the in-section heading size global.css gives <h3>) is the closest
+     existing role below the section head, so the bare <h3> already carries the right
+     size. This only CENTERS it (to match the section-head treatment) and gives it
+     breathing room as a pivot. Ink-colored — no blue. */
+  .audit-turn {
     text-align: center;
-    margin-top: var(--space-md);
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-md);
+  }
+
+  /* Oxygen-surcharge callout. Ink left-border (NOT accent — no blue), tokenized
+     spacing/radius; --color-surface lifts it off the cream band. Joke kept verbatim. */
+  .audit-quote {
+    margin: var(--space-xl) 0 0;
+    padding: var(--space-md) var(--space-lg);
+    border-left: var(--border-pop) solid var(--color-ink);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+  }
+  .audit-quote p {
+    font-size: var(--text-body-lg);
+    line-height: var(--leading-body-lg);
+    margin-bottom: var(--space-sm);
+  }
+  .audit-quote__aside {
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+    color: var(--color-gray);
     margin-bottom: 0;
   }
-  .audit-keep {
-    margin-bottom: 0;
+
+  .audit-takeaways {
+    margin: 0 0 var(--space-md);
+    padding-left: var(--space-lg);
+    line-height: var(--leading-body);
   }
-  .audit-geo {
-    margin-bottom: 0;
+  .audit-takeaways li { margin-bottom: var(--space-sm); }
+
+  .audit-keep { margin-bottom: 0; }
+
+  /* Back-to-home footer link (Ben 2026-06-27). Mirrors HVCO's .hvco-footer/.hvco-back
+     STRUCTURE — centered footer block, heading font + 600 weight, underline-on-hover.
+     COLOR DEVIATION (intentional, flagged to Ben): HVCO renders this in --color-accent
+     (cobalt); this page is under the "NO blue text" directive, so it renders in INK. */
+  .audit-footer {
+    padding-block: var(--space-2xl);
+    text-align: center;
   }
-  .audit-final-cta {
-    margin-top: var(--space-2xl);
+  .audit-back {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--color-ink);
+    text-decoration: none;
   }
+  .audit-back:hover { text-decoration: underline; }
 </style>
