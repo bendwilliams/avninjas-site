@@ -1416,8 +1416,13 @@ const faqSchema = {
           <div class="container">
             <div class="sec-head sec-head--wide sec-head--onbleed">
               <!-- Final-CTA heading. Ben 2026-06-26: extended the original short heading
-                   with the second rhetorical clause, which moved here out of the cost FAQ. -->
-              <h2 class="display">Ready to Do The Thing? Or just want to Talk Through Your Options?</h2>
+                   with the second rhetorical clause, which moved here out of the cost FAQ.
+                   Ben 2026-06-27: demote the second clause to a sub-headline (.subhead,
+                   --text-h2) beneath the display line. The two render on separate lines but
+                   the copy-fidelity gate stays 143/143 — decode() strips tags and collapses
+                   whitespace, so the canonical string is still matched across the split. -->
+              <h2 class="display">Ready to Do The Thing?</h2>
+              <p class="subhead">Or just want to Talk Through Your Options?</p>
               <p class="lead">
                 The ninjas are here to handle the heavy lifting so you can focus on what
                 matters. Let's talk about making your event unforgettable.
