@@ -149,6 +149,11 @@ const offerBullets = [
         <a href={import.meta.env.BASE_URL} class="hvco-back">← Back to home</a>
       </div>
     </footer>
+
+    <!-- Lead-capture wiring (Mack, 2026-06-30): sends the opt-in form's data to the
+         same-origin /api/lead Pages Function → EA Ninjas OS ingest. Data POST only;
+         no copy/design change. See public/scripts/hvco-lead.js + functions/api/lead.ts. -->
+    <script src={`${import.meta.env.BASE_URL}scripts/hvco-lead.js`} is:inline></script>
   </main>
 </BaseLayout>
 
